@@ -10,7 +10,7 @@ RUN apk update && \
     nginx && \
     pecl install ds && \
     docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp --with-xpm --with-webp && \
-    docker-php-ext-install bcmath gd intl opcache pcntl pdo_pgsql pgsql sockets zip && \
+    docker-php-ext-install bcmath exif gd intl opcache pcntl pdo_pgsql pgsql sockets zip && \
     docker-php-ext-enable opcache ds && \
     apk del --no-cache phpize freetype-dev libpng-dev libjpeg-turbo-dev libwebp-dev libxpm-dev
 
@@ -47,7 +47,7 @@ RUN if [ "$INSTALL_XDEBUG" = 1 ]; then \
     fi
 
 # Setting up composer
-COPY --from=composer:2.1.14 /usr/bin/composer /usr/local/bin/composer
+COPY --from=composer:2.4.3 /usr/bin/composer /usr/local/bin/composer
 RUN alias composer='php /usr/bin/composer'
 
 # Overriding default php.ini
@@ -60,7 +60,7 @@ RUN chown -R 82:82 /var/www /var/log /var/lib/nginx /var/run /run
 RUN mkdir -p /var/run/
 WORKDIR /var/www/html
 
-COPY --chown=82:82 composer.json ./
+COPY --chown=82:82 composer.json composer.lock ./
 
 RUN composer install \
     --no-interaction \
@@ -76,6 +76,6 @@ RUN composer dump-autoload
 
 EXPOSE 8000
 STOPSIGNAL SIGTERM
-CMD /usr/local/bin/php ./artisan config:cache && \
-    #    /usr/local/bin/php ./artisan route:cache && \
+CMD /usr/local/bin/php ./artisan storage:link && \
+    /usr/local/bin/php ./artisan optimize && \
     /usr/sbin/nginx; /usr/local/sbin/php-fpm -F
