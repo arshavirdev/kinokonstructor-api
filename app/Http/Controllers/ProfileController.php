@@ -26,7 +26,7 @@ class ProfileController extends Controller
     public function index(Request $request)
     {
         // $this->authorize('viewAny');
-        $query = Profile::query()->with(['user', 'media', 'occupation']);
+        $query = Profile::query()->with(['user', 'media', 'occupation'])->orderBy('is_verified', 'desc');
 
         if ($request->has('type'))
             $query = $request->input('type') === 'actor' ? $query->isActor() : $query->isSpecialist();
@@ -39,6 +39,9 @@ class ProfileController extends Controller
 
         if ($request->has('gender'))
             $query = $query->where('gender', $request->input('gender'));
+
+        if ($request->has('occupation_id'))
+            $query = $query->where('occupation_id', $request->input('occupation_id'));
 
         if ($request->has('city'))
             $query = $query->where('city', 'ilike', $request->input('city'));

@@ -18,6 +18,7 @@ class ProfileBriefResource extends JsonResource
         return [
             'id' => $this->id,
             'avatar' => $this->getFirstMediaUrl('avatar') ?: null,
+            'is_verified' => $this->is_verified,
             'firstname' => $this->firstname,
             'lastname' => $this->lastname,
             'middlename' => $this->middlename,

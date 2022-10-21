@@ -39,10 +39,13 @@ class UpdateProfileRequest extends FormRequest
 
             'is_org' => 'boolean',
             'org_reg_id' => 'numeric|exclude_if:is_org,false',
+            'org_name' => 'string|exclude_if:is_org,false',
             'org_position' => 'string|exclude_if:is_org,false',
 
             'is_entrepreneur' => 'boolean',
             'entrepreneur_reg_id' => 'numeric|exclude_if:is_entrepreneur,false',
+
+            'regions.*' => 'integer',
 
             'portfolio' => 'string|nullable',
             'mass_media_mentions' => 'string|nullable',
@@ -52,7 +55,7 @@ class UpdateProfileRequest extends FormRequest
             'socials_ok' => 'string|nullable',
 
             'avatar' => 'file|nullable',
-            'attachments.*' => 'file',
+            'attachments.*' => 'file|nullable',
 
             'education.*.id' => 'integer|nullable',
             'education.*.institution' => 'string',

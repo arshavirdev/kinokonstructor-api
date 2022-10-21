@@ -16,6 +16,7 @@ return new class extends Migration {
         Schema::create('profiles', function (Blueprint $table) {
             $table->id();
             $table->enum('status', ['draft', 'moderation', 'accepted'])->default('draft');
+            $table->boolean('is_verified')->default(false);
             $table->foreignIdFor(User::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
 
             $table->string('firstname');
@@ -36,8 +37,10 @@ return new class extends Migration {
             $table->boolean('is_entrepreneur');
             $table->string('entrepreneur_reg_id')->nullable();
 
-            $table->longText('portfolio');
-            $table->longText('mass_media_mentions');
+            $table->jsonb('regions')->default('[]');
+
+            $table->longText('portfolio')->nullable();
+            $table->longText('mass_media_mentions')->nullable();
 
             $table->string('socials_vk')->nullable();
             $table->string('socials_tg')->nullable();

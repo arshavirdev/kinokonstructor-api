@@ -19,7 +19,7 @@ class ProfileResource extends JsonResource
             'id' => $this->id,
             'user_id' => $this->user_id,
             'status' => $this->status,
-            'is_verified' => true,
+            'is_verified' => $this->is_verified,
 
             'firstname' => $this->firstname,
             'lastname' => $this->lastname,
@@ -33,8 +33,9 @@ class ProfileResource extends JsonResource
             'avatar' => $avatar,
 
             'is_org' => $this->is_org,
-            'org_position' => $this->org_position,
             'org_reg_id' => $this->org_reg_id,
+            'org_name' => $this->org_name,
+            'org_position' => $this->org_position,
             'is_entrepreneur' => $this->is_entrepreneur,
             'entrepreneur_reg_id' => $this->entrepreneur_reg_id,
 
@@ -47,6 +48,8 @@ class ProfileResource extends JsonResource
             'experience' => $this->experience,
             'education' => $this->education,
             'projects' => $this->customProjects,
+
+            'regions' => $this->regions,
 
             'portfolio' => $this->portfolio,
             'mass_media_mentions' => $this->mass_media_mentions,

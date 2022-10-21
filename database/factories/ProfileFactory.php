@@ -21,6 +21,9 @@ function randomNumber($length)
  */
 class ProfileFactory extends Factory
 {
+    static $positionPrefix = ['Младший', 'Старший', 'Ведущий', 'Главный'];
+    static $orgPositions = ['Менеджер', 'Консультант', 'Специалист по найму'];
+
     /**
      * Define the model's default state.
      *
@@ -49,17 +52,20 @@ class ProfileFactory extends Factory
             'city' => fake()->city(),
             'birthday' => fake()->date(),
 
-            'phone' => fake()->unique()->phoneNumber(),
+            'phone' => fake()->unique()->numerify('+79#########'),
 
             'is_org' => $is_org,
-            'org_reg_id' => $is_org ? randomNumber(12) : null,
-            'org_position' => $is_org ? fake()->word() : null,
+            'org_reg_id' => $is_org ? randomNumber(13) : null,
+            'org_name' => fake()->company(),
+            'org_position' => $is_org ? fake()->randomElement(static::$positionPrefix) . ' ' . fake()->randomElement(static::$orgPositions) : null,
 
             'is_entrepreneur' => $is_entrepreneur,
-            'entrepreneur_reg_id' => $is_entrepreneur ? randomNumber(10) : null,
+            'entrepreneur_reg_id' => $is_entrepreneur ? randomNumber(15) : null,
 
-            'portfolio' => fake()->text(),
-            'mass_media_mentions' => fake()->text(),
+            'regions' => fake()->randomElements([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], fake()->numberBetween(1, 8)),
+
+            'portfolio' => fake()->realText(3000, 5),
+            'mass_media_mentions' => fake()->realText(1000, 5),
 
             'socials_vk' => $nickname,
             'socials_tg' => $nickname,

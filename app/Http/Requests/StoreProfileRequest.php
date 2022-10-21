@@ -46,6 +46,8 @@ class StoreProfileRequest extends FormRequest
             'is_entrepreneur' => 'boolean',
             'entrepreneur_reg_id' => 'numeric|exclude_if:is_entrepreneur,false',
 
+            'regions.*' => 'integer',
+
             'portfolio' => 'string',
             'mass_media_mentions' => 'string',
 
@@ -53,7 +55,7 @@ class StoreProfileRequest extends FormRequest
             'socials_tg' => 'string',
             'socials_ok' => 'string',
 
-            'avatar' => 'file',
+            'avatar' => 'file|nullable',
             'attachments.*' => 'file',
 
             'education.*.id' => 'integer|nullable',

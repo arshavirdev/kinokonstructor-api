@@ -14,8 +14,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $ocupations = (new OccupationSeeder())->run();
-//        dd($ocupations->pluck('id'));
+        $occupations = (new OccupationSeeder())->run();
+        $regions = (new RegionSeeder())->run();
 
         \App\Models\User::factory()->create([
             'name' => 'Admin Admin',
@@ -32,20 +32,30 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Guests
-        $guests = \App\Models\User::factory(3)->create(['role' => 'guest']);
+        $guests = \App\Models\User::factory(3)
+//            ->has(\App\Models\Profile::factory(1)->afterMaking(function ($model) use ($occupations) {
+//                $model->status = fake()->randomElement(['draft', 'moderation']);
+//                $model->occupation_id = fake()->randomElement($occupations->pluck('id'));
+//            }))
+            ->create(['role' => 'guest']);
         \App\Models\Profile::factory(2)->create(fn() => [
             'status' => fake()->randomElement(['draft', 'moderation']),
             'user_id' => fake()->unique()->randomElement($guests->pluck('id')),
-            'occupation_id' => fake()->randomElement($ocupations->pluck('id'))
+            'occupation_id' => fake()->randomElement($occupations->pluck('id'))
         ]);
 
         // Specialists
-        $specialists = \App\Models\User::factory(7)->create(['role' => 'specialist']);
-        $specialistProfiles = \App\Models\Profile::factory(7)->create(fn() => [
-            'status' => 'accepted',
-            'user_id' => fake()->unique()->randomElement($specialists->pluck('id')),
-            'occupation_id' => rand(0, 1) === 1 ? fake()->randomElement($ocupations->pluck('id')) : 1
-        ]);
+        $specialists = \App\Models\User::factory(90)->create(['role' => 'specialist']);
+        $specialistProfiles = \App\Models\Profile::factory(90)
+            ->has(\App\Models\ProfileEducation::factory(rand(1, 2)), 'education')
+            ->has(\App\Models\ProfileExperience::factory(rand(1, 3)), 'experience')
+//            ->has(\App\Models\ProfileCustomProjects::factory(2))
+            ->create(fn() => [
+                'status' => 'accepted',
+                'is_verified' => rand(0, 10) === 10,
+                'user_id' => fake()->unique()->randomElement($specialists->pluck('id')),
+                'occupation_id' => rand(0, 1) === 1 ? fake()->randomElement($occupations->pluck('id')) : 1
+            ]);
 
         \App\Models\Location::factory(10)->create(fn() => ['owner_id' => fake()->randomElement($specialistProfiles->pluck('id'))]);
         // \App\Models\Project::factory(5)->create();

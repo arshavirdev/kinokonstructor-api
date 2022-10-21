@@ -52,7 +52,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::patch('profile', 'updateProfile');
         });
 
-        Route::get('dictionaries/{dictionary}', [DictionaryController::class, 'show']);
+        Route::get('dictionaries/{dictionary?}', [DictionaryController::class, 'show']);
         Route::apiResource('profiles', ProfileController::class, ['only' => ['index', 'show']]);
         Route::apiResource('locations', LocationController::class);
         Route::apiResource('projects', ProjectController::class);

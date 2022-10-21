@@ -18,6 +18,8 @@ class Profile extends AppModel implements HasMedia
     public const AVATAR_MEDIA = 'avatar';
     public const ATTACHMENT_MEDIA = 'attachment';
 
+    protected $perPage = 8;
+
     /**
      * The attributes that should be cast.
      *
@@ -25,6 +27,7 @@ class Profile extends AppModel implements HasMedia
      */
     protected $casts = [
         'birthday' => 'date',
+        'regions' => 'array'
     ];
 
     protected $guarded = ['status'];
@@ -52,6 +55,11 @@ class Profile extends AppModel implements HasMedia
     public function occupation()
     {
         return $this->belongsTo(Occupation::class);
+    }
+
+    public function regions()
+    {
+        return $this->hasMany(Region::class);
     }
 
     public function customProjects()
