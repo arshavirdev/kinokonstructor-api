@@ -32,12 +32,8 @@ class ProfileResource extends JsonResource
             'socials_ok' => $this->socials_ok,
             'avatar' => $avatar,
 
-            'is_org' => $this->is_org,
-            'org_reg_id' => $this->org_reg_id,
-            'org_name' => $this->org_name,
-            'org_position' => $this->org_position,
-            'is_entrepreneur' => $this->is_entrepreneur,
-            'entrepreneur_reg_id' => $this->entrepreneur_reg_id,
+            'org' => $this->org,
+            'entrepreneur' => $this->entrepreneur,
 
             'city' => $this->city,
             'birthday' => $this->birthday->format('Y-m-d'),

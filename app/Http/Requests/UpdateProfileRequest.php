@@ -37,13 +37,13 @@ class UpdateProfileRequest extends FormRequest
                 Rule::unique('profiles', 'phone')->ignore(Auth::user()->profile->id)
             ],
 
-            'is_org' => 'boolean',
-            'org_reg_id' => 'numeric|exclude_if:is_org,false',
-            'org_name' => 'string|exclude_if:is_org,false',
-            'org_position' => 'string|exclude_if:is_org,false',
+            'org' => 'nullable',
+            'org.reg_id' => 'numeric|required_unless:org,null',
+            'org.name' => 'string|required_unless:org,null',
+            'org.position' => 'string|required_unless:org,null',
 
-            'is_entrepreneur' => 'boolean',
-            'entrepreneur_reg_id' => 'numeric|exclude_if:is_entrepreneur,false',
+            'entrepreneur' => 'nullable',
+            'entrepreneur.reg_id' => 'numeric|required_unless:entrepreneur,null',
 
             'regions.*' => 'integer',
 

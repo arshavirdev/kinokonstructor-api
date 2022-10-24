@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -31,6 +32,37 @@ class Profile extends AppModel implements HasMedia
     ];
 
     protected $guarded = ['status'];
+    protected $fillable = ['org', 'entrepreneur'];
+
+    public function org(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value, $attributes) => $attributes['is_org'] ? [
+                'reg_id' => $attributes['org_reg_id'],
+                'name' => $attributes['org_name'],
+                'position' => $attributes['org_position'],
+            ] : null,
+            set: fn($value) => [
+                'is_org' => !is_null($value),
+                'org_reg_id' => is_null($value) ? null : $value['reg_id'],
+                'org_name' => is_null($value) ? null : $value['name'],
+                'org_position' => is_null($value) ? null : $value['position'],
+            ]
+        )->withoutObjectCaching();
+    }
+
+    public function entrepreneur(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value, $attributes) => $attributes['is_entrepreneur'] ? [
+                'reg_id' => $attributes['entrepreneur_reg_id']
+            ] : null,
+            set: fn($value) => [
+                'is_entrepreneur' => !is_null($value),
+                'entrepreneur_reg_id' => is_null($value) ? null : $value['reg_id'],
+            ]
+        )->withoutObjectCaching();
+    }
 
     public function user()
     {

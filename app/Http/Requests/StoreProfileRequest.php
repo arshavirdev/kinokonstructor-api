@@ -39,21 +39,22 @@ class StoreProfileRequest extends FormRequest
                 Rule::unique('profiles', 'phone')
             ],
 
-            'is_org' => 'boolean',
-            'org_reg_id' => 'numeric|exclude_if:is_org,false',
-            'org_position' => 'string|exclude_if:is_org,false',
+            'org' => 'nullable',
+            'org.reg_id' => 'numeric|required_unless:org,null',
+            'org.name' => 'string|required_unless:org,null',
+            'org.position' => 'string|required_unless:org,null',
 
-            'is_entrepreneur' => 'boolean',
-            'entrepreneur_reg_id' => 'numeric|exclude_if:is_entrepreneur,false',
+            'entrepreneur' => 'nullable',
+            'entrepreneur.reg_id' => 'numeric|required_unless:entrepreneur,null',
 
             'regions.*' => 'integer',
 
-            'portfolio' => 'string',
-            'mass_media_mentions' => 'string',
+            'portfolio' => 'string|nullable',
+            'mass_media_mentions' => 'string|nullable',
 
-            'socials_vk' => 'string',
-            'socials_tg' => 'string',
-            'socials_ok' => 'string',
+            'socials_vk' => 'string|nullable',
+            'socials_tg' => 'string|nullable',
+            'socials_ok' => 'string|nullable',
 
             'avatar' => 'file|nullable',
             'attachments.*' => 'file',

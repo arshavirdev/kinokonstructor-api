@@ -76,9 +76,7 @@ class UserController extends Controller
         if (isset($params['projects']))
             $profile->customProjects()->sync($params['projects']);
 
-
-        $profile = Profile::with(['experience', 'education', 'customProjects', 'projects', 'media', 'occupation'])->find($profile->id);
-        return $profile;
+        return [];
     }
 
 }
