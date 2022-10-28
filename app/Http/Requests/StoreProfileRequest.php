@@ -57,7 +57,7 @@ class StoreProfileRequest extends FormRequest
             'socials_ok' => 'string|nullable',
 
             'avatar' => 'file|nullable',
-            'attachments.*' => 'file',
+            'attachments.*' => 'nullable',
 
             'education.*.id' => 'integer|nullable',
             'education.*.institution' => 'string',

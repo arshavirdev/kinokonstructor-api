@@ -18,23 +18,30 @@ class UserController extends Controller
         return new UserResource($user);
     }
 
-    public function createProfile(StoreProfileRequest $request)
+    private function syncMedia(Profile $profile, $params)
     {
-        $user = Auth::user();
-
-        $params = $request->validated();
-        $profile = $user->profile()->create($params);
-
-        if (isset($params['avatar'])) {
-            $profile->clearMediaCollection(Profile::AVATAR_MEDIA);
-            $profile->addMedia($params['avatar'])->toMediaCollection(Profile::AVATAR_MEDIA);
+        if (array_key_exists('avatar', $params)) {
+            if (is_null($params['avatar'])) {
+                $profile->clearMediaCollection(Profile::AVATAR_MEDIA);
+            } else {
+                $profile->addMedia($params['avatar'])->toMediaCollection(Profile::AVATAR_MEDIA);
+            }
         }
 
-        if (isset($params['attachments'])) {
-            $profile->clearMediaCollection(Profile::ATTACHMENT_MEDIA);
-            $profile->addMedia($params['attachments'])->toMediaCollection(Profile::ATTACHMENT_MEDIA);
+//        dd($params);
+        if (array_key_exists('attachments', $params)) {
+            $requestAttachments = collect($params['attachments']);
+            $toSaveAttachments = $requestAttachments->filter(fn($item) => is_object($item));
+            $toKeepAttachmentsIds = $requestAttachments->filter(fn($item) => !is_object($item))->map(fn($id) => (int)$id);
+            $profile->clearMediaCollectionExcept(Profile::ATTACHMENT_MEDIA, $toKeepAttachmentsIds);
+            foreach ($toSaveAttachments as $attachment) {
+                $profile->addMedia($attachment)->toMediaCollection(Profile::ATTACHMENT_MEDIA);
+            }
         }
+    }
 
+    private function syncRelations(Profile $profile, $params)
+    {
         if (isset($params['education']))
             $profile->education()->sync($params['education']);
 
@@ -43,10 +50,19 @@ class UserController extends Controller
 
         if (isset($params['projects']))
             $profile->customProjects()->sync($params['projects']);
+    }
 
+    public function createProfile(StoreProfileRequest $request)
+    {
+        $user = Auth::user();
 
-        $profile = Profile::with(['experience', 'education', 'customProjects', 'projects', 'media', 'occupation'])->find($profile->id);
-        return $profile;
+        $params = $request->validated();
+        $profile = $user->profile()->create($params);
+
+        $this->syncMedia($profile, $params);
+        $this->syncRelations($profile, $params);
+
+        return [];
     }
 
     public function updateProfile(UpdateProfileRequest $request)
@@ -56,25 +72,12 @@ class UserController extends Controller
 
         $params = $request->validated();
 
-        if (isset($params['avatar'])) {
-            $profile->addMedia($params['avatar'])->toMediaCollection(Profile::AVATAR_MEDIA);
-        }
-
-        if (isset($params['attachments'])) {
-            $profile->addMedia($params['attachments'])->toMediaCollection(Profile::ATTACHMENT_MEDIA);
-        }
+        $this->syncMedia($profile, $params);
 
         $profile->fill($params);
         $profile->save();
 
-        if (isset($params['education']))
-            $profile->education()->sync($params['education']);
-
-        if (isset($params['experience']))
-            $profile->experience()->sync($params['experience']);
-
-        if (isset($params['projects']))
-            $profile->customProjects()->sync($params['projects']);
+        $this->syncRelations($profile, $params);
 
         return [];
     }

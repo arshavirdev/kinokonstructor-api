@@ -55,7 +55,8 @@ class UpdateProfileRequest extends FormRequest
             'socials_ok' => 'string|nullable',
 
             'avatar' => 'file|nullable',
-            'attachments.*' => 'file|nullable',
+            'attachments' => 'array',
+//            'attachments.*' => '',
 
             'education.*.id' => 'integer|nullable',
             'education.*.institution' => 'string',

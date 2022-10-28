@@ -32,7 +32,25 @@ class Profile extends AppModel implements HasMedia
     ];
 
     protected $guarded = ['status'];
-    protected $fillable = ['org', 'entrepreneur'];
+    protected $fillable = [
+        "user_id",
+        "firstname",
+        "lastname",
+        "middlename",
+        "city",
+        "birthday",
+        "occupation_id",
+        "phone",
+        "regions",
+        "regions",
+        "portfolio",
+        "mass_media_mentions",
+        "socials_vk",
+        "socials_tg",
+        "socials_ok",
+        'org',
+        'entrepreneur'
+    ];
 
     public function org(): Attribute
     {
@@ -84,6 +102,11 @@ class Profile extends AppModel implements HasMedia
         return $this->hasMany(ProfileCustomProjects::class);
     }
 
+    public function locations()
+    {
+        return $this->hasMany(Location::class, 'owner_id');
+    }
+
     public function occupation()
     {
         return $this->belongsTo(Occupation::class);
@@ -119,26 +142,18 @@ class Profile extends AppModel implements HasMedia
     {
         $this->addMediaCollection(self::AVATAR_MEDIA)
             ->singleFile()
-            ->withResponsiveImages()
-            ->registerMediaConversions(function (Media $media) {
-                $this
-                    ->addMediaConversion('thumb')
-                    ->fit(Manipulations::FIT_FILL, 150, 150)
-                    ->quality(75)
-                    ->optimize();
-            });
+            ->withResponsiveImages();
+//            ->registerMediaConversions(function (Media $media) {
+//                $this
+//                    ->addMediaConversion('thumb')
+//                    ->fit(Manipulations::FIT_FILL, 150, 150)
+//                    ->quality(75)
+//                    ->optimize();
+//            });
         //add options
 
         // you can define as many collections as needed
         $this->addMediaCollection(self::ATTACHMENT_MEDIA);
         //add options
-    }
-
-    public function registerMediaConversions(Media $media = null): void
-    {
-        $this->addMediaConversion(self::AVATAR_MEDIA)
-            ->width(368)
-            ->height(232)
-            ->sharpen(10);
     }
 }
