@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->foreignId('owner_id')->constrained('profiles')->cascadeOnUpdate()->cascadeOnDelete();
             $table->jsonb('tags');
 
-            $table->string('region');
+            $table->foreignId('region_id')->constrained('regions')->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('city');
             $table->string('latlng');
 

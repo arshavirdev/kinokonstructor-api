@@ -9,17 +9,18 @@ use App\Http\Requests\StoreLocationRequest;
 use App\Http\Requests\UpdateLocationRequest;
 use App\Models\Location;
 use App\Http\Resources\LocationResource;
+use Illuminate\Support\Facades\Auth;
 
 class LocationController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Location::query()->with('owner');
+        $query = Location::query()->with(['owner', 'owner.media', 'owner.occupation', 'media']);
 
         if ($request->has('name'))
             $query = $query->where('name', 'ilike', '%' . $request->input('name') . '%');
         if ($request->has('region'))
-            $query = $query->where('region', $request->input('region'));
+            $query = $query->where('region_id', $request->input('region'));
         if ($request->has('city'))
             $query = $query->where('city', $request->input('city'));
         if ($request->has('tags'))
@@ -30,12 +31,19 @@ class LocationController extends Controller
 
     public function store(StoreLocationRequest $request)
     {
-        //
+        $location = $request->all();
+        $profile = Auth::user()->profile;
+        $location['owner_id'] = $profile['id'];
+//        dd($location);
+        return Location::create($location);
+//        dd($location, $profile);
+//        $profile->locations()->create($request->all());
     }
 
     public function show(Location $location)
     {
-        //
+        $location->load(['owner', 'media']);
+        return new LocationResource($location);
     }
 
     public function update(UpdateLocationRequest $request, Location $location)

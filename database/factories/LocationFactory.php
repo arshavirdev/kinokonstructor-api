@@ -22,7 +22,7 @@ class LocationFactory extends Factory
 
             'owner_id' => 1,
             'tags' => fake()->words(4),
-            'region' => $city,
+            'region_id' => 1,
             'city' => $city,
             'latlng' => join(',', fake()->localCoordinates()),
             'description' => fake()->text()

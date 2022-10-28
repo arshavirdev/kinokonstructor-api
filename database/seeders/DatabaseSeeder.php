@@ -57,7 +57,10 @@ class DatabaseSeeder extends Seeder
                 'occupation_id' => rand(0, 1) === 1 ? fake()->randomElement($occupations->pluck('id')) : 1
             ]);
 
-        \App\Models\Location::factory(10)->create(fn() => ['owner_id' => fake()->randomElement($specialistProfiles->pluck('id'))]);
+        \App\Models\Location::factory(10)->create(fn() => [
+            'owner_id' => fake()->randomElement($specialistProfiles->pluck('id')),
+            'region_id' => fake()->randomElement($regions->pluck('id'))
+        ]);
         // \App\Models\Project::factory(5)->create();
         \App\Models\News::factory(5)->create();
         \App\Models\Post::factory(5)->create();
