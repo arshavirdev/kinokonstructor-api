@@ -3,15 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Image\Manipulations;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Location extends AppModel implements HasMedia
 {
     use HasFactory;
     use InteractsWithMedia;
-
-    protected $perPage = 5;
 
     public const GALLERY_MEDIA = 'gallery';
 
@@ -39,6 +39,20 @@ class Location extends AppModel implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection(self::GALLERY_MEDIA)
-            ->withResponsiveImages();
+            ->registerMediaConversions(function (Media $media) {
+                $this->addMediaConversion('large')
+                    ->fit(Manipulations::FIT_MAX, 1024, 1024)
+                    ->quality(75)
+                    ->optimize();
+                $this
+                    ->addMediaConversion('thumb')
+                    ->fit(Manipulations::FIT_MAX, 150, 150)
+                    ->quality(70)
+                    ->optimize();
+                $this->addMediaConversion('preview')
+                    ->fit(Manipulations::FIT_MAX, 350, 350)
+                    ->quality(75)
+                    ->optimize();
+            });
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Profile;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource
@@ -15,10 +16,10 @@ class UserResource extends JsonResource
     public function toArray($request)
     {
         $profile = $this->profile;
-        $avatar = is_null($profile) ? null : $profile->getFirstMediaUrl('avatar');
+        $avatar = is_null($profile) ? null : $profile->getFirstMedia('avatar');
         return [
             'id' => $this->id,
-            'avatar' => $avatar,
+            'avatar' => new AvatarResource($avatar),
             'name' => optional($profile)->firstname ?? $this->name,
             'username' => $this->username,
             'email' => $this->email,

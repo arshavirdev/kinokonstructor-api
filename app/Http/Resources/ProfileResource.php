@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\Profile;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class ProfileResource extends JsonResource
 {
@@ -15,21 +16,13 @@ class ProfileResource extends JsonResource
      */
     public function toArray($request)
     {
-        $avatar = $this->getFirstMediaUrl(Profile::AVATAR_MEDIA);
-        $attachments = $this->getMedia(Profile::ATTACHMENT_MEDIA)->map(fn($media) => [
-            'id' => $media->id,
-            'name' => $media->name,
-            'mime' => $media->mime_type,
-            'size' => $media->size,
-            'url' => $media->getFullUrl(),
-        ]);
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
             'status' => $this->status,
             'is_verified' => $this->is_verified,
-            'avatar' => $avatar,
-            'attachments' => $attachments,
+            'avatar' => new AvatarResource($this->getFirstMedia(Profile::AVATAR_MEDIA)),
+            'attachments' => MediaResource::collection($this->getMedia(Profile::ATTACHMENT_MEDIA)),
 
             'firstname' => $this->firstname,
             'lastname' => $this->lastname,
@@ -58,8 +51,6 @@ class ProfileResource extends JsonResource
 
             'portfolio' => $this->portfolio,
             'mass_media_mentions' => $this->mass_media_mentions,
-
-            'old' => parent::toArray($request)
         ];
     }
 }

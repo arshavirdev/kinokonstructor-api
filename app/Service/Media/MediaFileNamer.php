@@ -2,6 +2,7 @@
 
 namespace App\Service\Media;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\Conversions\Conversion;
 use Spatie\MediaLibrary\Support\FileNamer\FileNamer;
@@ -10,13 +11,11 @@ class MediaFileNamer extends FileNamer
 {
     public function originalFileName(string $fileName): string
     {
-//        return Str::random();
-//        dd($fileName);
         $extLength = strlen(pathinfo($fileName, PATHINFO_EXTENSION));
 
         $baseName = substr($fileName, 0, strlen($fileName) - ($extLength ? $extLength + 1 : 0));
 
-        return $baseName;
+        return substr(sha1($baseName), 0, 8);
     }
 
     public function conversionFileName(string $fileName, Conversion $conversion): string

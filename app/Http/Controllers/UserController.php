@@ -8,6 +8,7 @@ use App\Http\Resources\UserResource;
 use App\Models\Profile;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -21,6 +22,7 @@ class UserController extends Controller
     private function syncMedia(Profile $profile, $params)
     {
         if (array_key_exists('avatar', $params)) {
+            $profile->clearMediaCollection(Profile::AVATAR_MEDIA);
             if (is_null($params['avatar'])) {
                 $profile->clearMediaCollection(Profile::AVATAR_MEDIA);
             } else {
@@ -28,12 +30,10 @@ class UserController extends Controller
             }
         }
 
-//        dd($params);
         if (array_key_exists('attachments', $params)) {
             $requestAttachments = collect($params['attachments']);
             $toSaveAttachments = $requestAttachments->filter(fn($item) => is_object($item));
-            $toKeepAttachmentsIds = $requestAttachments->filter(fn($item) => !is_object($item))->map(fn($id) => (int)$id);
-            $profile->clearMediaCollectionExcept(Profile::ATTACHMENT_MEDIA, $toKeepAttachmentsIds);
+            $toKeepAttachments = $requestAttachments->filter(fn($item) => !is_object($item))->map(fn($id) => ['id' => (int)$id]);
             foreach ($toSaveAttachments as $attachment) {
                 $profile->addMedia($attachment)->toMediaCollection(Profile::ATTACHMENT_MEDIA);
             }

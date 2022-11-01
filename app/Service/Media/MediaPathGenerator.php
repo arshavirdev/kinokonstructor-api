@@ -2,6 +2,8 @@
 
 namespace App\Service\Media;
 
+use Exception;
+use Illuminate\Support\Facades\Log;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\MediaLibrary\Support\PathGenerator\PathGenerator;
 
@@ -15,6 +17,7 @@ class MediaPathGenerator implements PathGenerator
 
     public function getPathForConversions(Media $media): string
     {
+        return $this->getPath($media);
         return $this->getBasePath($media) . '/conversions/';
     }
 
@@ -29,10 +32,10 @@ class MediaPathGenerator implements PathGenerator
      */
     protected function getBasePath(Media $media): string
     {
-        $model_name = $media->model->getTable();
+        $model_name = strtolower(explode('\\', $media->model_type)[2] . 's');
         $model_id = (string)$media->model_id;
         $collection_type = $media->collection_name;
-        $path = $model_name . '/' . $model_id . '/' . $collection_type;
+        $path = $model_name . '/' . $model_id . '/' . $collection_type . '/' . $media->id;
         $prefix = config('media-library.prefix', '');
 
         if ($prefix !== '') {

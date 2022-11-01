@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use Carbon\Carbon;
+use App\Models\Profile;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProfileBriefResource extends JsonResource
@@ -17,7 +17,7 @@ class ProfileBriefResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'avatar' => $this->getFirstMediaUrl('avatar') ?: null,
+            'avatar' => new AvatarResource($this->getFirstMedia(Profile::AVATAR_MEDIA)),
             'is_verified' => $this->is_verified,
             'firstname' => $this->firstname,
             'lastname' => $this->lastname,

@@ -142,18 +142,21 @@ class Profile extends AppModel implements HasMedia
     {
         $this->addMediaCollection(self::AVATAR_MEDIA)
             ->singleFile()
-            ->withResponsiveImages();
-//            ->registerMediaConversions(function (Media $media) {
-//                $this
-//                    ->addMediaConversion('thumb')
-//                    ->fit(Manipulations::FIT_FILL, 150, 150)
-//                    ->quality(75)
-//                    ->optimize();
-//            });
-        //add options
+            ->registerMediaConversions(function (Media $media) {
+                $this
+                    ->addMediaConversion('thumb')
+                    ->performOnCollections([self::AVATAR_MEDIA])
+                    ->fit(Manipulations::FIT_MAX, 100, 100)
+                    ->quality(75)
+                    ->optimize();
+                $this
+                    ->addMediaConversion('medium')
+                    ->performOnCollections([self::AVATAR_MEDIA])
+                    ->fit(Manipulations::FIT_MAX, 400, 400)
+                    ->quality(75)
+                    ->optimize();
+            });
 
-        // you can define as many collections as needed
         $this->addMediaCollection(self::ATTACHMENT_MEDIA);
-        //add options
     }
 }

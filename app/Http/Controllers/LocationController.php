@@ -17,11 +17,11 @@ class LocationController extends Controller
     {
         $query = Location::query()->with(['owner', 'owner.media', 'owner.occupation', 'media']);
 
-        if ($request->has('name'))
+        if ($request->has('name') && $request->input('name'))
             $query = $query->where('name', 'ilike', '%' . $request->input('name') . '%');
         if ($request->has('region'))
             $query = $query->where('region_id', $request->input('region'));
-        if ($request->has('city'))
+        if ($request->has('city') && $request->input('city'))
             $query = $query->where('city', $request->input('city'));
         if ($request->has('tags'))
             $query = $query->whereHasTags($request->input('tags'));
@@ -29,15 +29,27 @@ class LocationController extends Controller
         return LocationResource::collection($query->paginate());
     }
 
+    private function syncMedia(Location $location, $params)
+    {
+        if (array_key_exists('photos', $params)) {
+            $requestPhotos = collect($params['photos']);
+            $toSavePhotos = $requestPhotos->filter(fn($item) => is_object($item));
+            $toKeepPhotosIds = $requestPhotos->filter(fn($item) => !is_object($item))->map(fn($id) => (int)$id);
+            $location->clearMediaCollectionExcept(Location::GALLERY_MEDIA, $toKeepPhotosIds);
+            foreach ($toSavePhotos as $photo) {
+                $location->addMedia($photo)->toMediaCollection(Location::GALLERY_MEDIA);
+            }
+        }
+    }
+
     public function store(StoreLocationRequest $request)
     {
-        $location = $request->all();
+        $params = $request->all();
         $profile = Auth::user()->profile;
-        $location['owner_id'] = $profile['id'];
-//        dd($location);
-        return Location::create($location);
-//        dd($location, $profile);
-//        $profile->locations()->create($request->all());
+        $params['owner_id'] = $profile['id'];
+        $location = Location::create($params);
+        $this->syncMedia($location, $params);
+        return $location;
     }
 
     public function show(Location $location)

@@ -2,7 +2,9 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Location;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class LocationResource extends JsonResource
 {
@@ -14,16 +16,15 @@ class LocationResource extends JsonResource
      */
     public function toArray($request)
     {
-//        $photos = $request->getMedia();
         return [
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
-            'photos' => [],
             'tags' => $this->tags,
             'region_id' => $this->region_id,
             'city' => $this->city,
             'latlng' => $this->latlng,
+            'photos' => MediaResource::collection($this->getMedia(Location::GALLERY_MEDIA)),
             'owner' => new ProfileBriefResource($this->owner),
         ];
     }
