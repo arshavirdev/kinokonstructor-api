@@ -1,22 +1,27 @@
-FROM php:8.1.4-fpm-alpine
+FROM php:8.1.12-fpm-alpine3.16
 
 # Setting up system dependencies
-RUN apk update && \
+RUN set -x && \
+    apk update && \
     apk upgrade && \
     apk add --no-cache --virtual phpize $PHPIZE_DEPS && \
     apk add --no-cache \
     freetype freetype-dev libpng libpng-dev libjpeg-turbo libjpeg-turbo-dev libwebp libwebp-dev libxpm libxpm-dev \
-    oniguruma-dev zip libzip-dev libmcrypt-dev icu-dev libxml2-dev libpq-dev \
-    nginx && \
-    pecl install ds && \
+    oniguruma-dev zip libzip-dev libmcrypt-dev icu-dev libxml2-dev libpq-dev && \
+# Install nginx
+    addgroup -g 101 -S nginx && \
+    adduser -S -D -H -u 101 -h /var/cache/nginx -s /sbin/nologin -G nginx -g nginx nginx && \
+    apk add --no-cache nginx && \
+# Install php extensions
+    pecl install ds redis && \
     docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp --with-xpm --with-webp && \
     docker-php-ext-install bcmath exif gd intl opcache pcntl pdo_pgsql pgsql sockets zip && \
-    docker-php-ext-enable opcache ds && \
-    apk del --no-cache phpize freetype-dev libpng-dev libjpeg-turbo-dev libwebp-dev libxpm-dev
-
-RUN mkdir -p /usr/src/php/ext/redis; \
-	curl -fsSL https://pecl.php.net/get/redis --ipv4 | tar xvz -C "/usr/src/php/ext/redis" --strip 1; \
-	docker-php-ext-install redis;
+    docker-php-ext-enable opcache ds redis && \
+# Removing build-time deps
+    apk del --no-cache phpize freetype-dev libpng-dev libjpeg-turbo-dev libwebp-dev libxpm-dev && \
+# Linking logs to system
+    ln -sf /dev/stdout /var/log/nginx/access.log && \
+    ln -sf /dev/stderr /var/log/nginx/error.log
 
 ARG INSTALL_XDEBUG=0f
 
