@@ -16,3 +16,5 @@ yarn-error.log
 /.vscode
 **/.DS_Store
 /storage/media-library/temp
+rr
+.rr.yaml

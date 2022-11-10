@@ -55,9 +55,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('dictionaries/{dictionary?}', [DictionaryController::class, 'show']);
         Route::apiResource('profiles', ProfileController::class, ['only' => ['index', 'show']]);
         Route::apiResource('locations', LocationController::class);
-        Route::apiResource('projects', ProjectController::class);
         Route::apiResource('news', NewsController::class);
         Route::apiResource('posts', Post::class);
+
+        Route::apiResource('projects', ProjectController::class);
+        Route::controller(ProjectController::class)->prefix('projects')->group(function () {
+            Route::post('/{project}/moderate', 'moderate');
+        });
     });
 });
 

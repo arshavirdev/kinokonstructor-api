@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Project;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateProjectRequest extends FormRequest
@@ -13,7 +14,7 @@ class UpdateProjectRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,8 +24,14 @@ class UpdateProjectRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            //
-        ];
+        function array_map_values(callable $f, array $a): array
+        {
+            return array_column(array_map($f, array_keys($a), $a), 1, 0);
+        }
+
+        $addOptional = fn($key, $value) => [$key, 'nullable|' . $value];
+        $makeOptional = fn(array $array) => array_map_values($addOptional, $array);
+
+        return array_merge(Project::$validation['basic'], $makeOptional(Project::$validation['additional']));
     }
 }
