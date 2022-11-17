@@ -15,7 +15,7 @@ return new class extends Migration {
     {
         Schema::create('profiles', function (Blueprint $table) {
             $table->id();
-            $table->enum('status', ['draft', 'moderation', 'accepted'])->default('draft');
+            $table->enum('status', ['draft', 'moderation', 'accepted', 'rejected'])->default('draft');
             $table->boolean('is_verified')->default(false);
             $table->foreignIdFor(User::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
 

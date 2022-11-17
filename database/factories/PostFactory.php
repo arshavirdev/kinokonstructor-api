@@ -16,10 +16,20 @@ class PostFactory extends Factory
      */
     public function definition()
     {
-        return [
-            'name' => fake()->words(3, true),
+        $type = fake()->randomElement(['article', 'video', 'pdf']);
+        $post = [
+            'type' => $type,
+            'title' => fake()->words(3, true),
             'content' => fake()->realText(),
             'created_at' => fake()->date()
         ];
+//        if ($type === 'article')
+//            $post['content'] = fake()->realText();
+        if ($type === 'video')
+            $post['url'] = fake()->url();
+        if ($type === 'pdf')
+            $post['url'] = fake()->url();
+
+        return $post;
     }
 }

@@ -4,13 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
+use App\Http\Resources\PostResource;
 use App\Models\Post;
 
 class PostController extends Controller
 {
     public function index()
     {
-        return Post::orderBy('created_at', 'desc')->paginate();
+        $posts = Post::orderBy('created_at', 'desc')->paginate();
+        return PostResource::collection($posts);
     }
 
     /**

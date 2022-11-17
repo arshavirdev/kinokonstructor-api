@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\ImpersonateSanctum;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -40,6 +41,7 @@ class Kernel extends HttpKernel
 
         'api' => [
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+            \App\Http\Middleware\ImpersonateSanctum::class,
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\FormatResponse::class
@@ -64,5 +66,6 @@ class Kernel extends HttpKernel
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        'moderator' => \App\Http\Middleware\Moderator::class,
     ];
 }

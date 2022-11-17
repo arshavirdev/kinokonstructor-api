@@ -1,22 +1,18 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DictionaryController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\NewsController;
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\Admin\UserAdminController;
 use App\Http\Controllers\VerifyEmailController;
-use App\Models\Post;
-use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\TokenController;
-use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
-use Laravel\Fortify\Http\Controllers\NewPasswordController;
-use Laravel\Fortify\Http\Controllers\PasswordResetLinkController;
-use Laravel\Fortify\Http\Controllers\RegisteredUserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,7 +32,12 @@ Route::post('/sanctum/token', TokenController::class);
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::controller(UserController::class)->prefix('user')->group(function () {
-        Route::get('', 'show');
+        Route::get('', 'showCurrentUser');
+    });
+
+    Route::controller(TokenController::class)->prefix('auth')->group(function () {
+        Route::post('impersonate', 'impersonate');
+        Route::post('unimpersonate', 'unimpersonate');
     });
 
     Route::controller(VerifyEmailController::class)
@@ -47,6 +48,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         });
 
     Route::middleware(['verified'])->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'index']);
+
         Route::controller(UserController::class)->prefix('user')->group(function () {
             Route::post('profile', 'createProfile');
             Route::patch('profile', 'updateProfile');
@@ -56,11 +59,23 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::apiResource('profiles', ProfileController::class, ['only' => ['index', 'show']]);
         Route::apiResource('locations', LocationController::class);
         Route::apiResource('news', NewsController::class);
-        Route::apiResource('posts', Post::class);
+        Route::apiResource('posts', PostController::class);
 
         Route::apiResource('projects', ProjectController::class);
         Route::controller(ProjectController::class)->prefix('projects')->group(function () {
             Route::post('/{project}/moderate', 'moderate');
+        });
+    });
+    Route::middleware(['moderator:asdf'])->group(function () {
+        Route::apiResource('users', UserAdminController::class);
+        Route::controller(UserAdminController::class)->prefix('users/{user}/')->group(function () {
+            Route::post('verify', 'markAsVerified');
+            Route::post('unverify', 'markAsUnverified');
+            Route::post('set_role', 'setRole');
+        });
+        Route::controller(UserAdminController::class)->prefix('profiles/{profile}')->group(function () {
+            Route::post('approve', 'approveProfile');
+            Route::post('reject', 'rejectProfile');
         });
     });
 });

@@ -22,22 +22,28 @@ class FormatResponse
         }
         $response = $next($request);
 
+        try {
+            $data = $response->getData(true);
 
-        $data = $response->getData(true);
+            if ($request->session()->has('impersonate'))
+                $response->header('X-Impersonating', 'true');
 
-        if (isset($data['links']) && isset($data['meta'])) {
-            unset($data['links']);
-            $data['meta'] = [
-                'total' => $data['meta']['total'],
-                'page' => $data['meta']['current_page'],
-                'pageSize' => $data['meta']['per_page'],
-            ];
+            if (isset($data['links']) && isset($data['meta'])) {
+                unset($data['links']);
+                $data['meta'] = [
+                    'total' => $data['meta']['total'],
+                    'page' => $data['meta']['current_page'],
+                    'pageSize' => $data['meta']['per_page'],
+                ];
+            }
+
+            $response->setData($data);
+            if ($response instanceof JsonResponse)
+                $response->setEncodingOptions(JSON_UNESCAPED_UNICODE);
+
+            return $response;
+        } catch (\Exception $exception) {
+            return $response;
         }
-
-        $response->setData($data);
-        if ($response instanceof JsonResponse)
-            $response->setEncodingOptions(JSON_UNESCAPED_UNICODE);
-
-        return $response;
     }
 }

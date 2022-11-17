@@ -41,7 +41,7 @@ class ProfileFactory extends Factory
 
         $nickname = strtolower($slugger->slug($firstname . ' ' . $lastname));
         return [
-            'status' => fake()->randomElement(['draft', 'moderation', 'accpted']),
+            'status' => fake()->randomElement(['draft', 'moderation', 'accepted']),
             'user_id' => fake()->numberBetween(1, 10),
 
 //            'gender' => substr($gender, 0, 1),

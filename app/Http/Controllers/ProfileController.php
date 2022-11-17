@@ -26,7 +26,7 @@ class ProfileController extends Controller
     public function index(Request $request)
     {
         // $this->authorize('viewAny');
-        $query = Profile::query()->with(['user', 'media', 'occupation'])->orderBy('is_verified', 'desc');
+        $query = Profile::query()->with(['user', 'media', 'occupation'])->orderBy('is_verified', 'desc')->onlyAccepted();
 
         if ($request->has('type'))
             $query = $request->input('type') === 'actor' ? $query->isActor() : $query->isSpecialist();

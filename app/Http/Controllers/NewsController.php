@@ -4,13 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreNewsRequest;
 use App\Http\Requests\UpdateNewsRequest;
+use App\Http\Resources\NewsResource;
 use App\Models\News;
 
 class NewsController extends Controller
 {
     public function index()
     {
-        return News::orderBy('created_at', 'desc')->paginate();
+        $news = News::orderBy('created_at', 'desc')->paginate();
+        return NewsResource::collection($news);
     }
 
     /**

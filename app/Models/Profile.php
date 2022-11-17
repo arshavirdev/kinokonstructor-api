@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Moderation\Moderatable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -15,6 +16,7 @@ class Profile extends AppModel implements HasMedia
 {
     use HasFactory;
     use InteractsWithMedia;
+    use Moderatable;
 
     public const AVATAR_MEDIA = 'avatar';
     public const ATTACHMENT_MEDIA = 'attachment';

@@ -43,13 +43,13 @@ class DatabaseSeeder extends Seeder
             ]);
 
         // Guests
-        $guests = \App\Models\User::factory(3)
+        $guests = \App\Models\User::factory(30)
 //            ->has(\App\Models\Profile::factory(1)->afterMaking(function ($model) use ($occupations) {
 //                $model->status = fake()->randomElement(['draft', 'moderation']);
 //                $model->occupation_id = fake()->randomElement($occupations->pluck('id'));
 //            }))
             ->create(['role' => 'guest']);
-        \App\Models\Profile::factory(2)->create(fn() => [
+        \App\Models\Profile::factory(20)->create(fn() => [
             'status' => fake()->randomElement(['draft', 'moderation']),
             'user_id' => fake()->unique()->randomElement($guests->pluck('id')),
             'occupation_id' => fake()->randomElement($occupations->pluck('id'))
@@ -78,7 +78,7 @@ class DatabaseSeeder extends Seeder
 
         \App\Models\Project::factory(20)->create(fn() => [
             'owner_id' => fake()->randomElement($specialistProfiles->pluck('id')),
-            'status' => rand(0, 1) === 1 ? 'draft' : fake()->randomElement(['moderation', 'changes_required', 'accepted'])
+            'status' => rand(0, 1) === 1 ? 'draft' : fake()->randomElement(['moderation', 'rejected', 'accepted'])
         ]);
     }
 }

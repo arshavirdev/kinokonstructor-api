@@ -15,7 +15,7 @@ return new class extends Migration {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
             $table->foreignId('owner_id')->constrained('profiles')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->enum('status', ['draft', 'moderation', 'changes_required', 'accepted'])->default('draft');
+            $table->enum('status', ['draft', 'moderation', 'rejected', 'accepted'])->default('draft');
             $table->string('title');
             $table->enum('format', ['movie', 'series']);
             $table->enum('genre_type', ['documentary', 'fictional']);

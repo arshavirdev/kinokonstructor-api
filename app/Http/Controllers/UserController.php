@@ -8,11 +8,10 @@ use App\Http\Resources\UserResource;
 use App\Models\Profile;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
-    public function show()
+    public function showCurrentUser()
     {
         $user = Auth::user();
         $user->load(['profile']);
@@ -63,6 +62,8 @@ class UserController extends Controller
         $this->syncMedia($profile, $params);
         $this->syncRelations($profile, $params);
 
+        $profile->putToModeration();
+
         return [];
     }
 
@@ -79,6 +80,7 @@ class UserController extends Controller
         $profile->save();
 
         $this->syncRelations($profile, $params);
+        $profile->putToModeration();
 
         return [];
     }

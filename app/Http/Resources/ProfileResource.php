@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\Profile;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class ProfileResource extends JsonResource
@@ -16,6 +17,8 @@ class ProfileResource extends JsonResource
      */
     public function toArray($request)
     {
+        $user = Auth::user();
+        $showDetails = $user->id === $this->user_id || in_array($user->role, ['admin', 'moderator']);
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
@@ -28,8 +31,8 @@ class ProfileResource extends JsonResource
             'lastname' => $this->lastname,
             'middlename' => $this->middlename,
 
-            'phone' => $this->phone,
-            'email' => $this->user->email,
+            'phone' => $this->when($showDetails, $this->phone),
+            'email' => $this->when($showDetails, $this->user->email),
             'socials_vk' => $this->socials_vk,
             'socials_tg' => $this->socials_tg,
             'socials_ok' => $this->socials_ok,
@@ -38,7 +41,7 @@ class ProfileResource extends JsonResource
             'entrepreneur' => $this->entrepreneur,
 
             'city' => $this->city,
-            'birthday' => $this->birthday->format('Y-m-d'),
+            'birthday' => $this->when($showDetails, $this->birthday->format('Y-m-d')),
             'age' => $this->birthday->age,
             'occupation' => $this->occupation,
             'occupation_id' => $this->occupation->id,
@@ -51,6 +54,8 @@ class ProfileResource extends JsonResource
 
             'portfolio' => $this->portfolio,
             'mass_media_mentions' => $this->mass_media_mentions,
+
+            'moderation' => $this->when($showDetails, count($this->moderationStatus) > 0 ? new ModerationResource($this->moderationStatus[0]) : null),
         ];
     }
 }

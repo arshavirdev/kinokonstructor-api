@@ -30,4 +30,16 @@ class TokenController extends Controller
 
         return response()->json(['token' => $token], 200);
     }
+
+
+    public function impersonate(Request $request)
+    {
+        $userId = $request->input('userId');
+        $request->session()->put('impersonate', $userId);
+    }
+
+    public function unimpersonate(Request $request)
+    {
+        $request->session()->remove('impersonate');
+    }
 }
