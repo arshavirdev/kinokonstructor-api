@@ -44,7 +44,7 @@ class ProfileFactory extends Factory
             'status' => fake()->randomElement(['draft', 'moderation', 'accepted']),
             'user_id' => fake()->numberBetween(1, 10),
 
-//            'gender' => substr($gender, 0, 1),
+            'gender' => substr($gender, 0, 1),
             'firstname' => $firstname,
             'lastname' => $lastname,
             'middlename' => null,

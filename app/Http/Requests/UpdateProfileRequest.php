@@ -27,9 +27,9 @@ class UpdateProfileRequest extends FormRequest
     {
         return [
             'gender' => 'in:m,f',
-            'firstname' => 'alpha',
-            'lastname' => 'alpha',
-            'middlename' => 'alpha|nullable',
+            'firstname' => 'string',
+            'lastname' => 'string',
+            'middlename' => 'string|nullable',
             'city' => 'string',
             'birthday' => 'date',
             'occupation_id' => "exists:occupations,id",

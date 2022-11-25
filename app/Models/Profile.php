@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\Moderation\Moderatable;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -39,6 +40,7 @@ class Profile extends AppModel implements HasMedia
         "firstname",
         "lastname",
         "middlename",
+        "gender",
         "city",
         "birthday",
         "occupation_id",
@@ -138,6 +140,17 @@ class Profile extends AppModel implements HasMedia
     public function scopeIsSpecialist(Builder $query)
     {
         return $query->whereNotIn('occupation_id', Occupation::$actorIds);
+    }
+
+    public function scopeWhereAge(Builder $query, string $age)
+    {
+        $is_range = str_contains($age, '-');
+        $lower_age = (int)($is_range ? explode('-', $age)[0] : $age);
+        $upper_age = (int)($is_range ? explode('-', $age)[1] : $age);
+
+        $lower_date = Carbon::now()->subYears($upper_age + 1)->endOf('day')->toJSON();
+        $upper_date = Carbon::now()->subYears($lower_age)->startOf('day')->toJSON();
+        return $query->whereBetween('birthday', [$lower_date, $upper_date]);
     }
 
     public function registerMediaCollections(): void

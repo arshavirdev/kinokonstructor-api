@@ -40,6 +40,9 @@ class ProfileController extends Controller
         if ($request->has('gender'))
             $query = $query->where('gender', $request->input('gender'));
 
+        if ($request->has('age'))
+            $query = $query->whereAge($request->input('age'));
+
         if ($request->has('occupation_id'))
             $query = $query->where('occupation_id', $request->input('occupation_id'));
 

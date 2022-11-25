@@ -23,6 +23,7 @@ return new class extends Migration {
             $table->string('lastname');
             $table->string('middlename')->nullable();
 
+            $table->enum('gender', ['m', 'f']);
             $table->string('city');
             $table->date('birthday');
             $table->foreignId('occupation_id')->constrained()->cascadeOnUpdate()->restrictOnDelete();
