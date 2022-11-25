@@ -8,5 +8,5 @@ class Occupation extends AppModel
 {
     use HasFactory;
 
-    static $actorIds = [1];
+    static $actorIds = [1, 2, 3, 4, 5, 6];
 }
