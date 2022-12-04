@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class PostResource extends JsonResource
+class ProfileMemberResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,13 +16,11 @@ class PostResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'title' => $this->title,
             'type' => $this->type,
-            'url' => $this->url,
-            'content' => $this->content,
-            'picture' => new MediaResource($this->getFirstMedia()),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at
+            'role' => $this->role,
+            'status' => $this->status,
+            'profile_id' => $this->profile_id,
+            'fullname' => $this->profile->fullname,
         ];
     }
 }

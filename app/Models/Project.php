@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Moderation\Moderatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -10,6 +11,7 @@ class Project extends AppModel implements HasMedia
 {
     use HasFactory;
     use InteractsWithMedia;
+    use Moderatable;
 
     public const EXTENDED_SYNOPSIS_MEDIA = 'extended_synopsis';
     public const ATTACHMENTS_MEDIA = 'attachments';
@@ -72,7 +74,7 @@ class Project extends AppModel implements HasMedia
         "audio_reference",
         "budget",
         "co_financing",
-        "custom_members"
+        "custom_members",
     ];
 
     protected $casts = [
@@ -83,9 +85,14 @@ class Project extends AppModel implements HasMedia
         'co_financing' => 'integer',
     ];
 
-    public function members()
+    public function memberInvites()
     {
-        return $this->hasManyThrough(Profile::class, ProjectMember::class);
+        return $this->hasMany(ProjectMember::class);
+    }
+
+    public function locations()
+    {
+        return $this->belongsToMany(Location::class, 'project_locations');
     }
 
 

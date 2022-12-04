@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\Profile;
 use App\Models\Project;
+use App\Traits\Moderation\Status;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProjectResource extends JsonResource
@@ -16,6 +17,8 @@ class ProjectResource extends JsonResource
      */
     public function toArray($request)
     {
+        $moderation = \Arr::get($this->moderationStatus, '0');
+        $canEdit = (string)$this->owner_id === (string)\Auth::user()?->profile?->id;
         return [
             'id' => $this->id,
             'title' => $this->title,
@@ -31,8 +34,9 @@ class ProjectResource extends JsonResource
             'additional' => $this->resource->additional,
             'budget' => $this->budget,
             'co_financing' => $this->co_financing,
-            'members' => [],
             'custom_members' => $this->custom_members,
+            'members' => ProfileMemberResource::collection($this->memberInvites),
+            'locations' => ProjectLocationResource::collection($this->locations),
 
             'extended_synopsis' => new MediaResource($this->getFirstMedia(Project::EXTENDED_SYNOPSIS_MEDIA)),
             'attachments' => MediaResource::collection($this->getMedia(Project::ATTACHMENTS_MEDIA)),
@@ -45,10 +49,13 @@ class ProjectResource extends JsonResource
             'financial_proof' => new MediaResource($this->getFirstMedia(Project::FINANCIAL_PROOF_MEDIA)),
             'partnership_proof' => MediaResource::collection($this->getMedia(Project::PARTNERSHIP_PROOF_MEDIA)),
 
-            'moderation' => $this->when($this->status === 'moderation', [
+            'canEdit' => $canEdit,
+
+            'moderation' => $this->when($this->status === Status::PENDING || $this->status === Status::REJECTED && isset($moderation), [
                 'startedAt' => $this->updatedAt,
-                'status' => 'pending',
-                'email' => 'avzaytsev@kinofond.ru'
+                'comment' => $moderation?->comment,
+                'email' => \Arr::get($moderation, 'data.email'),
+                'data' => $moderation?->data
             ], null)
         ];
     }

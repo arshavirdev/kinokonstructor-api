@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProjectBriefResource;
+use App\Http\Resources\ProjectLocationResource;
 use App\Http\Resources\ProjectResource;
 
-use App\Models\Profile;
+use App\Traits\Moderation\Status;
 use Auth;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
+use App\Models\Location;
 
 class ProjectController extends Controller
 {
@@ -29,16 +32,16 @@ class ProjectController extends Controller
             if (!$profile && ($type === 'my' || $type === 'membership'))
                 return abort(404);
 
-            if ($type === 'all') {
-                $query = $query->where('status', 'accepted');
+            if ($type === 'all' || !$type) {
+                $query = $query->where('status', 'accepted')->onlyAccepted();
             } elseif ($type === 'my') {
-                $query = $query->where('owner_id', $profile->id);
+                $query = $query->where('owner_id', $profile->id)->orderBy('updated_at', 'DESC');
             } elseif ($type === 'membership') {
-                $query = $query->whereHas('member', function (Builder $query) use ($profile) {
+                $query = $query->whereHas('memberInvites', function (Builder $query) use ($profile) {
                     $query->where('profile_id', $profile->id);
                 });
             } elseif ($type === 'moderation') {
-                $query = $query->where('status', 'moderation');
+                $query = $query->where('status', 'moderation')->orderBy('updated_at', 'ASC');
             }
         }
 
@@ -51,11 +54,8 @@ class ProjectController extends Controller
         if ($request->has('genre_type'))
             $query = $query->where('genre_type', $request->input('genre_type'));
 
-        // if ($request->has('city'))
-        //     $query = $query->where('city', 'ilike', $request->input('city'));
-
         $projects = $query->paginate();
-        return ProjectResource::collection($projects);
+        return ProjectBriefResource::collection($projects);
     }
 
     /**
@@ -84,7 +84,10 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        $project->load(['media']);
+//        if ($project->owner_id !== Auth::user()->profile->id || $project->status !== Status::ACCEPTED) abort(403);
+
+        $project->load(['media', 'memberInvites', 'memberInvites.profile', 'locations']);
+
         return new ProjectResource($project);
     }
 
@@ -112,8 +115,7 @@ class ProjectController extends Controller
     {
         if ($project->owner_id !== Auth::user()->profile->id) abort(403);
 
-        $project->status = 'moderation';
-        $project->save();
+        $project->putToModeration();
         return [];
     }
 
@@ -167,5 +169,38 @@ class ProjectController extends Controller
 
     private function syncRelations(Project $project, $params)
     {
+    }
+
+    public function indexLocations(Project $project)
+    {
+        return ProjectLocationResource::collection($project->locations);
+    }
+
+    public function addLocation(Project $project, Request $request)
+    {
+        $locationIds = $request->input('locationIds', []);
+        $project->locations()->attach($locationIds);
+    }
+
+    public function removeLocation(Project $project, Request $request)
+    {
+        $locationIds = $request->input('locationIds', []);
+        $project->locations()->detach($locationIds);
+    }
+
+    public function cancelModeration(Project $project)
+    {
+        if ($project->owner_id !== Auth::user()->profile->id) abort(403);
+        $project->cancelModeration();
+    }
+
+    public function approveModeration(Project $project)
+    {
+        $project->markAccepted();
+    }
+
+    public function rejectModeration(Project $project, Request $request)
+    {
+        $project->markRejected($request->input('comment'), $request->except('comment'));
     }
 }

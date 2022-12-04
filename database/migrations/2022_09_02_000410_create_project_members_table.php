@@ -17,8 +17,10 @@ return new class extends Migration {
             $table->foreignId('profile_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('project_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('type');
-            $table->enum('status', ['pending', 'accepted', 'rejected'])->nullable();
-            $table->string('invitation_id');
+            $table->string('role');
+            $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending');
+            $table->string('invitation_code');
+            $table->jsonb('data')->default('{}');
             $table->timestamps();
         });
     }

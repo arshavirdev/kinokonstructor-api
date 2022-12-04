@@ -73,6 +73,16 @@ class Profile extends AppModel implements HasMedia
         )->withoutObjectCaching();
     }
 
+    public function fullname(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value, $profile) {
+                $parts = [$profile['lastname'], $profile['firstname'], $profile['middlename']];
+                return implode(' ', array_filter($parts, fn($part) => !is_null($part)));
+            },
+        );
+    }
+
     public function entrepreneur(): Attribute
     {
         return Attribute::make(

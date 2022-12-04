@@ -10,6 +10,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Admin\UserAdminController;
 use App\Http\Controllers\VerifyEmailController;
+use App\Http\Controllers\InviteController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\TokenController;
@@ -28,6 +29,10 @@ use App\Http\Controllers\TokenController;
 $verificationLimiterMiddleware = 'throttle:' . config('fortify.limiters.verification', '6,1');
 
 Route::post('/sanctum/token', TokenController::class);
+
+
+Route::get('/project/invite/accept', [InviteController::class, 'acceptInvite']);
+Route::get('/project/invite/reject', [InviteController::class, 'rejectInvite']);
 
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -62,11 +67,23 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::apiResource('posts', PostController::class);
 
         Route::apiResource('projects', ProjectController::class);
-        Route::controller(ProjectController::class)->prefix('projects')->group(function () {
-            Route::post('/{project}/moderate', 'moderate');
+        Route::prefix('projects/{project}')->group(function () {
+            Route::post('/moderate', [ProjectController::class, 'moderate']);
+            Route::controller(ProjectController::class)->prefix('moderation')->group(function () {
+                Route::post('/cancel', 'cancelModeration');
+                Route::post('/approve', 'approveModeration');
+                Route::post('/reject', 'rejectModeration');
+            });
+
+            Route::post('/invite', [InviteController::class, 'inviteMember']);
+            Route::post('/remove/{project_member}', [InviteController::class, 'removeMember']);
+
+            Route::get('/locations', [ProjectController::class, 'indexLocations']);
+            Route::post('/locations/add', [ProjectController::class, 'addLocation']);
+            Route::post('/locations/remove', [ProjectController::class, 'removeLocation']);
         });
     });
-    Route::middleware(['moderator:asdf'])->group(function () {
+    Route::middleware(['moderator'])->group(function () {
         Route::apiResource('users', UserAdminController::class);
         Route::controller(UserAdminController::class)->prefix('users/{user}/')->group(function () {
             Route::post('verify', 'markAsVerified');

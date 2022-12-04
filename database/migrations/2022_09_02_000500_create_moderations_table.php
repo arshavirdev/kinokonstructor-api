@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->id();
             $table->morphs('moderatable');
 
-            $table->enum('status', [Status::PENDING, Status::REJECTED, Status::ACCEPTED]);
+            $table->enum('status', [Status::PENDING, Status::REJECTED, Status::ACCEPTED, Status::DRAFT]);
             $table->string('comment')->nullable();
             $table->json('data')->nullable();
 

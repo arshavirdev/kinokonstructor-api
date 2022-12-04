@@ -72,9 +72,6 @@ class DatabaseSeeder extends Seeder
             'owner_id' => fake()->randomElement($specialistProfiles->pluck('id')),
             'region_id' => fake()->randomElement($regions->pluck('id'))
         ]);
-        // \App\Models\Project::factory(5)->create();
-        \App\Models\News::factory(5)->create();
-        \App\Models\Post::factory(5)->create();
 
         \App\Models\Project::factory(20)->create(fn() => [
             'owner_id' => fake()->randomElement($specialistProfiles->pluck('id')),

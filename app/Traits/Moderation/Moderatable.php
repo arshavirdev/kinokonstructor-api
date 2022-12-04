@@ -24,6 +24,13 @@ trait Moderatable
         ]);
     }
 
+    public function cancelModeration()
+    {
+        $this->status = Status::DRAFT;
+        $this->save();
+        $this->moderationHistory()->create(['status' => Status::DRAFT]);
+    }
+
     public function putToModeration()
     {
         $this->status = Status::PENDING;
