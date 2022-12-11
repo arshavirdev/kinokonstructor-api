@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use Closure;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 
@@ -71,5 +72,12 @@ class ProfileFactory extends Factory
             'socials_tg' => $nickname,
             'socials_ok' => $nickname,
         ];
+    }
+
+    public function afterCreating(Closure $callback)
+    {
+        return parent::afterCreating(function ($row) {
+            $row->roles()->attach(rand(1, 20));
+        });
     }
 }

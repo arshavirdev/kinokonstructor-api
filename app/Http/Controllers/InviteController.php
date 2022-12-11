@@ -40,7 +40,7 @@ class InviteController extends Controller
         $member->save();
         $invitedUser = $profile->user;
 
-        \Mail::to($invitedUser)->send(new ProjectInvitation($invitedUser, $member));
+        \Mail::to($invitedUser)->send(new ProjectInvitation($invitedUser, $member, $project));
         return $invitedUser;
     }
 

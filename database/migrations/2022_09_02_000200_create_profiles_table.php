@@ -26,7 +26,6 @@ return new class extends Migration {
             $table->enum('gender', ['m', 'f']);
             $table->string('city');
             $table->date('birthday');
-            $table->foreignId('occupation_id')->constrained()->cascadeOnUpdate()->restrictOnDelete();
 
             $table->string('phone')->unique();
 
@@ -46,6 +45,8 @@ return new class extends Migration {
             $table->string('socials_vk')->nullable();
             $table->string('socials_tg')->nullable();
             $table->string('socials_ok')->nullable();
+
+            $table->jsonb('privacy_hide')->default('[]');
 
             $table->timestamps();
         });

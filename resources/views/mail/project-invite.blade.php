@@ -18,11 +18,17 @@
 
 @endisset
 @isset($invitation->data['description'])
-
 **Описание**: {{$invitation->data['description']}}
 
-
 @endisset
+@if($invitation->data['attachLogline'] && isset($project->logline))
+**Логлайн**: {{$project->logline}}
+
+@endif
+@if($invitation->data['attachSynopsis'] && isset($project->synopsis))
+**Синопсис**: {{$project->synopsis}}
+
+@endif
 
 @component('mail::button', ['url' => $url['accept']])
     Подтвердить участие

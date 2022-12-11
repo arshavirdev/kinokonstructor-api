@@ -12,13 +12,9 @@ return new class extends Migration {
      */
     public function up()
     {
-        Schema::create('profile_education', function (Blueprint $table) {
-            $table->id();
+        Schema::create('profile_occupations', function (Blueprint $table) {
             $table->foreignIdFor(\App\Models\Profile::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->string('institution');
-            $table->string('speciality');
-            $table->year('start');
-            $table->year('end');
+            $table->foreignIdFor(\App\Models\Occupation::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
         });
     }
 
@@ -29,6 +25,6 @@ return new class extends Migration {
      */
     public function down()
     {
-        Schema::dropIfExists('profile_education');
+        Schema::dropIfExists('profile_occupations');
     }
 };

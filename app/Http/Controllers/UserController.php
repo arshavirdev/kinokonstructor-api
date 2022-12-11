@@ -50,6 +50,9 @@ class UserController extends Controller
 
         if (isset($params['projects']))
             $profile->customProjects()->sync($params['projects']);
+
+        if (isset($params['occupation_ids']))
+            $profile->occupations()->sync($params['occupation_ids']);
     }
 
     public function createProfile(StoreProfileRequest $request)
@@ -80,7 +83,10 @@ class UserController extends Controller
         $profile->save();
 
         $this->syncRelations($profile, $params);
-        $profile->putToModeration();
+
+        $fields = collect(['firstname', 'lastname', 'middlename', 'birthday', 'gender', 'city', 'occupation_ids']);
+        if ($fields->some(fn($field) => isset($params[$field])))
+            $profile->putToModeration();
 
         return [];
     }

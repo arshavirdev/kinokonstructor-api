@@ -43,7 +43,6 @@ class Profile extends AppModel implements HasMedia
         "gender",
         "city",
         "birthday",
-        "occupation_id",
         "phone",
         "regions",
         "regions",
@@ -121,9 +120,9 @@ class Profile extends AppModel implements HasMedia
         return $this->hasMany(Location::class, 'owner_id');
     }
 
-    public function occupation()
+    public function occupations()
     {
-        return $this->belongsTo(Occupation::class);
+        return $this->belongsToMany(Occupation::class, 'profile_occupations');
     }
 
     public function regions()
@@ -144,12 +143,23 @@ class Profile extends AppModel implements HasMedia
 
     public function scopeIsActor(Builder $query)
     {
-        return $query->whereIn('occupation_id', Occupation::$actorIds);
+        return $query->whereHas('occupations', function (Builder $query) {
+            $query->whereIn('id', Occupation::$actorIds);
+        });
     }
 
     public function scopeIsSpecialist(Builder $query)
     {
-        return $query->whereNotIn('occupation_id', Occupation::$actorIds);
+        return $query->whereHas('occupations', function (Builder $query) {
+            $query->whereNotIn('id', Occupation::$actorIds);
+        });
+    }
+
+    public function scopeWhereHasOccupation(Builder $query, string $id)
+    {
+        return $query->whereHas('occupations', function (Builder $query) use ($id) {
+            $query->where('id', $id);
+        });
     }
 
     public function scopeWhereAge(Builder $query, string $age)

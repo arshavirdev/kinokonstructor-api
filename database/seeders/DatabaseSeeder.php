@@ -39,7 +39,6 @@ class DatabaseSeeder extends Seeder
                 'status' => 'accepted',
                 'is_verified' => true,
                 'user_id' => fake()->unique()->randomElement([$admin->id, $moderator->id]),
-                'occupation_id' => rand(0, 1) === 1 ? fake()->randomElement($occupations->pluck('id')) : 1
             ]);
 
         // Guests
@@ -52,7 +51,6 @@ class DatabaseSeeder extends Seeder
         \App\Models\Profile::factory(20)->create(fn() => [
             'status' => fake()->randomElement(['draft', 'moderation']),
             'user_id' => fake()->unique()->randomElement($guests->pluck('id')),
-            'occupation_id' => fake()->randomElement($occupations->pluck('id'))
         ]);
 
         // Specialists
@@ -65,8 +63,11 @@ class DatabaseSeeder extends Seeder
                 'status' => 'accepted',
                 'is_verified' => rand(0, 10) === 10,
                 'user_id' => fake()->unique()->randomElement($specialists->pluck('id')),
-                'occupation_id' => rand(0, 1) === 1 ? fake()->randomElement($occupations->pluck('id')) : 1
             ]);
+
+        \App\Models\Profile::all()->each(function ($profile) use ($occupations) {
+            $profile->occupations()->sync($occupations->random(rand(1, 3))->pluck('id')->toArray());
+        });
 
         \App\Models\Location::factory(10)->create(fn() => [
             'owner_id' => fake()->randomElement($specialistProfiles->pluck('id')),

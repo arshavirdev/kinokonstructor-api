@@ -14,7 +14,7 @@ return new class extends Migration {
     {
         Schema::create('profile_experiences', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('profile_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignIdFor(\App\Models\Profile::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('company');
             $table->string('position');
             $table->year('start');

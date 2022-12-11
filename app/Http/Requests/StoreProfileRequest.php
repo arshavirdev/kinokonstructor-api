@@ -34,7 +34,8 @@ class StoreProfileRequest extends FormRequest
             'middlename' => 'string|nullable',
             'city' => 'string',
             'birthday' => 'date',
-            'occupation_id' => "exists:occupations,id",
+            'occupation_id' => 'array|min:1',
+            'occupation_ids.*' => "exists:occupations,id",
             'phone' => [
                 Rule::unique('profiles', 'phone')
             ],

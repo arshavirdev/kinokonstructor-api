@@ -11,8 +11,6 @@ use App\Http\Requests\UpdateProfileRequest;
 use App\Models\Profile;
 use App\Http\Resources\ProfileResource;
 use App\Http\Resources\ProfileBriefResource;
-use App\Http\Resources\ProfileBriefCollection;
-
 
 class ProfileController extends Controller
 {
@@ -26,7 +24,10 @@ class ProfileController extends Controller
     public function index(Request $request)
     {
         // $this->authorize('viewAny');
-        $query = Profile::query()->with(['user', 'media', 'occupation'])->orderBy('is_verified', 'desc')->onlyAccepted();
+        $query = Profile::query()->with(['user', 'media', 'occupations'])
+            ->orderBy('is_verified', 'desc')
+            ->orderBy('lastname', 'asc')
+            ->onlyAccepted();
 
         if ($request->has('type'))
             $query = $request->input('type') === 'actor' ? $query->isActor() : $query->isSpecialist();
@@ -44,7 +45,7 @@ class ProfileController extends Controller
             $query = $query->whereAge($request->input('age'));
 
         if ($request->has('occupation_id'))
-            $query = $query->where('occupation_id', $request->input('occupation_id'));
+            $query = $query->whereHasOccupation($request->input('occupation_id'));
 
         if ($request->has('city'))
             $query = $query->where('city', 'ilike', $request->input('city'));
@@ -56,7 +57,7 @@ class ProfileController extends Controller
 
     public function show(Profile $profile)
     {
-        $profile->load(['experience', 'education', 'customProjects', 'projects', 'media', 'occupation']);
+        $profile->load(['experience', 'education', 'customProjects', 'projects', 'media', 'occupations']);
         return new ProfileResource($profile);
     }
 }

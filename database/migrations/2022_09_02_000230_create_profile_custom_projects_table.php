@@ -14,7 +14,7 @@ return new class extends Migration {
     {
         Schema::create('profile_custom_projects', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('profile_id')->constrained()->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignIdFor(\App\Models\Profile::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('name');
             $table->string('position');
             $table->year('start');

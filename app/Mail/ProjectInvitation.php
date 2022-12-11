@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\Project;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -13,18 +14,20 @@ class ProjectInvitation extends Mailable
 
     public $user;
     public $invitation;
+    public $project;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($user, $invitation)
+    public function __construct($user, $invitation, $project)
     {
 //        $this->to($user);
         $this->subject('Приглашение в проект');
         $this->user = $user;
         $this->invitation = $invitation;
+        $this->project = $project;
     }
 
     /**
@@ -45,10 +48,11 @@ class ProjectInvitation extends Mailable
             'user' => $this->user,
             'invitation' => $this->invitation,
             'type' => $types[$this->invitation->type],
+            'project' => $this->project,
             'url' => [
                 'accept' => $actionUrl . '/accept' . $actionUrlParams,
                 'reject' => $actionUrl . '/reject' . $actionUrlParams
-            ]
+            ],
         ];
         return $this->markdown('mail.project-invite', $bag);
     }

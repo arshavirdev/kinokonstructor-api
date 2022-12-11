@@ -30,6 +30,7 @@ class ProfileResource extends JsonResource
             'firstname' => $this->firstname,
             'lastname' => $this->lastname,
             'middlename' => $this->middlename,
+            'gender' => $this->gender,
 
             'phone' => $this->when($showDetails, $this->phone),
             'email' => $this->when($showDetails, $this->user->email),
@@ -43,8 +44,8 @@ class ProfileResource extends JsonResource
             'city' => $this->city,
             'birthday' => $this->when($showDetails, $this->birthday->format('Y-m-d')),
             'age' => $this->birthday->age,
-            'occupation' => $this->occupation,
-            'occupation_id' => $this->occupation->id,
+
+            'occupation_ids' => $this->occupations->pluck('id'),
 
             'experience' => $this->experience,
             'education' => $this->education,
