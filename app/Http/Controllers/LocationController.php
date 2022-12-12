@@ -15,7 +15,7 @@ class LocationController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Location::query()->with(['owner', 'owner.media', 'owner.occupation', 'media']);
+        $query = Location::query()->with(['owner', 'owner.media', 'owner.occupations', 'media']);
 
         if ($request->has('name') && $request->input('name'))
             $query = $query->where('name', 'ilike', '%' . $request->input('name') . '%');
