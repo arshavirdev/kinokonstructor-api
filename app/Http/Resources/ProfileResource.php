@@ -18,7 +18,13 @@ class ProfileResource extends JsonResource
     public function toArray($request)
     {
         $user = Auth::user();
-        $showDetails = $user->id === $this->user_id || in_array($user->role, ['admin', 'moderator']);
+        $isSameUser = $user->id === $this->user_id;
+        $isPrivileged = in_array($user->role, ['admin', 'moderator']);
+        $isNotGuest = $user->role !== 'guest';
+        $showDetails = $isSameUser || $isPrivileged;
+        $showPhone = $isSameUser || $isPrivileged || ($isNotGuest && !in_array('phone', $this->privacy_hide));
+        $showEmail = $isSameUser || $isPrivileged || ($isNotGuest && !in_array('email', $this->privacy_hide));
+        $showSocials = $isSameUser || $isPrivileged || ($isNotGuest && !in_array('socials', $this->privacy_hide));
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
@@ -32,11 +38,11 @@ class ProfileResource extends JsonResource
             'middlename' => $this->middlename,
             'gender' => $this->gender,
 
-            'phone' => $this->when($showDetails, $this->phone),
-            'email' => $this->when($showDetails, $this->user->email),
-            'socials_vk' => $this->socials_vk,
-            'socials_tg' => $this->socials_tg,
-            'socials_ok' => $this->socials_ok,
+            'phone' => $this->when($showPhone, $this->phone),
+            'email' => $this->when($showEmail, $this->user->email),
+            'socials_vk' => $this->when($showSocials, $this->socials_vk),
+            'socials_tg' => $this->when($showSocials, $this->socials_tg),
+            'socials_ok' => $this->when($showSocials, $this->socials_ok),
 
             'org' => $this->org,
             'entrepreneur' => $this->entrepreneur,
@@ -55,6 +61,8 @@ class ProfileResource extends JsonResource
 
             'portfolio' => $this->portfolio,
             'mass_media_mentions' => $this->mass_media_mentions,
+
+            'privacy_hide' => $this->when($user->id === $this->user_id, $this->privacy_hide),
 
             'moderation' => $this->when($showDetails, count($this->moderationStatus) > 0 ? new ModerationResource($this->moderationStatus[0]) : null),
         ];

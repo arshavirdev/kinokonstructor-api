@@ -55,6 +55,9 @@ class UpdateProfileRequest extends FormRequest
             'socials_tg' => 'string|nullable',
             'socials_ok' => 'string|nullable',
 
+            'privacy_hide' => 'array',
+            'privacy_hide.*' => 'string|in:phone,email,socials',
+
             'avatar' => 'file|nullable',
             'attachments' => 'array',
 //            'attachments.*' => '',

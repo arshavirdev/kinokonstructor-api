@@ -3,8 +3,6 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DictionaryController;
 use App\Http\Controllers\LocationController;
-use App\Http\Controllers\NewsController;
-use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\UserController;
@@ -63,8 +61,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('dictionaries/{dictionary?}', [DictionaryController::class, 'show']);
         Route::apiResource('profiles', ProfileController::class, ['only' => ['index', 'show']]);
         Route::apiResource('locations', LocationController::class);
-        Route::apiResource('news', NewsController::class);
-        Route::apiResource('posts', PostController::class);
 
         Route::apiResource('projects', ProjectController::class);
         Route::prefix('projects/{project}')->group(function () {

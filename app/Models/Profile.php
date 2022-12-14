@@ -31,7 +31,8 @@ class Profile extends AppModel implements HasMedia
      */
     protected $casts = [
         'birthday' => 'date',
-        'regions' => 'array'
+        'regions' => 'array',
+        'privacy_hide' => 'array'
     ];
 
     protected $guarded = ['status'];
@@ -51,6 +52,7 @@ class Profile extends AppModel implements HasMedia
         "socials_vk",
         "socials_tg",
         "socials_ok",
+        'privacy_hide',
         'org',
         'entrepreneur'
     ];
