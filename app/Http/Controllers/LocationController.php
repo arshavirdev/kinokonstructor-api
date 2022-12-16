@@ -17,6 +17,11 @@ class LocationController extends Controller
     {
         $query = Location::query()->with(['owner', 'owner.media', 'owner.occupations', 'media']);
 
+        if ($request->has('type') && $request->input('type') === 'my') {
+            $profileId = Auth::user()->profile?->id;
+            if (!$profileId) abort(421);
+            $query = $query->where('owner_id', $profileId);
+        }
         if ($request->has('name') && $request->input('name'))
             $query = $query->where('name', 'ilike', '%' . $request->input('name') . '%');
         if ($request->has('region'))
