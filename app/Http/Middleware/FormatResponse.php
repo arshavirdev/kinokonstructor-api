@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class FormatResponse
 {
@@ -22,6 +23,8 @@ class FormatResponse
         }
         $response = $next($request);
 
+        if ($response instanceof StreamedResponse) return $response;
+        
         try {
             $data = $response->getData(true);
 

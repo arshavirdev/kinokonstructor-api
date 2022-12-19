@@ -77,6 +77,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::get('/locations', [ProjectController::class, 'indexLocations']);
             Route::post('/locations/add', [ProjectController::class, 'addLocation']);
             Route::post('/locations/remove', [ProjectController::class, 'removeLocation']);
+
+            Route::post('/export', [\App\Actions\Project\ExportProject::class, 'export']);
         });
     });
     Route::middleware(['moderator'])->group(function () {
