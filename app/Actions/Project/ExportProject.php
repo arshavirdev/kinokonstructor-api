@@ -35,6 +35,7 @@ class ExportProject
         $html = view('pdf.project', ['project' => $project, 'files' => $files], [])->render();
 
         $mpdf = new \Mpdf\Mpdf([
+            'tempDir' => storage_path('tmp'),
             'margin_left' => 15,
             'margin_right' => 05,
             'margin_top' => 20,
