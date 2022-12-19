@@ -35,6 +35,7 @@ class ProjectResource extends JsonResource
             'budget' => $this->budget,
             'co_financing' => $this->co_financing,
             'custom_members' => $this->custom_members,
+            'audio_reference' => $this->audio_reference,
             'members' => ProfileMemberResource::collection($this->memberInvites),
             'locations' => ProjectLocationResource::collection($this->locations),
 
