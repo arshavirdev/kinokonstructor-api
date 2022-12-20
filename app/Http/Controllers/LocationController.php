@@ -39,7 +39,7 @@ class LocationController extends Controller
         if (array_key_exists('photos', $params)) {
             $requestPhotos = collect($params['photos']);
             $toSavePhotos = $requestPhotos->filter(fn($item) => is_object($item));
-            $toKeepPhotosIds = $requestPhotos->filter(fn($item) => !is_object($item))->map(fn($id) => (int)$id);
+            $toKeepPhotosIds = $requestPhotos->filter(fn($item) => !is_object($item))->map(fn($id) => ['id' => (int)$id]);
             $location->clearMediaCollectionExcept(Location::GALLERY_MEDIA, $toKeepPhotosIds);
             foreach ($toSavePhotos as $photo) {
                 $location->addMedia($photo)->toMediaCollection(Location::GALLERY_MEDIA);
@@ -65,7 +65,13 @@ class LocationController extends Controller
 
     public function update(UpdateLocationRequest $request, Location $location)
     {
-        //
+        $params = $request->all();
+
+        $this->syncMedia($location, $params);
+        $location->fill($params);
+        $location->save();
+
+        return [];
     }
 
     public function destroy(Location $location)
