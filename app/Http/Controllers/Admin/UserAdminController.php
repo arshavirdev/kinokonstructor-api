@@ -72,4 +72,8 @@ class UserAdminController extends Controller
         return UserResource::collection($users->paginate());
     }
 
+    public function destroy(User $user)
+    {
+        $user->delete();
+    }
 }
