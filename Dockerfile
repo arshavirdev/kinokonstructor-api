@@ -61,7 +61,8 @@ COPY docker/php-fpm.conf /usr/local/etc/php-fpm.d/zz-docker.conf
 COPY docker/nginx.conf /etc/nginx/nginx.conf
 COPY docker/vhost.conf /etc/nginx/conf.d/default.conf
 
-RUN chown -R 82:82 /var/www /var/log /var/lib/nginx /var/run /run
+RUN chown -R 82:82 /var/www /var/log /var/lib/nginx /var/run /run && \
+    chmod -R 755 /var/lib/nginx
 RUN mkdir -p /var/run/
 WORKDIR /var/www/html
 
