@@ -33,7 +33,7 @@ class UserController extends Controller
             $requestAttachments = collect($params['attachments']);
             $toSaveAttachments = $requestAttachments->filter(fn($item) => is_object($item));
             $toKeepAttachments = $requestAttachments->filter(fn($item) => !is_object($item))->map(fn($id) => ['id' => (int)$id]);
-//            $profile->clearMediaCollectionExcept(Profile::ATTACHMENT_MEDIA, $toKeepAttachments);
+            $profile->clearMediaCollectionExcept(Profile::ATTACHMENT_MEDIA, $toKeepAttachments);
             foreach ($toSaveAttachments as $attachment) {
                 $profile->addMedia($attachment)->toMediaCollection(Profile::ATTACHMENT_MEDIA);
             }
