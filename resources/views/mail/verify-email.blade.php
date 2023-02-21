@@ -8,6 +8,10 @@
     Подтвердить адрес
 @endcomponent
 
+@component('mail/components/button-fallback', ['url' => $actionUrl])
+Уважаемый пользователь! В случае, если данная кнопка не работает, Вы можете подтвердить регистрацию, скопировав и вставив в строку браузера следующую ссылку:
+@endcomponent
+
 С уважением,<br>
 команда {{ config('app.name') }}
 @endcomponent
