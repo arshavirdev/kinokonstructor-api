@@ -6,6 +6,7 @@ use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\MemberController;
 use App\Http\Controllers\Admin\UserAdminController;
 use App\Http\Controllers\VerifyEmailController;
 use App\Http\Controllers\InviteController;
@@ -31,6 +32,8 @@ Route::post('/sanctum/token', TokenController::class);
 
 Route::get('/project/invite/accept', [InviteController::class, 'acceptInvite']);
 Route::get('/project/invite/reject', [InviteController::class, 'rejectInvite']);
+
+Route::post('/auth/checkId', [MemberController::class, 'checkId']);
 
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -94,4 +97,3 @@ Route::middleware(['auth:sanctum'])->group(function () {
         });
     });
 });
-

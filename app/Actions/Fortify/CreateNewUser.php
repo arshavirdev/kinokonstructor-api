@@ -3,6 +3,7 @@
 namespace App\Actions\Fortify;
 
 use App\Models\User;
+use App\Models\Profile;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -27,11 +28,43 @@ class CreateNewUser implements CreatesNewUsers
             'password' => $this->passwordRules(),
         ])->validate();
 
-        return User::create([
+        $data = [
             'username' => $input['username'],
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
             'allow_newsletter' => (bool)$input['allow_newsletter'],
-        ]);
+        ];
+
+        $id = $input['member_id'] ?? null;
+        if ($id) {
+            return $this->createByMember($id, $data);
+        }
+
+        Validator::validate($input, ['username' => [function (string $attribute, mixed $value, \Closure $fail) {
+            if (is_numeric($value)) {
+                $fail("Поле не может содержать только цифры");
+            }
+        }]]);
+
+        return $this->createBasic($data);
+    }
+
+    private function createByMember($id, $data)
+    {
+        $profile = Profile::where('member_id', $id)->whereNull('user_id')->first();
+        abort_unless($profile, 404, 'Member not found');
+
+        $user = new User($data);
+        $user->role = 'specialist';
+        $user->save();
+
+        $user->profile()->save($profile);
+
+        return $user;
+    }
+
+    private function createBasic($data)
+    {
+        return User::create($data);
     }
 }

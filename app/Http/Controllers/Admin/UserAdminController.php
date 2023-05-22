@@ -62,12 +62,21 @@ class UserAdminController extends Controller
 
     public function index(Request $request)
     {
-        $users = User::query()->with(['profile']);
+        $users = User::query()->with(['profile'])->orderByDesc('updated_at');
         if ($request->has('type')) {
             if ($request->input('type') === 'moderation')
                 $users = $users->whereHas('profile', function (Builder $query) {
                     $query->where('status', 'moderation');
                 });
+        }
+
+        if ($request->has('fullname')) {
+            $users = $users->whereHas('profile', function (Builder $query) use ($request) {
+                $query->whereFullname($request->input('fullname'));
+            });
+        }
+        if ($request->has('email')) {
+            $users = $users->where('email', 'ILIKE', '%' . trim($request->input('email')) . '%');
         }
         return UserResource::collection($users->paginate());
     }

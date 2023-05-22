@@ -25,9 +25,11 @@ class ProfileResource extends JsonResource
         $showPhone = $isSameUser || $isPrivileged || ($isNotGuest && !in_array('phone', $this->privacy_hide));
         $showEmail = $isSameUser || $isPrivileged || ($isNotGuest && !in_array('email', $this->privacy_hide));
         $showSocials = $isSameUser || $isPrivileged || ($isNotGuest && !in_array('socials', $this->privacy_hide));
+        $showMemberId = $isPrivileged;
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
+            'member_id' => $this->when($showMemberId, $this->member_id),
             'status' => $this->status,
             'is_verified' => $this->is_verified,
             'avatar' => new AvatarResource($this->getFirstMedia(Profile::AVATAR_MEDIA)),
@@ -39,7 +41,7 @@ class ProfileResource extends JsonResource
             'gender' => $this->gender,
 
             'phone' => $this->when($showPhone, $this->phone),
-            'email' => $this->when($showEmail, $this->user->email),
+            'email' => $this->when($showEmail, $this->user?->email),
             'socials_vk' => $this->when($showSocials, $this->socials_vk),
             'socials_tg' => $this->when($showSocials, $this->socials_tg),
             'socials_ok' => $this->when($showSocials, $this->socials_ok),
@@ -48,8 +50,8 @@ class ProfileResource extends JsonResource
             'entrepreneur' => $this->entrepreneur,
 
             'city' => $this->city,
-            'birthday' => $this->when($showDetails, $this->birthday->format('Y-m-d')),
-            'age' => $this->birthday->age,
+            'birthday' => $this->when($showDetails, $this->birthday?->format('Y-m-d')),
+            'age' => $this->birthday?->age,
 
             'occupation_ids' => $this->occupations->pluck('id'),
 

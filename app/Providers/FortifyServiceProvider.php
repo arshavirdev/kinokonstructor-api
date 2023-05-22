@@ -6,6 +6,7 @@ use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
 use App\Actions\Fortify\UpdateUserPassword;
 use App\Actions\Fortify\UpdateUserProfileInformation;
+use App\Models\Profile;
 use App\Models\User;
 use Hash;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -38,8 +39,17 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
         Fortify::authenticateUsing(function (Request $request) {
-            $column = Str::contains($request->login, '@') ? 'email' : 'username';
-            $user = User::where($column, $request->login)->first();
+            $user = null;
+            if (is_numeric($request->login) && strlen($request->login) === 8) {
+                $profile = Profile::where('member_id', $request->login)->first();
+                if ($profile) {
+                    $user = $profile->user;
+                    if (!$user) abort(404, 'Member is not registered');
+                }
+            } else {
+                $column = Str::contains($request->login, '@') ? 'email' : 'username';
+                $user = User::where($column, $request->login)->first();
+            }
 
             if ($user && Hash::check($request->password, $user->password))
                 return $user;

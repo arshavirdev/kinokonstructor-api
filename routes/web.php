@@ -17,20 +17,3 @@ use Illuminate\Support\Facades\Route;
 //Route::get('/', function () {
 //    return view('welcome');
 //});
-
-
-Route::get('/', function () {
-//    return new \App\Mail\VerifyEmail();
-//    $email = new \Illuminate\Auth\Notifications\VerifyEmail();
-//    return $email->toMail(\App\Models\User::find(16));
-//    $notifiable = User::first();
-//    URL::temporarySignedRoute(
-//        'verification.verify',
-//        Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
-//        [
-//            'id' => $notifiable->getKey(),
-//            'hash' => sha1($notifiable->getEmailForVerification()),
-//        ]
-//    );
-});
-

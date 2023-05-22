@@ -23,7 +23,7 @@ class ProfileBriefResource extends JsonResource
             'lastname' => $this->lastname,
             'middlename' => $this->middlename,
             'occupation_ids' => $this->occupations->pluck('id'),
-            'age' => $this->birthday->age,
+            'age' => $this->birthday?->age,
             'city' => $this->city,
         ];
     }
