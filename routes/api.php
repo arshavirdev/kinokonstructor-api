@@ -48,9 +48,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::controller(VerifyEmailController::class)
         ->prefix('auth/email')
-        ->middleware(['auth:sanctum'])->group(function () {
+        ->group(function () {
             Route::post('/verify/{id}/{hash}', 'verify');
-            Route::post('/request-verify', 'request')->middleware(['throttle:1,1']);
+            Route::post('/request-verify', 'request')->middleware(['throttle:verify-email']);
         });
 
     Route::middleware(['verified'])->group(function () {

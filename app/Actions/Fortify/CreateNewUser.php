@@ -23,28 +23,23 @@ class CreateNewUser implements CreatesNewUsers
     {
         Validator::make($input, [
             'email' => ['required', 'string', 'email', 'max:120', Rule::unique(User::class),],
-            'username' => ['required', 'string', 'max:64', Rule::unique(User::class)],
+            'username' => ['required_without:member_id', 'string', 'max:64', Rule::unique(User::class)],
             'allow_newsletter' => ['boolean'],
             'password' => $this->passwordRules(),
         ])->validate();
 
+
+        $id = $input['member_id'] ?? null;
         $data = [
-            'username' => $input['username'],
+            'username' => $input['username'] ?? $id,
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
             'allow_newsletter' => (bool)$input['allow_newsletter'],
         ];
 
-        $id = $input['member_id'] ?? null;
         if ($id) {
             return $this->createByMember($id, $data);
         }
-
-        Validator::validate($input, ['username' => [function (string $attribute, mixed $value, \Closure $fail) {
-            if (is_numeric($value)) {
-                $fail("Поле не может содержать только цифры");
-            }
-        }]]);
 
         return $this->createBasic($data);
     }
@@ -56,6 +51,7 @@ class CreateNewUser implements CreatesNewUsers
 
         $user = new User($data);
         $user->role = 'specialist';
+        $user->markEmailAsVerified();
         $user->save();
 
         $user->profile()->save($profile);
@@ -65,6 +61,11 @@ class CreateNewUser implements CreatesNewUsers
 
     private function createBasic($data)
     {
+        Validator::validate($data, ['username' => [function (string $attribute, mixed $value, \Closure $fail) {
+            if (is_numeric($value)) {
+                $fail("Поле не может содержать только цифры");
+            }
+        }]]);
         return User::create($data);
     }
 }

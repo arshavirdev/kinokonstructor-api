@@ -3,16 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use \App\Http\Controllers\Controller;
-use App\Http\Requests\StoreProfileRequest;
-use App\Http\Requests\UpdateProfileRequest;
+use App\Http\Resources\UserByProfileResource;
 use App\Http\Resources\UserResource;
 use App\Models\Profile;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class UserAdminController extends Controller
 {
@@ -33,7 +29,6 @@ class UserAdminController extends Controller
         $profile = $user->profile;
         $profile->is_verified = false;
         $profile->save();
-
     }
 
     public function setRole(User $user, Request $request)
@@ -62,13 +57,19 @@ class UserAdminController extends Controller
 
     public function index(Request $request)
     {
+        if ($request->has('type') && $request->input('type') === 'moderation')
+            return $this->moderationIndex($request);
+
+        return $this->profileIndex($request);
+    }
+
+    public function moderationIndex(Request $request)
+    {
         $users = User::query()->with(['profile'])->orderByDesc('updated_at');
-        if ($request->has('type')) {
-            if ($request->input('type') === 'moderation')
-                $users = $users->whereHas('profile', function (Builder $query) {
-                    $query->where('status', 'moderation');
-                });
-        }
+
+        $users = $users->whereHas('profile', function (Builder $query) {
+            $query->where('status', 'moderation');
+        });
 
         if ($request->has('fullname')) {
             $users = $users->whereHas('profile', function (Builder $query) use ($request) {
@@ -79,6 +80,21 @@ class UserAdminController extends Controller
             $users = $users->where('email', 'ILIKE', '%' . trim($request->input('email')) . '%');
         }
         return UserResource::collection($users->paginate());
+    }
+
+    public function profileIndex(Request $request)
+    {
+        $profiles = Profile::query()->with(['user'])->orderByDesc('updated_at');
+
+        if ($request->has('fullname')) {
+            $profiles = $profiles->whereFullname($request->input('fullname'));
+        }
+        if ($request->has('email')) {
+            $profiles = $profiles->whereHas('user', function (Builder $query) use ($request) {
+                $query->where('email', 'ILIKE', '%' . trim($request->input('email')) . '%');
+            });
+        }
+        return UserByProfileResource::collection($profiles->paginate(50));
     }
 
     public function destroy(User $user)
