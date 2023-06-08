@@ -19,6 +19,7 @@ class ProfileBriefResource extends JsonResource
             'id' => $this->id,
             'avatar' => new AvatarResource($this->getFirstMedia(Profile::AVATAR_MEDIA)),
             'is_verified' => $this->is_verified,
+            'status' => $this->status,
             'firstname' => $this->firstname,
             'lastname' => $this->lastname,
             'middlename' => $this->middlename,

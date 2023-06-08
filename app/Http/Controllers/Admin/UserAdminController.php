@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use \App\Http\Controllers\Controller;
 use App\Http\Resources\UserByProfileResource;
+use App\Http\Resources\UserBriefResource;
 use App\Http\Resources\UserResource;
 use App\Models\Profile;
 use App\Models\User;
@@ -65,7 +66,7 @@ class UserAdminController extends Controller
 
     public function moderationIndex(Request $request)
     {
-        $users = User::query()->with(['profile'])->orderByDesc('updated_at');
+        $users = User::query()->with(['profile', 'profile.occupations', 'profile.media'])->orderByDesc('updated_at');
 
         $users = $users->whereHas('profile', function (Builder $query) {
             $query->where('status', 'moderation');
@@ -79,12 +80,12 @@ class UserAdminController extends Controller
         if ($request->has('email')) {
             $users = $users->where('email', 'ILIKE', '%' . trim($request->input('email')) . '%');
         }
-        return UserResource::collection($users->paginate());
+        return UserBriefResource::collection($users->paginate());
     }
 
     public function profileIndex(Request $request)
     {
-        $profiles = Profile::query()->with(['user'])->orderByDesc('updated_at');
+        $profiles = Profile::query()->with(['user', 'occupations', 'media'])->orderByDesc('updated_at');
 
         if ($request->has('fullname')) {
             $profiles = $profiles->whereFullname($request->input('fullname'));

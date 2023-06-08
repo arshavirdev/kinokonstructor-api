@@ -18,7 +18,6 @@ class UserByProfileResource extends JsonResource
         $user = optional($this->user);
         $isAnonymousMember = $this->member_id !== null && !$this->user;
         $avatar = $this->getFirstMedia('avatar');
-        // dd($this, $user);
         return [
             'id' => $isAnonymousMember ? $this->member_id : $user->id,
             'avatar' => new AvatarResource($avatar),
@@ -27,7 +26,7 @@ class UserByProfileResource extends JsonResource
             'email' => $user->email,
             'emailVerified' => $isAnonymousMember ? true : (bool)$user->email_verified_at,
             'role' => $isAnonymousMember ? 'specialist' : $user->role,
-            'profile' => new ProfileResource($this),
+            'profile' => new ProfileBriefResource($this),
             'email_verified_at' => $isAnonymousMember ? $this->created_at : $user->email_verified_at,
             'updated_at' => $this->updated_at,
             'created_at' => $this->created_at ?? $this->updated_at,
