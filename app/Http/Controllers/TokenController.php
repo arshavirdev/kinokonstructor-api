@@ -1,0 +1,45 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
+
+class TokenController extends Controller
+{
+    public function __invoke(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+            'device_name' => 'required',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            throw ValidationException::withMessages([
+                'email' => ['The provided credentials are incorrect.'],
+            ]);
+        }
+
+        $token = $user->createToken($request->device_name)->plainTextToken;
+
+        return response()->json(['token' => $token], 200);
+    }
+
+
+    public function impersonate(Request $request)
+    {
+        $userId = $request->input('userId');
+        $request->session()->put('impersonate', $userId);
+    }
+
+    public function unimpersonate(Request $request)
+    {
+        $request->session()->remove('impersonate');
+    }
+}
