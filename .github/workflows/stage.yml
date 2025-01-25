@@ -21,4 +21,4 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /root/kinokonstructor/
-          ./scripts/update-api.sh
+          ./scripts/update-backend.sh
