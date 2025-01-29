@@ -1,0 +1,39 @@
+name: Deploy Backend to Server
+
+on:
+  push:
+    branches:
+      - stage
+      - dev1
+      - dev2
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set environment variables based on branch
+      run: |
+        if [[ "${{ github.ref }}" == "refs/heads/dev1" ]]; then
+          echo "DEPLOY_HOST=${{ secrets.REMOTE_HOST_DEV1 }}" >> $GITHUB_ENV
+          echo "DEPLOY_USER=${{ secrets.REMOTE_USER_DEV1 }}" >> $GITHUB_ENV
+        elif [[ "${{ github.ref }}" == "refs/heads/dev2" ]]; then
+          echo "DEPLOY_HOST=${{ secrets.REMOTE_HOST_DEV2 }}" >> $GITHUB_ENV
+          echo "DEPLOY_USER=${{ secrets.REMOTE_USER_DEV2 }}" >> $GITHUB_ENV
+        else
+          echo "DEPLOY_HOST=${{ secrets.REMOTE_HOST_STAGE }}" >> $GITHUB_ENV
+          echo "DEPLOY_USER=${{ secrets.REMOTE_USER_STAGE }}" >> $GITHUB_ENV
+        fi
+
+    - name: Set up SSH and deploy
+      uses: appleboy/ssh-action@v1.2.0
+      with:
+        host: ${{ env.DEPLOY_HOST }}
+        username: ${{ env.DEPLOY_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          cd /root/kinokonstructor/
+          ./scripts/update-backend.sh
