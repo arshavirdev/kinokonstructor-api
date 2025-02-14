@@ -37,15 +37,15 @@ class StoreContestRequest extends FormRequest
             'gallery.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
 
             'conditions' => 'nullable|string',
-            'deadline_title' => 'nullable|string|max:255',
-            'deadline_date' => 'nullable|date',
+            'deadlines' => 'nullable|array',
+            'deadlines*' => 'nullable|string|max:255',
             'prizes' => 'nullable|string',
             'adjudicator' => 'nullable|string',
             'organizers' => 'nullable|string',
             
             // Documents (Multiple Files)
             'documents' => 'nullable|array',
-            'documents.*' => 'file|mimes:pdf,doc,docx|max:5120', // Max 5MB
+            'documents.*' => 'nullable', // Max 5MB
 
             'online_application' => 'nullable|url|max:255',
             // Logo (Single File)
