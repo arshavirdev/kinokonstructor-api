@@ -37,8 +37,6 @@ class StoreContestRequest extends FormRequest
             'gallery.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
 
             'conditions' => 'nullable|string',
-            'deadlines' => 'nullable|array',
-            'deadlines*' =>  'nullable|string|date',
 
             'deadlines' => 'nullable|array',
             'deadlines.*.title' => 'nullable|string|max:255',
