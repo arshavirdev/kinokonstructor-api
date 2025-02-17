@@ -63,9 +63,9 @@ class StoreContestRequest extends FormRequest
             'partners' => 'nullable|array',
             'partners.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
 
-            'contacts.website' => 'nullable|url|max:255',
-            'contacts.social_media' => 'nullable|url|max:255',
-            'contacts.email' => 'nullable|email|max:255',
+            'contacts.website' => 'nullable|string|max:255',
+            'contacts.social_media' => 'nullable|string|max:255',
+            'contacts.email' => 'nullable|string|max:255',
             'contacts.phone' => 'nullable|string|max:20',
             'contacts.postal_address' => 'nullable|string|max:255',
             'contacts.button_name' => 'nullable|string|max:255',
