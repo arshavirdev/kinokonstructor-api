@@ -24,9 +24,9 @@ class StoreContestRequest extends FormRequest
     public function rules()
     {
         return [
-            'title' => 'required|string|max:255',
+            'title' => 'required|string|min:2|max:255',
             'type' => 'nullable|string|max:255',
-            'years_held' => 'nullable|string|max:255',
+            'years_held' => 'nullable|numeric',
             'country' => 'nullable|string|max:255',
             'region' => 'nullable|string|max:255',
             'city' => 'nullable|string|max:255',
@@ -38,9 +38,9 @@ class StoreContestRequest extends FormRequest
 
             'conditions' => 'nullable|string',
 
-            'deadlines' => 'nullable|array',
+            'deadlines' => 'nullable',
             'deadlines.*.title' => 'nullable|string|max:255',
-            'deadlines.*.date' => 'nullable|date|after_or_equal:today',
+            'deadlines.*.date' => 'nullable|date',
 
             'prizes' => 'nullable|string',
             'adjudicator' => 'nullable|string',

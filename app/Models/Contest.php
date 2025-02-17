@@ -31,13 +31,16 @@ class Contest extends AppModel implements HasMedia
         'city',
         'description',
         'conditions',
-        'deadline_title',
-        'deadline_date',
+        'deadlines',
         'prizes',
         'adjudicator',
         'organizers',
         'online_application',  
         'video'
+    ];
+
+    protected $casts = [
+        'deadlines' => 'array'
     ];
 
     public function contacts(): HasOne
