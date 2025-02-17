@@ -48,12 +48,12 @@ class StoreContestRequest extends FormRequest
             
             // Documents (Multiple Files)
             'documents' => 'nullable|array',
-            'documents.*' => 'nullable', // Max 5MB
+            'documents.*' => 'nullable',
 
-            'online_application' => 'nullable|url|max:255',
+            'online_application' => 'nullable|string|max:255',
             // Logo (Single File)
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'video' => 'nullable|string', // 10MB limit
+            'video' => 'nullable|string',
 
             // Photo Gallery (Multiple Images)
             'photo_gallery' => 'nullable|array',
