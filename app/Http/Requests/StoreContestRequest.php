@@ -52,7 +52,7 @@ class StoreContestRequest extends FormRequest
 
             'online_application' => 'nullable|url|max:255',
             // Logo (Single File)
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'video' => 'nullable|string', // 10MB limit
 
             // Photo Gallery (Multiple Images)
