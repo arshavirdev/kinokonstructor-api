@@ -38,7 +38,12 @@ class StoreContestRequest extends FormRequest
 
             'conditions' => 'nullable|string',
             'deadlines' => 'nullable|array',
-            'deadlines*' => 'nullable|string|max:255',
+            'deadlines*' =>  'nullable|string|date',
+
+            'deadlines' => 'nullable|array',
+            'deadlines.*.title' => 'nullable|string|max:255',
+            'deadlines.*.date' => 'nullable|date|after_or_equal:today',
+
             'prizes' => 'nullable|string',
             'adjudicator' => 'nullable|string',
             'organizers' => 'nullable|string',

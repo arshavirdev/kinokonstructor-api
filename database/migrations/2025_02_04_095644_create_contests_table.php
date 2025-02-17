@@ -23,8 +23,7 @@ return new class extends Migration
             $table->string('city')->nullable();
             $table->text('description')->nullable();
             $table->text('conditions')->nullable();
-            $table->string('deadline_title')->nullable();
-            $table->date('deadline_date')->nullable();
+            $table->json('deadlines')->default('[]');
             $table->text('prizes')->nullable();
             $table->text('adjudicator')->nullable();
             $table->text('organizers')->nullable();
