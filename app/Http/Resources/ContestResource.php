@@ -36,7 +36,14 @@ class ContestResource extends JsonResource
             'video' => $this->video,
             'photo_gallery' => MediaResource::collection($this->getMedia(Contest::PHOTO_GALLERY)),
             'partners' => MediaResource::collection($this->getMedia(Contest::PARTNERS)),
-            'contacts' => $this->contacts,
+            'contacts' => [
+                'website' => $this->contacts->website,
+                'social_media' => $this->contacts->social_media,
+                'email' => $this->contacts->email,
+                'phone' => $this->contacts->phone,
+                'postal_address' => $this->contacts->postal_address,
+                'button_name' => $this->contacts->button_name
+            ]
         ];
     }
 }
