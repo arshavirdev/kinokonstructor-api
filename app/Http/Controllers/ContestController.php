@@ -16,7 +16,7 @@ class ContestController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Contest::query();
+        $query = Contest::query()->orderBy('id', 'desc');
 
         $contests = $query->paginate();
         return ContestResource::collection($contests);
