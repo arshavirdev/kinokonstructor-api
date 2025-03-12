@@ -45,8 +45,8 @@ class ProjectController extends Controller
             }
         }
 
-        if ($request->has('name'))
-            $query = $query->where('name', 'ilike', $request->input('name'));
+        if ($request->has('title'))
+            $query = $query->where('title', 'ilike', $request->input('title'));
 
         if ($request->has('format'))
             $query = $query->where('format', $request->input('format'));
@@ -54,7 +54,7 @@ class ProjectController extends Controller
         if ($request->has('genre_type'))
             $query = $query->where('genre_type', $request->input('genre_type'));
 
-        $projects = $query->paginate();
+        $projects = $query->paginate($request->input('pageSize', 10));
         return ProjectBriefResource::collection($projects);
     }
 
