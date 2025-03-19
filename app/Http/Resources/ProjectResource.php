@@ -58,6 +58,7 @@ class ProjectResource extends JsonResource
 
             'partnership_proof' => MediaResource::collection($this->getMedia(Project::PARTNERSHIP_PROOF_MEDIA)),
 
+            'owner' => $this->owner,
             'isOwner' => $isOwner,
             'canEdit' => $isOwner,
 

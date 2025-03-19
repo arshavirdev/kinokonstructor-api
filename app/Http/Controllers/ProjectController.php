@@ -45,8 +45,30 @@ class ProjectController extends Controller
             }
         }
 
+        if ($request->has('filter')) {
+            if ($request->has('filter.date')) {
+                $query = $query->whereBetween('created_at', [$request->input('filter.date')[0], $request->input('filter.date')[1]]);
+            }
+
+            if ($request->has('filter.genre')) {
+                $query = $query->where('genres', 'like', '%' . $request->input('filter.genre') . '%');
+            }
+
+            if ($request->has('filter.format')) {
+                $query = $query->where('format', $request->input('filter.format'));
+            }
+
+            if ($request->has('filter.location')) {
+                $locationFilter = $request->input('filter.location');
+                $query = $query->whereHas('locations', function ($q) use ($locationFilter) {
+                    $q->whereIn('locations.id', (array) $locationFilter);
+                });
+            }
+        }
+
+
         if ($request->has('title'))
-            $query = $query->where('title', 'ilike', $request->input('title'));
+            $query = $query->where('title', 'like', '%' . $request->input('title') . '%');
 
         if ($request->has('format'))
             $query = $query->where('format', $request->input('format'));
@@ -84,9 +106,9 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-//        if ($project->owner_id !== Auth::user()->profile->id || $project->status !== Status::ACCEPTED) abort(403);
+        //        if ($project->owner_id !== Auth::user()->profile->id || $project->status !== Status::ACCEPTED) abort(403);
 
-        $project->load(['media', 'memberInvites', 'memberInvites.profile', 'locations']);
+        $project->load(['media', 'memberInvites', 'memberInvites.profile', 'locations', 'owner']);
 
         return new ProjectResource($project);
     }
@@ -113,7 +135,8 @@ class ProjectController extends Controller
 
     public function moderate(Project $project): array
     {
-        if ($project->owner_id !== Auth::user()->profile->id) abort(403);
+        if ($project->owner_id !== Auth::user()->profile->id)
+            abort(403);
 
         $project->putToModeration();
         return [];
@@ -145,7 +168,8 @@ class ProjectController extends Controller
         ];
         $medias = [Project::ATTACHMENTS_MEDIA];
         foreach ($singleMedias as $key) {
-            if (!array_key_exists($key, $params)) continue;
+            if (!array_key_exists($key, $params))
+                continue;
             if (is_null($params[$key])) {
                 $project->clearMediaCollection($key);
             } elseif (is_object($params[$key])) {
@@ -156,10 +180,11 @@ class ProjectController extends Controller
             }
         }
         foreach ($medias as $key) {
-            if (!array_key_exists($key, $params)) continue;
+            if (!array_key_exists($key, $params))
+                continue;
             $requestItems = collect($params[$key]);
             $toSaveItems = $requestItems->filter(fn($item) => is_object($item));
-            $toKeepItems = $requestItems->filter(fn($item) => !is_object($item))->map(fn($id) => ['id' => (int)$id]);
+            $toKeepItems = $requestItems->filter(fn($item) => !is_object($item))->map(fn($id) => ['id' => (int) $id]);
             $project->clearMediaCollectionExcept($key, $toKeepItems);
             foreach ($toSaveItems as $attachment) {
                 $project->addMedia($attachment)->toMediaCollection($key);
@@ -190,7 +215,8 @@ class ProjectController extends Controller
 
     public function cancelModeration(Project $project)
     {
-        if ($project->owner_id !== Auth::user()->profile->id) abort(403);
+        if ($project->owner_id !== Auth::user()->profile->id)
+            abort(403);
         $project->cancelModeration();
     }
 
