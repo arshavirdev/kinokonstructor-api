@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Favoritable;
 use App\Traits\Moderation\Moderatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\MediaLibrary\HasMedia;
@@ -12,6 +13,7 @@ class Project extends AppModel implements HasMedia
     use HasFactory;
     use InteractsWithMedia;
     use Moderatable;
+    use Favoritable;
 
     public const EXTENDED_SYNOPSIS_MEDIA = 'extended_synopsis';
     public const ATTACHMENTS_MEDIA = 'attachments';
@@ -82,6 +84,7 @@ class Project extends AppModel implements HasMedia
         "budget",
         "co_financing",
         "custom_members",
+        "is_archived"
     ];
 
     protected $casts = [
@@ -90,6 +93,7 @@ class Project extends AppModel implements HasMedia
         'custom_members' => 'array',
         'budget' => 'integer',
         'co_financing' => 'integer',
+        'is_archived' => 'boolean'
     ];
 
     public function memberInvites()

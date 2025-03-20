@@ -67,7 +67,10 @@ class ProjectResource extends JsonResource
                 'comment' => $moderation?->comment,
                 'email' => \Arr::get($moderation, 'data.email'),
                 'data' => $moderation?->data
-            ], null)
+            ], null),
+        
+            'is_favorited' => (bool) $this->is_favorited,
+            'is_archived' => $this->is_archived
         ];
     }
 }

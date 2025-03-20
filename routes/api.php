@@ -84,6 +84,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::post('/locations/remove', [ProjectController::class, 'removeLocation']);
 
             Route::post('/export', [\App\Actions\Project\ExportProject::class, 'export']);
+
+            Route::post('/{action}', [ProjectController::class, 'action'])
+                ->where('action', 'favorite|unfavorite|archive|unarchive');
         });
     });
     Route::middleware(['moderator'])->group(function () {

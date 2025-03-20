@@ -6,14 +6,13 @@ use App\Http\Resources\ProjectBriefResource;
 use App\Http\Resources\ProjectLocationResource;
 use App\Http\Resources\ProjectResource;
 
-use App\Traits\Moderation\Status;
 use Auth;
+use App\Service\ProjectService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
-use App\Models\Location;
 
 class ProjectController extends Controller
 {
@@ -25,7 +24,12 @@ class ProjectController extends Controller
     {
         $user = Auth::user();
         $profile = $user->profile;
-        $query = Project::query()->with(['media']);
+        $query = Project::query()->with(['media'])
+            ->withCount([
+                'favorites as is_favorited' => function ($query) use ($user) {
+                    $query->where('user_id', $user->id);
+                }
+            ]);
 
         if ($request->has('type')) {
             $type = $request->get('type');
@@ -228,5 +232,30 @@ class ProjectController extends Controller
     public function rejectModeration(Project $project, Request $request)
     {
         $project->markRejected($request->input('comment'), $request->except('comment'));
+    }
+
+    public function action(Project $project, string $action, ProjectService $projectService)
+    {
+        // Allowed actions
+        $allowedActions = ['favorite', 'unfavorite', 'archive', 'unarchive'];
+
+        if (!in_array($action, $allowedActions)) {
+            return response()->json(['message' => 'Invalid action'], 400);
+        }
+
+        $result = match ($action) {
+            'favorite' => $projectService->favorite($project),
+            'unfavorite' => $projectService->unfavorite($project),
+            'archive' => $projectService->archive($project),
+            'unarchive' => $projectService->unarchive($project),
+            'cake' => 'This food is a cake',
+            default => response()->json(['message' => 'Invalid action'], 400)
+        };
+
+        if (isset($result['error'])) {
+            return response()->json(['message' => 'Invalid action'], 400);
+        }
+
+        return response()->json($result);
     }
 }

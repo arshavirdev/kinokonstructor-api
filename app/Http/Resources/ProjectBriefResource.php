@@ -26,6 +26,8 @@ class ProjectBriefResource extends JsonResource
             'logline' => $this->logline,
             'locations' => ProjectLocationResource::collection($this->locations),
             'created_at' => $this->created_at,
+            'is_favorited' => (bool) $this->is_favorited,
+            'is_archived' => $this->is_archived,
         ];
     }
 }
