@@ -83,5 +83,7 @@ RUN composer dump-autoload
 EXPOSE 8000
 STOPSIGNAL SIGTERM
 CMD chmod -R 777 storage && \
-    /usr/local/bin/php ./artisan storage:link && /usr/local/bin/php ./artisan migrate --force && \
+    /usr/local/bin/php ./artisan storage:link && \
+    /usr/local/bin/php ./artisan migrate --force && \
+    /usr/local/bin/php ./artisan optimize && \
     /usr/sbin/nginx; /usr/local/sbin/php-fpm -F
