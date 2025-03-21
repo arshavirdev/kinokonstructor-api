@@ -5,6 +5,7 @@ use App\Http\Controllers\DictionaryController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\Admin\UserAdminController;
@@ -88,6 +89,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::post('/{action}', [ProjectController::class, 'action'])
                 ->where('action', 'favorite|unfavorite|archive|unarchive');
         });
+
+        // REPORT
+        Route::post('/report', [ReportController::class, 'store']);
     });
     Route::middleware(['moderator'])->group(function () {
         Route::apiResource('users', UserAdminController::class);

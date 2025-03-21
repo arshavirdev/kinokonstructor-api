@@ -91,4 +91,28 @@ class ProjectPolicy
     {
         //
     }
+
+     /**
+     * Determine whether the user can archive the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function archive(User $user, Project $project)
+    {
+        return $user->id === $project->owner->user->id;
+    }
+
+     /**
+     * Determine whether the user can archive the model.
+     *
+     * @param  \App\Models\User  $user
+     * @param  \App\Models\Project  $project
+     * @return \Illuminate\Auth\Access\Response|bool
+     */
+    public function unarchive(User $user, Project $project)
+    {
+        return $user->id === $project->owner->user->id;
+    }
 }

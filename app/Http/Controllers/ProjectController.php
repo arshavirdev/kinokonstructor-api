@@ -26,7 +26,7 @@ class ProjectController extends Controller
         $profile = $user->profile;
         $query = Project::query()->with(['media'])
             ->withCount([
-                'favorites as is_favorited' => function ($query) use ($user) {
+                'favorites as is_favorite' => function ($query) use ($user) {
                     $query->where('user_id', $user->id);
                 }
             ]);
@@ -243,12 +243,15 @@ class ProjectController extends Controller
             return response()->json(['message' => 'Invalid action'], 400);
         }
 
+        if (in_array($action, ['archive', 'unarchive'])) {
+            $this->authorize($action, $project);
+        }
+
         $result = match ($action) {
             'favorite' => $projectService->favorite($project),
             'unfavorite' => $projectService->unfavorite($project),
             'archive' => $projectService->archive($project),
             'unarchive' => $projectService->unarchive($project),
-            'cake' => 'This food is a cake',
             default => response()->json(['message' => 'Invalid action'], 400)
         };
 

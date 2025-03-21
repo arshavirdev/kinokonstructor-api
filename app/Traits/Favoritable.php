@@ -18,7 +18,7 @@ trait Favoritable
         return $this->favorites()->where('user_id', $user->id)->exists();
     }
 
-    public function getIsFavoritedAttribute(): bool
+    public function getIsFavoriteAttribute(): bool
     {
         return $this->favorites()->where('user_id', Auth::id())->exists();
     }

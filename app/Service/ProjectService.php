@@ -13,12 +13,12 @@ class ProjectService
         $exists = $project->favorites()->where('user_id', $userId)->exists();
 
         if ($exists) {
-            return ['error' => 'Project already favorited'];
+            return ['is_favorite' => true];
         }
 
         $project->favorites()->create(['user_id' => $userId]);
 
-        return ['message' => 'Project favorited successfully'];
+        return ['is_favorite' => false];
     }
 
     public function unfavorite(Project $project)
@@ -27,21 +27,21 @@ class ProjectService
         $deleted = $project->favorites()->where('user_id', $userId)->delete();
 
         if (!$deleted) {
-            return ['error' => 'Project was not favorited'];
+            return ['is_favorite' => false];
         }
 
-        return ['message' => 'Project unfavorited successfully'];
+        return ['is_favorite' => false];
     }
 
     public function archive(Project $project)
     {
         $project->update(['is_archived' => true]);
-        return ['message' => 'Project archived'];
+        return ['is_archived' => true];
     }
 
     public function unarchive(Project $project)
     {
         $project->update(['is_archived' => false]);
-        return ['message' => 'Project unarchived'];
+        return ['is_archived' => false];
     }
 }

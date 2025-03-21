@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Profile;
 use App\Models\Project;
 use App\Traits\Moderation\Status;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -20,9 +19,13 @@ class ProjectResource extends JsonResource
     {
         $user = Auth::user();
         $moderation = \Arr::get($this->moderationStatus, '0');
-        $isOwner = (string)$this->owner_id === (string)$user?->profile?->id;
-        $isPrivileged = in_array($user->role, ['admin', 'moderator']);
-        $canViewBudget = $isOwner || $isPrivileged;
+        $is_owner = (string) $this->owner_id === (string) $user?->profile?->id;
+        $is_privileged = in_array($user->role, ['admin', 'moderator']);
+        $can_view_budget = $is_owner || $is_privileged;
+        $organization = $this->owner->org
+            ? array_merge($this->owner->org, ['email' => $this->owner->user->email])
+            : [];
+
         return [
             'id' => $this->id,
             'title' => $this->title,
@@ -37,8 +40,8 @@ class ProjectResource extends JsonResource
             'relevance' => $this->relevance,
             'additional' => $this->resource->additional,
 
-            'budget' => $this->when($canViewBudget, $this->budget),
-            'co_financing' => $this->when($canViewBudget, $this->co_financing),
+            'budget' => $this->when($can_view_budget, $this->budget),
+            'co_financing' => $this->when($can_view_budget, $this->co_financing),
 
             'custom_members' => $this->custom_members,
             'audio_reference' => $this->audio_reference,
@@ -53,14 +56,14 @@ class ProjectResource extends JsonResource
             'decorations' => new MediaResource($this->getFirstMedia(Project::DECORATIONS_MEDIA)),
             'location_reference' => new MediaResource($this->getFirstMedia(Project::LOCATIONS_MEDIA)),
 
-            'financial_plan' => $this->when($canViewBudget, new MediaResource($this->getFirstMedia(Project::FINANCIAL_PLAN_MEDIA))),
-            'financial_proof' => $this->when($canViewBudget, new MediaResource($this->getFirstMedia(Project::FINANCIAL_PROOF_MEDIA))),
+            'financial_plan' => $this->when($can_view_budget, new MediaResource($this->getFirstMedia(Project::FINANCIAL_PLAN_MEDIA))),
+            'financial_proof' => $this->when($can_view_budget, new MediaResource($this->getFirstMedia(Project::FINANCIAL_PROOF_MEDIA))),
 
             'partnership_proof' => MediaResource::collection($this->getMedia(Project::PARTNERSHIP_PROOF_MEDIA)),
 
-            'owner' => $this->owner,
-            'isOwner' => $isOwner,
-            'canEdit' => $isOwner,
+            'organization' => $organization,
+            'is_owner' => $is_owner,
+            'can_edit' => $is_owner,
 
             'moderation' => $this->when($this->status === Status::PENDING || $this->status === Status::REJECTED && isset($moderation), [
                 'startedAt' => $this->updatedAt,
@@ -68,8 +71,8 @@ class ProjectResource extends JsonResource
                 'email' => \Arr::get($moderation, 'data.email'),
                 'data' => $moderation?->data
             ], null),
-        
-            'is_favorited' => (bool) $this->is_favorited,
+
+            'is_favorite' => (bool) $this->is_favorite,
             'is_archived' => $this->is_archived
         ];
     }

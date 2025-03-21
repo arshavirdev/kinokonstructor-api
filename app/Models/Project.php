@@ -111,6 +111,12 @@ class Project extends AppModel implements HasMedia
         return $this->belongsTo(Profile::class, 'owner_id');
     }
 
+    public function reports()
+    {
+        return $this->morphMany(Report::class, 'reportable');
+    }
+
+
 
     public function registerMediaCollections(): void
     {
