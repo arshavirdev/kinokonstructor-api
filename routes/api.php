@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DictionaryController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ReportController;
@@ -104,5 +105,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::post('approve', 'approveProfile');
             Route::post('reject', 'rejectProfile');
         });
+    });
+
+    // NOTIFICATION
+    Route::prefix('notifications')->group(function () {
+        Route::get('', [NotificationController::class, 'index']);
+        Route::get('test', [NotificationController::class, 'test']);
+        Route::patch('{id}/read', [NotificationController::class, 'markAsRead']);
     });
 });
