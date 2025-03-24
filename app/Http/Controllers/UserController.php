@@ -8,6 +8,7 @@ use App\Http\Resources\UserResource;
 use App\Models\Profile;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\ContactOrganizerRequest;
 
 class UserController extends Controller
 {
@@ -91,4 +92,15 @@ class UserController extends Controller
         return [];
     }
 
+    public function contactOrganizer(ContactOrganizerRequest $request)
+    {
+        $params = $request->validated();
+        $profile = Profile::find($params['profile_id']);
+        
+        if (!$profile || !$profile->is_org) {
+            return response()->json(['message' => 'The profile id is incorrect or it is not an organizer'], 400);
+        }
+
+        return response()->json([]);
+    }
 }

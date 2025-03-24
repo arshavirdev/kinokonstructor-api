@@ -113,4 +113,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('test', [NotificationController::class, 'test']);
         Route::patch('{id}/read', [NotificationController::class, 'markAsRead']);
     });
+
+    // CONTACT ORGANIZER
+    Route::post('/organizer/contact', [UserController::class, 'contactOrganizer']);
 });
