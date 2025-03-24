@@ -88,7 +88,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::post('/export', [\App\Actions\Project\ExportProject::class, 'export']);
 
             Route::post('/{action}', [ProjectController::class, 'action'])
-                ->where('action', 'favorite|unfavorite|archive|unarchive');
+                ->where('action', 'favorite|archive|unarchive');
         });
 
         // REPORT

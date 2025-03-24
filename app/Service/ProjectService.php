@@ -13,24 +13,12 @@ class ProjectService
         $exists = $project->favorites()->where('user_id', $userId)->exists();
 
         if ($exists) {
-            return ['is_favorite' => true];
-        }
-
-        $project->favorites()->create(['user_id' => $userId]);
-
-        return ['is_favorite' => false];
-    }
-
-    public function unfavorite(Project $project)
-    {
-        $userId = Auth::id();
-        $deleted = $project->favorites()->where('user_id', $userId)->delete();
-
-        if (!$deleted) {
+            $project->favorites()->where('user_id', $userId)->delete();
             return ['is_favorite' => false];
         }
 
-        return ['is_favorite' => false];
+        $project->favorites()->create(['user_id' => $userId]);
+        return ['is_favorite' => true];
     }
 
     public function archive(Project $project)

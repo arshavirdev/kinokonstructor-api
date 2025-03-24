@@ -237,7 +237,7 @@ class ProjectController extends Controller
     public function action(Project $project, string $action, ProjectService $projectService)
     {
         // Allowed actions
-        $allowedActions = ['favorite', 'unfavorite', 'archive', 'unarchive'];
+        $allowedActions = ['favorite', 'archive', 'unarchive'];
 
         if (!in_array($action, $allowedActions)) {
             return response()->json(['message' => 'Invalid action'], 400);
@@ -249,7 +249,6 @@ class ProjectController extends Controller
 
         $result = match ($action) {
             'favorite' => $projectService->favorite($project),
-            'unfavorite' => $projectService->unfavorite($project),
             'archive' => $projectService->archive($project),
             'unarchive' => $projectService->unarchive($project),
             default => response()->json(['message' => 'Invalid action'], 400)
