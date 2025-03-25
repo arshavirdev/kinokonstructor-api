@@ -39,6 +39,7 @@ class ProjectResource extends JsonResource
             'synopsis' => $this->synopsis,
             'relevance' => $this->relevance,
             'additional' => $this->resource->additional,
+            'created_at' => $this->created_at,
 
             'budget' => $this->when($can_view_budget, $this->budget),
             'co_financing' => $this->when($can_view_budget, $this->co_financing),
