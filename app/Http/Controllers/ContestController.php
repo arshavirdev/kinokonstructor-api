@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreContestRequest;
+use App\Http\Requests\UpdateContestRequest;
 use App\Http\Resources\ContestResource;
 use Illuminate\Http\Request;
 use App\Models\Contest;
@@ -30,7 +31,6 @@ class ContestController extends Controller
 
     public function store(StoreContestRequest $request)
     {
-        \Log::info(request()->all());
         $params = $request->except(['gallery', 'documents', 'logo', 'photo_gallery', 'partners', 'contacts']);
         $contest = Contest::create($params);
 
@@ -75,5 +75,20 @@ class ContestController extends Controller
         }
     
         return new ContestResource($contest);
+    }
+
+    public function update(UpdateContestRequest $request, Contest $contest)
+    {
+        $params = $request->validated();
+
+        $contest->fill($params);
+        $contest->save();
+
+        return new ContestResource($contest);
+    }
+
+    public function destroy(Contest $contest)
+    {
+        $contest->delete();
     }
 }

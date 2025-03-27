@@ -67,7 +67,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('dictionaries/{dictionary?}', [DictionaryController::class, 'show']);
         Route::apiResource('profiles', ProfileController::class, ['only' => ['index', 'show']]);
         Route::apiResource('locations', LocationController::class);
-        Route::apiResource('contests', ContestController::class, ['only' => ['index', 'show', 'store']]);
+        Route::apiResource('contests', ContestController::class);
 
         Route::apiResource('projects', ProjectController::class);
         Route::prefix('projects/{project}')->group(function () {

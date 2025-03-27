@@ -23,7 +23,7 @@ class ProjectResource extends JsonResource
         $is_privileged = in_array($user->role, ['admin', 'moderator']);
         $can_view_budget = $is_owner || $is_privileged;
         $organization = $this->owner->org
-            ? array_merge($this->owner->org, ['email' => $this->owner->user->email])
+            ? array_merge($this->owner->org, ['email' => $this->owner->user->email, 'id' => $this->owner->id])
             : [];
 
         return [

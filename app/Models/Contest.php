@@ -7,12 +7,16 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Spatie\Image\Manipulations;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use App\Traits\Favoritable;
+use App\Traits\Moderation\Moderatable;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Contest extends AppModel implements HasMedia
 {
     use HasFactory;
     use InteractsWithMedia;
+    use Moderatable;
+    use Favoritable;
 
     public const GALLERY = 'gallery';
     public const DOCUMENTS = 'documents';
