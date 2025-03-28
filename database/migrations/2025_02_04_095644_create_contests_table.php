@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('contests', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('owner_id')->constrained('profiles')->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('title');
             $table->string('type')->nullable();
             $table->string('years_held')->nullable();
@@ -25,10 +26,11 @@ return new class extends Migration
             $table->text('conditions')->nullable();
             $table->json('deadlines')->default('[]');
             $table->text('prizes')->nullable();
-            $table->text('adjudicator')->nullable();
+            $table->text('jury')->nullable();
             $table->text('organizers')->nullable();
             $table->string('online_application')->nullable();
-            $table->string('video')->nullable();
+            $table->string('video_link')->nullable();
+            $table->boolean('is_archived')->default(false);
         });
     }
 

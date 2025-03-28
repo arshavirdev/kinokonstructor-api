@@ -27,6 +27,7 @@ class Contest extends AppModel implements HasMedia
     public $timestamps = false;
 
     protected $fillable = [
+        'owner_id',
         'title',
         'type',
         'years_held',
@@ -37,15 +38,22 @@ class Contest extends AppModel implements HasMedia
         'conditions',
         'deadlines',
         'prizes',
-        'adjudicator',
+        'jury',
         'organizers',
         'online_application',  
-        'video'
+        'video_link',
+        'is_archived'
     ];
 
     protected $casts = [
-        'deadlines' => 'array'
+        'deadlines' => 'array',
+        'is_archived' => 'boolean'
     ];
+
+    public function owner()
+    {
+        return $this->belongsTo(Profile::class, 'owner_id');
+    }
 
     public function contacts(): HasOne
     {

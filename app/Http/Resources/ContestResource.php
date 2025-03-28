@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\Contest;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class ContestResource extends JsonResource
 {
@@ -15,6 +16,8 @@ class ContestResource extends JsonResource
      */
     public function toArray($request)
     {
+        $user = Auth::user();
+        $is_owner = (string) $this->owner_id === (string) $user?->profile?->id;
         return [
             'id' => $this->id,
             'title' => $this->title,
@@ -28,14 +31,17 @@ class ContestResource extends JsonResource
             'conditions' => $this->conditions,
             'deadlines' => $this->deadlines,
             'prizes' => $this->prizes,
-            'adjudicator' => $this->adjudicator,
+            'jury' => $this->jury,
             'organizers' => $this->organizers,
             'documents' => MediaResource::collection($this->getMedia(Contest::DOCUMENTS)),
             'online_application' => $this->online_application,
             'logo' => new MediaResource($this->getFirstMedia(Contest::LOGO)),
-            'video' => $this->video,
+            'video_link' => $this->video_link,
             'photo_gallery' => MediaResource::collection($this->getMedia(Contest::PHOTO_GALLERY)),
             'partners' => MediaResource::collection($this->getMedia(Contest::PARTNERS)),
+            'is_owner' => $is_owner,
+            'is_favorite' => (bool) $this->is_favorite,
+            'is_archived' => $this->is_archived,
             'contacts' => $this->when($this->contacts, [
                 'website' => $this->contacts->website,
                 'social_media' => $this->contacts->social_media,

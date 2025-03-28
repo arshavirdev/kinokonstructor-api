@@ -68,6 +68,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::apiResource('profiles', ProfileController::class, ['only' => ['index', 'show']]);
         Route::apiResource('locations', LocationController::class);
         Route::apiResource('contests', ContestController::class);
+        Route::post('/contests/{contest}/{action}', [ContestController::class, 'action'])
+                ->where('action', 'favorite|archive|unarchive');
 
         Route::apiResource('projects', ProjectController::class);
         Route::prefix('projects/{project}')->group(function () {

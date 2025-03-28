@@ -43,7 +43,7 @@ class StoreContestRequest extends FormRequest
             'deadlines.*.date' => 'nullable|date',
 
             'prizes' => 'nullable|string',
-            'adjudicator' => 'nullable|string',
+            'jury' => 'nullable|string',
             'organizers' => 'nullable|string',
             
             // Documents (Multiple Files)
@@ -53,7 +53,7 @@ class StoreContestRequest extends FormRequest
             'online_application' => 'nullable|string|max:255',
             // Logo (Single File)
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'video' => 'nullable|string',
+            'video_link' => 'nullable|string',
 
             // Photo Gallery (Multiple Images)
             'photo_gallery' => 'nullable|array',
