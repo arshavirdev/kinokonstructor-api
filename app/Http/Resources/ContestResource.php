@@ -18,6 +18,9 @@ class ContestResource extends JsonResource
     {
         $user = Auth::user();
         $is_owner = (string) $this->owner_id === (string) $user?->profile?->id;
+        $organization = $this->owner->org
+            ? array_merge($this->owner->org, ['email' => $this->owner->user->email])
+            : [];
         return [
             'id' => $this->id,
             'title' => $this->title,
@@ -39,17 +42,20 @@ class ContestResource extends JsonResource
             'video_link' => $this->video_link,
             'photo_gallery' => MediaResource::collection($this->getMedia(Contest::PHOTO_GALLERY)),
             'partners' => MediaResource::collection($this->getMedia(Contest::PARTNERS)),
+            'organization' => $organization,
             'is_owner' => $is_owner,
             'is_favorite' => (bool) $this->is_favorite,
             'is_archived' => $this->is_archived,
-            'contacts' => $this->when($this->contacts, [
-                'website' => $this->contacts->website,
-                'social_media' => $this->contacts->social_media,
-                'email' => $this->contacts->email,
-                'phone' => $this->contacts->phone,
-                'postal_address' => $this->contacts->postal_address,
-                'button_name' => $this->contacts->button_name
-            ])
+            'contacts' => isset($this->contacts)
+                ? [
+                    'website' => $this->contacts->website,
+                    'social_media' => $this->contacts->social_media,
+                    'email' => $this->contacts->email,
+                    'phone' => $this->contacts->phone,
+                    'postal_address' => $this->contacts->postal_address,
+                    'button_name' => $this->contacts->button_name
+                ]
+                : []
         ];
     }
 }

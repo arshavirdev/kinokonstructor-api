@@ -61,9 +61,12 @@ class Profile extends AppModel implements HasMedia
     {
         return Attribute::make(
             get: fn($value, $attributes) => $attributes['is_org'] ? [
+                'id' => $attributes['id'],
                 'reg_id' => $attributes['org_reg_id'],
                 'name' => $attributes['org_name'],
                 'position' => $attributes['org_position'],
+                'phone' => $attributes['phone'],
+                'socials_tg' => $attributes['socials_tg']
             ] : null,
             set: fn($value) => [
                 'is_org' => !is_null($value),
