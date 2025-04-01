@@ -24,8 +24,6 @@ class Contest extends AppModel implements HasMedia
     public const PHOTO_GALLERY = 'photo_gallery';
     public const PARTNERS = 'partners';
 
-    public $timestamps = false;
-
     protected $fillable = [
         'owner_id',
         'title',

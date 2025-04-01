@@ -9,8 +9,6 @@ class ContestContact extends Model
 {
     use HasFactory;
 
-    public $timestamps = false;
-
     protected $fillable = [
         'contest_id',
         'website',

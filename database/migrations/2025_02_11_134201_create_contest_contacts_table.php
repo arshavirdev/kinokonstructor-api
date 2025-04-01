@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->string('postal_address')->nullable();
             $table->string('button_name')->nullable();
+            $table->timestamps();
         });
     }
 

@@ -46,6 +46,7 @@ class ContestResource extends JsonResource
             'is_owner' => $is_owner,
             'is_favorite' => (bool) $this->is_favorite,
             'is_archived' => $this->is_archived,
+            'created_at' => $this->created_at,
             'contacts' => isset($this->contacts)
                 ? [
                     'website' => $this->contacts->website,

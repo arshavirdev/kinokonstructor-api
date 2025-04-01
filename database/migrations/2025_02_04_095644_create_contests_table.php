@@ -31,6 +31,7 @@ return new class extends Migration
             $table->string('online_application')->nullable();
             $table->string('video_link')->nullable();
             $table->boolean('is_archived')->default(false);
+            $table->timestamps();
         });
     }
 
