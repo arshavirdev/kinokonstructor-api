@@ -100,10 +100,57 @@ class ContestController extends Controller
 
     public function update(UpdateContestRequest $request, Contest $contest)
     {
-        $params = $request->validated();
+        $params = $request->except(['gallery', 'documents', 'logo', 'photo_gallery', 'partners', 'contacts']);
 
-        $contest->fill($params);
-        $contest->save();
+        // Update contest fields
+        $contest->update($params);
+
+        // Handle contacts
+        if ($request->has('contacts')) {
+            $contactsData = $request->input('contacts');
+            ContestContact::updateOrCreate(
+                ['contest_id' => $contest->id],
+                array_merge($contactsData, ['contest_id' => $contest->id])
+            );
+        }
+
+        // Handle gallery images
+        if ($request->hasFile('gallery')) {
+            $contest->clearMediaCollection(Contest::GALLERY);
+            foreach ($request->file('gallery') as $photo) {
+                $contest->addMedia($photo)->toMediaCollection(Contest::GALLERY);
+            }
+        }
+
+        // Handle document uploads
+        if ($request->hasFile('documents')) {
+            $contest->clearMediaCollection(Contest::DOCUMENTS);
+            foreach ($request->file('documents') as $document) {
+                $contest->addMedia($document)->toMediaCollection(Contest::DOCUMENTS);
+            }
+        }
+
+        // Handle logo upload (Replace old logo)
+        if ($request->hasFile('logo')) {
+            $contest->clearMediaCollection(Contest::LOGO);
+            $contest->addMedia($request->file('logo'))->toMediaCollection(Contest::LOGO);
+        }
+
+        // Handle photo gallery images
+        if ($request->hasFile('photo_gallery')) {
+            $contest->clearMediaCollection(Contest::PHOTO_GALLERY);
+            foreach ($request->file('photo_gallery') as $photo) {
+                $contest->addMedia($photo)->toMediaCollection(Contest::PHOTO_GALLERY);
+            }
+        }
+
+        // Handle partner images
+        if ($request->hasFile('partners')) {
+            $contest->clearMediaCollection(Contest::PARTNERS);
+            foreach ($request->file('partners') as $partner) {
+                $contest->addMedia($partner)->toMediaCollection(Contest::PARTNERS);
+            }
+        }
 
         return new ContestResource($contest);
     }
