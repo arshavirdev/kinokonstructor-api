@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\UserAdminController;
 use App\Http\Controllers\ContestController;
 use App\Http\Controllers\VerifyEmailController;
 use App\Http\Controllers\InviteController;
+use App\Http\Controllers\PasswordController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\TokenController;
@@ -40,6 +41,7 @@ Route::post('/auth/checkId', [MemberController::class, 'checkId']);
 
 
 Route::middleware(['auth:sanctum'])->group(function () {
+    Route::put('auth/user/password', [PasswordController::class,'update']);
     Route::controller(UserController::class)->prefix('user')->group(function () {
         Route::get('', 'showCurrentUser');
     });

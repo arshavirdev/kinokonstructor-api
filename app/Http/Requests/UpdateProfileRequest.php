@@ -30,6 +30,9 @@ class UpdateProfileRequest extends FormRequest
             'firstname' => 'string',
             'lastname' => 'string',
             'middlename' => 'string|nullable',
+            'username' => [
+                Rule::unique('users', 'username')->ignore(Auth::id())
+            ],
             'city' => 'string',
             'birthday' => 'date',
             'occupation_id' => 'array|min:1',
@@ -37,6 +40,7 @@ class UpdateProfileRequest extends FormRequest
             'phone' => [
                 Rule::unique('profiles', 'phone')->ignore(Auth::user()->profile->id)
             ],
+            'additional_information' => 'string|nullable',
 
             'org' => 'nullable',
             'org.reg_id' => 'numeric|required_unless:org,null',

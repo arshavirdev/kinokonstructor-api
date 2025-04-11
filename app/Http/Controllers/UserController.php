@@ -43,6 +43,11 @@ class UserController extends Controller
 
     private function syncRelations(Profile $profile, $params)
     {
+        if (isset($params['username'])) {
+            $user = $profile->user;
+            $user->username = $params['username'];
+            $user->save();
+        }
         if (isset($params['education']))
             $profile->education()->sync($params['education']);
 

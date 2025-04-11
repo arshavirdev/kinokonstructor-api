@@ -37,6 +37,7 @@ class Project extends AppModel implements HasMedia
         'basic' => [
             "title" => "string",
             "format" => "in:movie,series",
+            "short_description" => "string",
             "genre_type" => "in:documentary,fictional",
             "chronography" => "integer",
             "series_count" => "integer",
@@ -44,6 +45,7 @@ class Project extends AppModel implements HasMedia
             "genres.*" => "integer",
         ],
         "additional" => [
+            "detailed_description" => "string|max:500",
             "logline" => "string",
             "synopsis" => "string",
             "extended_synopsis" => "nullable",

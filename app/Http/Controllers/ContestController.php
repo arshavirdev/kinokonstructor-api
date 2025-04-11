@@ -22,6 +22,7 @@ class ContestController extends Controller
         $user = Auth::user();
         $query = Contest::query()
             ->with('owner')
+            ->where('is_archived', '=', false)
             ->orderBy('id', 'desc')
             ->withCount([
                 'favorites as is_favorite' => function ($query) use ($user) {

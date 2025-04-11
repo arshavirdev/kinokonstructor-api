@@ -54,7 +54,8 @@ class Profile extends AppModel implements HasMedia
         "socials_ok",
         'privacy_hide',
         'org',
-        'entrepreneur'
+        'entrepreneur',
+        'additional_information'
     ];
 
     public function org(): Attribute
