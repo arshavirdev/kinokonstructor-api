@@ -9,7 +9,14 @@ class Contact extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['contactable_id', 'contactable_type'];
+    protected $fillable = ['user_id', 'contactable_id', 'contactable_type', 'phone', 'email', 'website', 'socials'];
+
+    protected $casts = [
+        'phone' => 'array',
+        'email' => 'array',
+        'website' => 'array',
+        'socials' => 'array',
+    ];
 
     public function contactable()
     {

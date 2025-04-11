@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\Moderation\Moderatable;
+use App\Traits\Contactable;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -18,6 +19,7 @@ class Profile extends AppModel implements HasMedia
     use HasFactory;
     use InteractsWithMedia;
     use Moderatable;
+    use Contactable;
 
     public const AVATAR_MEDIA = 'avatar';
     public const ATTACHMENT_MEDIA = 'attachment';
@@ -139,6 +141,11 @@ class Profile extends AppModel implements HasMedia
     public function customProjects()
     {
         return $this->hasMany(ProfileCustomProjects::class);
+    }
+
+    public function contact()
+    {
+        return $this->morphOne(Contact::class, 'contactable');
     }
 
     public function scopeWhereFullname(Builder $query, string $search)

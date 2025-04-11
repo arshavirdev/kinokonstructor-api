@@ -66,6 +66,12 @@ class UpdateProfileRequest extends FormRequest
             'attachments' => 'array',
 //            'attachments.*' => '',
 
+            'contacts' => 'array',
+            'contacts.phone' => 'array',
+            'contacts.email' => 'array',
+            'contacts.website' => 'array',
+            'contacts.socials' => 'array',
+
             'education.*.id' => 'integer|nullable',
             'education.*.institution' => 'string',
             'education.*.speciality' => 'string',

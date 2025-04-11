@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProfileRequest;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Resources\UserResource;
+use App\Models\User;
 use App\Models\Profile;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
@@ -14,8 +15,7 @@ class UserController extends Controller
 {
     public function showCurrentUser()
     {
-        $user = Auth::user();
-        $user->load(['profile']);
+        $user = User::with(['profile.contact'])->find(Auth::id());
         return new UserResource($user);
     }
 
@@ -63,7 +63,7 @@ class UserController extends Controller
 
     public function createProfile(StoreProfileRequest $request)
     {
-        $user = Auth::user();
+        $user = User::with('profile.contact')->find(Auth::id());
 
         $params = $request->validated();
         $profile = $user->profile()->create($params);
@@ -71,14 +71,28 @@ class UserController extends Controller
         $this->syncMedia($profile, $params);
         $this->syncRelations($profile, $params);
 
+        // Handle contacts creation
+        if (isset($params['contacts'])) {
+            $contacts = $params['contacts'];
+
+            $profile->contact()->create([
+                'user_id' => $user->id,
+                'phone' => $contacts['phone'] ?? [],
+                'email' => $contacts['email'] ?? [],
+                'website' => $contacts['website'] ?? [],
+                'socials' => $contacts['socials'] ?? [],
+            ]);
+        }
+
         $profile->putToModeration();
+        $user->load('profile.contact');
 
         return new UserResource($user);
     }
 
     public function updateProfile(UpdateProfileRequest $request)
     {
-        $user = Auth::user();
+        $user = User::with('profile.contact')->find(Auth::id());
         $profile = $user->profile;
         if (!$profile) throw new ModelNotFoundException();
 
@@ -91,9 +105,25 @@ class UserController extends Controller
 
         $this->syncRelations($profile, $params);
 
+        // Handle contacts
+        if (isset($params['contacts'])) {
+            $contacts = $params['contacts'];
+            $profile->contact()->updateOrCreate(
+                ['user_id' => $user->id],
+                [
+                    'phone' => $contacts['phone'] ?? [],
+                    'email' => $contacts['email'] ?? [],
+                    'website' => $contacts['website'] ?? [],
+                    'socials' => $contacts['socials'] ?? [],
+                ]
+            );
+        }
+
         $fields = collect(['firstname', 'lastname', 'middlename', 'birthday', 'gender', 'city', 'occupation_ids']);
         if ($fields->some(fn($field) => isset($params[$field])))
             $profile->putToModeration();
+
+        $user->load('profile.contact');
 
         return new UserResource($user);
     }
