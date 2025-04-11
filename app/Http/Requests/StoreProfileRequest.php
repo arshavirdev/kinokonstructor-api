@@ -39,6 +39,7 @@ class StoreProfileRequest extends FormRequest
             'phone' => [
                 Rule::unique('profiles', 'phone')
             ],
+            "additional_information" => 'string|nullable',
 
             'org' => 'nullable',
             'org.reg_id' => 'numeric|required_unless:org,null',

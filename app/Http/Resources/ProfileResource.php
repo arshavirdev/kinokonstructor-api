@@ -42,6 +42,7 @@ class ProfileResource extends JsonResource
 
             'phone' => $this->when($showPhone, $this->phone),
             'email' => $this->when($showEmail, $this->user?->email),
+            'additional_information' => $this->additional_information,
             'socials_vk' => $this->when($showSocials, $this->socials_vk),
             'socials_tg' => $this->when($showSocials, $this->socials_tg),
             'socials_ok' => $this->when($showSocials, $this->socials_ok),

@@ -73,12 +73,13 @@ class UserController extends Controller
 
         $profile->putToModeration();
 
-        return [];
+        return new UserResource($user);
     }
 
     public function updateProfile(UpdateProfileRequest $request)
     {
-        $profile = Auth::user()->profile;
+        $user = Auth::user();
+        $profile = $user->profile;
         if (!$profile) throw new ModelNotFoundException();
 
         $params = $request->validated();
@@ -94,7 +95,7 @@ class UserController extends Controller
         if ($fields->some(fn($field) => isset($params[$field])))
             $profile->putToModeration();
 
-        return [];
+        return new UserResource($user);
     }
 
     public function contactOrganizer(ContactOrganizerRequest $request)
