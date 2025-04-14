@@ -65,6 +65,10 @@ class UserController extends Controller
     {
         $user = User::with('profile.contact')->find(Auth::id());
 
+        if ($user->profile) {
+            return response()->json(['message' => 'This user already has profile'], 400);   
+        }
+
         $params = $request->validated();
         $profile = $user->profile()->create($params);
 
