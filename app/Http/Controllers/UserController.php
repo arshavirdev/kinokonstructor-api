@@ -81,6 +81,7 @@ class UserController extends Controller
                 'email' => $contacts['email'] ?? [],
                 'website' => $contacts['website'] ?? [],
                 'socials' => $contacts['socials'] ?? [],
+                'other' => $contacts['other'] ?? [],
             ]);
         }
 
@@ -115,6 +116,7 @@ class UserController extends Controller
                     'email' => $contacts['email'] ?? [],
                     'website' => $contacts['website'] ?? [],
                     'socials' => $contacts['socials'] ?? [],
+                    'other' => $contacts['other'] ?? [],
                 ]
             );
         }

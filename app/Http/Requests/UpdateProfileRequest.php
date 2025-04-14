@@ -71,6 +71,7 @@ class UpdateProfileRequest extends FormRequest
             'contacts.email' => 'array',
             'contacts.website' => 'array',
             'contacts.socials' => 'array',
+            'contacts.other' => 'array',
 
             'education.*.id' => 'integer|nullable',
             'education.*.institution' => 'string',

@@ -23,6 +23,7 @@ return new class extends Migration
             $table->json('email')->default('[]');
             $table->json('website')->default('[]');
             $table->json('socials')->default('[]');
+            $table->json('other')->default('[]');
             $table->timestamps();
         });
     }

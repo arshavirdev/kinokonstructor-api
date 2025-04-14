@@ -62,6 +62,7 @@ class ProfileResource extends JsonResource
                     'email' => $this->contact->email ?? [],
                     'website' => $this->contact->website ?? [],
                     'socials' => $this->contact->socials ?? [],
+                    'other' => $this->contact->other ?? [],
                 ];
             }),
 
