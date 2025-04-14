@@ -62,7 +62,8 @@ class StoreProfileRequest extends FormRequest
             'privacy_hide.*' => 'string|in:phone,email,website,socials',
 
             'avatar' => 'file|nullable',
-            'attachments.*' => 'nullable',
+            'attachments' => 'array|nullable',
+            'attachments.*' => 'file|nullable',
 
             'contacts' => 'array',
             'contacts.phone' => 'array',

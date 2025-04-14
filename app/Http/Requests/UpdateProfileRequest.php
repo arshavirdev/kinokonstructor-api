@@ -63,8 +63,8 @@ class UpdateProfileRequest extends FormRequest
             'privacy_hide.*' => 'string|in:phone,email,website,socials',
 
             'avatar' => 'file|nullable',
-            'attachments' => 'array',
-//            'attachments.*' => '',
+            'attachments' => 'array|nullable',
+            'attachments.*' => 'file|nullable',
 
             'contacts' => 'array',
             'contacts.phone' => 'array',
