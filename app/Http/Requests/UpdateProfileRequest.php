@@ -60,7 +60,7 @@ class UpdateProfileRequest extends FormRequest
             'socials_ok' => 'string|nullable',
 
             'privacy_hide' => 'array',
-            'privacy_hide.*' => 'string|in:phone,email,socials',
+            'privacy_hide.*' => 'string|in:phone,email,website,socials',
 
             'avatar' => 'file|nullable',
             'attachments' => 'array',
