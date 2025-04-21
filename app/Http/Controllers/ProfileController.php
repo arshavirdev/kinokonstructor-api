@@ -33,7 +33,7 @@ class ProfileController extends Controller
             $query = $request->input('type') === 'actor' ? $query->isActor() : $query->isSpecialist();
 
         if ($request->has('fullname'))
-            $query = $query->whereFullname($request->input('fullname'));
+            $query = $query->whereLastName($request->input('fullname'));
 
         if ($request->has('status'))
             $query = $query->where('status', $request->input('status'));

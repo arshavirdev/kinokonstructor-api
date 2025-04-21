@@ -154,6 +154,12 @@ class Profile extends AppModel implements HasMedia
         return $query->whereRaw("(COALESCE(lastname, '') || ' ' || COALESCE(firstname, '') || ' ' || COALESCE(middlename, '')) % ?", $pattern);
     }
 
+    public function scopeWhereLastName(Builder $query, string $search)
+    {
+        $pattern = trim($search);
+        $query->whereRaw("lastname ILIKE ?", ["%$pattern%"]);
+    }
+
     public function scopeIsActor(Builder $query)
     {
         return $query->whereHas('occupations', function (Builder $query) {
