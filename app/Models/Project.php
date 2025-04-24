@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Traits\Favoritable;
 use App\Traits\Moderation\Moderatable;
+use App\Traits\Contactable;
+use App\Traits\Requestable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -14,6 +16,8 @@ class Project extends AppModel implements HasMedia
     use InteractsWithMedia;
     use Moderatable;
     use Favoritable;
+    use Contactable;
+    use Requestable;
 
     public const EXTENDED_SYNOPSIS_MEDIA = 'extended_synopsis';
     public const ATTACHMENTS_MEDIA = 'attachments';
@@ -31,6 +35,21 @@ class Project extends AppModel implements HasMedia
         self::CAST_MEDIA, self::DECORATIONS_MEDIA,
         self::LOCATIONS_MEDIA, self::FINANCIAL_PLAN_MEDIA,
         self::FINANCIAL_PROOF_MEDIA, self::PARTNERSHIP_PROOF_MEDIA
+    ];
+    public const SYNOPSYS = 'synopsys';
+    public const SCENARIO = 'scenario';
+    public const DIRECTOR = 'director';
+    public const PRODUCER = 'producer';
+    public const ESTIMATE = 'estimate';
+    public const PLAN = 'plan';
+
+    public const MEDIA_FILE_TYPES_MAPPING = [
+        'synopsys' => self::SYNOPSYS,
+        'scenario' => self::SCENARIO,
+        'director' => self::DIRECTOR,
+        'producer' => self::PRODUCER,
+        'estimate' => self::ESTIMATE,
+        'plan' => self::PLAN
     ];
 
     public static $validation = [
@@ -66,6 +85,14 @@ class Project extends AppModel implements HasMedia
             "partnership_proof" => "nullable",
             "custom_members" => "array",
             "members" => "array",
+            "start_date" => "date",
+            "end_date" => "date",
+            "years_rating" => "string",
+            "region_id" => "integer",
+            "city" => "string",
+            "profile_contacts" => "array",
+            "requests" => "array",
+            "files_section" => "array"
         ]
     ];
 
@@ -73,6 +100,12 @@ class Project extends AppModel implements HasMedia
         "id",
         "owner_id",
         "title",
+        "start_date",
+        "end_date",
+        "years_rating",
+        "region_id",
+        "city",
+        "applicant_id",
         "format",
         "genre_type",
         "chronography",
@@ -113,11 +146,20 @@ class Project extends AppModel implements HasMedia
         return $this->belongsTo(Profile::class, 'owner_id');
     }
 
+    public function region()
+    {
+        return $this->belongsTo(Region::class, 'region_id');
+    }
+
     public function reports()
     {
         return $this->morphMany(Report::class, 'reportable');
     }
 
+    public function contact()
+    {
+        return $this->morphOne(Contact::class, 'contactable');
+    }
 
 
     public function registerMediaCollections(): void

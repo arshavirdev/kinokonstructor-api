@@ -13,6 +13,9 @@ use Illuminate\Http\Request;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
+use App\Models\Profile;
+use App\Models\Request as ModelsRequest;
+use Illuminate\Support\Facades\DB;
 
 class ProjectController extends Controller
 {
@@ -92,14 +95,102 @@ class ProjectController extends Controller
      */
     public function store(StoreProjectRequest $request)
     {
-        $projectData = $request->validated();
-        $projectData['owner_id'] = Auth::user()->profile->id;
-        $project = Project::create($projectData);
+        DB::beginTransaction();
 
-        $this->syncMedia($project, $projectData);
-        $this->syncRelations($project, $projectData);
+        try {
+            $user = Auth::user();
+            $projectData = $request->except(['files_section']);
+            $projectData['owner_id'] = $user->profile->id;
 
-        return new ProjectResource($project);
+            $project = Project::create($projectData);
+
+            // Handle requests section
+            if (isset($projectData['requests'])) {
+                $data = $projectData['requests'];
+
+                foreach (ModelsRequest::REQUEST_TYPE_MAPPING as $key => $type) {
+                    if (!empty($data[$key]) && is_array($data[$key])) {
+                        foreach ($data[$key] as $entry) {
+                            $project->requests()->create([
+                                'user_id' => $user->id,
+                                'name' => $entry['name'] ?? '',
+                                'location' => $entry['location'] ?? '',
+                                'season' => $entry['season'] ?? '',
+                                'info' => $entry['info'] ?? '',
+                                'type' => $type,
+                            ]);
+                        }
+                    }
+                }
+            }
+
+            // Handle project contacts creation
+            if (isset($projectData['project_contacts'])) {
+                $contacts = $projectData['project_contacts'];
+
+                $project->contact()->create([
+                    'user_id' => $user->id,
+                    'phone' => $contacts['phone'] ?? [],
+                    'email' => $contacts['email'] ?? [],
+                    'website' => $contacts['website'] ?? [],
+                    'socials' => $contacts['socials'] ?? [],
+                    'other' => $contacts['other'] ?? [],
+                ]);
+            }
+
+            // Handle applicant(profile) and applicant contacts creation
+            if (isset($projectData['profile_contacts'])) {
+                $applicant = new Profile();
+
+                $nameParts = preg_split('/\s+/', trim($projectData['profile_full_name']));
+
+                $occupation_ids = $projectData['profile_occupation_ids'];
+                $newApplicant = $applicant->create([
+                    'firstname' => $nameParts[0] ?? '',
+                    'lastname' => $nameParts[1] ?? '',
+                    'middlename' => $nameParts[2] ?? '',
+                    'gender' => 'm',
+                    'occupation_ids' => $occupation_ids
+                ]);
+                $project->applicant_id = $newApplicant->id;
+
+                $applicantContacts = $projectData['profile_contacts'];
+
+                $newApplicant->contact()->create([
+                    'user_id' => $user->id,
+                    'phone' => $applicantContacts['phone'] ?? [],
+                    'email' => $applicantContacts['email'] ?? [],
+                    'website' => $applicantContacts['website'] ?? [],
+                    'socials' => $applicantContacts['socials'] ?? [],
+                    'other' => $applicantContacts['other'] ?? [],
+                ]);
+            }
+
+            // Handle file uploads from files_section
+            if ($request->has('files_section')) {
+
+                foreach (Project::MEDIA_FILE_TYPES_MAPPING as $sectionKey => $mediaCollection) {
+                    $sectionGroups = $request->file("files_section.$sectionKey", []);
+
+                    foreach ($sectionGroups as $group) {
+                        $files = $group['files'] ?? [];
+
+                        foreach ($files as $file) {
+                            if ($file && $file->isValid()) {
+                                $project->addMedia($file)->toMediaCollection($mediaCollection);
+                            }
+                        }
+                    }
+                }
+            }
+
+            DB::commit();
+
+            return new ProjectResource($project);
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -180,7 +271,6 @@ class ProjectController extends Controller
                 $project->clearMediaCollection($key);
                 $project->addMedia($params[$key])->toMediaCollection($key);
             } else {
-
             }
         }
         foreach ($medias as $key) {
@@ -196,9 +286,7 @@ class ProjectController extends Controller
         }
     }
 
-    private function syncRelations(Project $project, $params)
-    {
-    }
+    private function syncRelations(Project $project, $params) {}
 
     public function indexLocations(Project $project)
     {

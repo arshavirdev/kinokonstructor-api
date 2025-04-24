@@ -40,6 +40,12 @@ class ProjectResource extends JsonResource
             'relevance' => $this->relevance,
             'additional' => $this->resource->additional,
             'created_at' => $this->created_at,
+            "start_date" => $this->start_date,
+            "end_date" => $this->end_date,
+            "years_rating" => $this->years_rating,
+            "region_id" => $this->region_id,
+            "city" => $this->city,
+            "applicant_id" => $this->applicant_id,
 
             'budget' => $this->when($can_view_budget, $this->budget),
             'co_financing' => $this->when($can_view_budget, $this->co_financing),
@@ -72,6 +78,16 @@ class ProjectResource extends JsonResource
                 'email' => \Arr::get($moderation, 'data.email'),
                 'data' => $moderation?->data
             ], null),
+
+            'contacts' => $this->whenLoaded('contact', function () {
+                return [
+                    'phone' => $this->contact->phone ?? [],
+                    'email' => $this->contact->email ?? [],
+                    'website' => $this->contact->website ?? [],
+                    'socials' => $this->contact->socials ?? [],
+                    'other' => $this->contact->other ?? [],
+                ];
+            }),
 
             'is_favorite' => (bool) $this->is_favorite,
             'is_archived' => $this->is_archived
