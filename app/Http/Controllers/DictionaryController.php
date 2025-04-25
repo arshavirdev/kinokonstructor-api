@@ -11,6 +11,7 @@ class DictionaryController extends Controller
     {
         return [
             'occupations' => Occupation::all(),
+            'applicant_occupations' => Occupation::whereIn('id', [56, 92, 103, 109, 175, 176, 177])->get(),
             'regions' => Region::all(),
         ];
     }
@@ -19,6 +20,7 @@ class DictionaryController extends Controller
     {
         if (!$dictionary) return $this->list();
         if ($dictionary === 'occupations') return Occupation::all();
+        if ($dictionary === 'applicant_occupations') return Occupation::whereIn('id', [56, 92, 103, 109, 175, 176, 177])->get();
         if ($dictionary === 'regions') return Region::all();
         abort(404, 'Dictionary not found');
     }
