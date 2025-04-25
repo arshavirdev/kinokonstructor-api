@@ -173,10 +173,12 @@ class ProjectController extends Controller
                     'lastname' => $nameParts[1] ?? '',
                     'middlename' => $nameParts[2] ?? '',
                     'gender' => 'm',
-                    'occupation_ids' => $occupation_ids,
                     'privacy_hide' => $profile_privacy_hide
                 ]);
+                $newApplicant->occupations()->sync($occupation_ids);
+
                 $project->applicant_id = $newApplicant->id;
+                $project->save();
 
                 $applicantContacts = $projectData['applicant_contacts'];
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Profile;
 use App\Models\Project;
 use App\Traits\Moderation\Status;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -25,6 +26,8 @@ class ProjectResource extends JsonResource
         $organization = $this->owner->org
             ? array_merge($this->owner->org, ['email' => $this->owner->user->email, 'id' => $this->owner->id])
             : [];
+        $applicant = new ProfileResource(Profile::find($this->applicant_id));
+        $applicantContacts = $applicant->contact;
 
         return [
             'id' => $this->id,
@@ -46,6 +49,15 @@ class ProjectResource extends JsonResource
             "region_id" => $this->region_id,
             "city" => $this->city,
             "applicant_id" => $this->applicant_id,
+            'applicant_full_name' => $applicant->fullName,
+            'applicant_occupation_ids' => $applicant->occupations->pluck('id'),
+            'applicant_contacts' => [
+                'phone' => $applicantContacts->phone,
+                'email' => $applicantContacts->email,
+                'website' => $applicantContacts->website,
+                'socials' => $applicantContacts->socials,
+                'other' => $applicantContacts->other
+            ],
 
             'budget' => $this->when($can_view_budget, $this->budget),
             'co_financing' => $this->when($can_view_budget, $this->co_financing),
