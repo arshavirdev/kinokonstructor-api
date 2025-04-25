@@ -108,9 +108,9 @@ class ProjectController extends Controller
             if (isset($projectData['requests'])) {
                 $data = $projectData['requests'];
 
-                foreach (ModelsRequest::REQUEST_TYPE_MAPPING as $key => $type) {
-                    if (!empty($data[$key]) && is_array($data[$key])) {
-                        foreach ($data[$key] as $entry) {
+                foreach (ModelsRequest::REQUEST_TYPES as $type) {
+                    if (!empty($data[$type]) && is_array($data[$type])) {
+                        foreach ($data[$type] as $entry) {
                             $project->requests()->create([
                                 'user_id' => $user->id,
                                 'name' => $entry['name'] ?? '',
@@ -152,19 +152,19 @@ class ProjectController extends Controller
             }
 
             // Handle applicant(profile) and applicant contacts creation
-            if (isset($projectData['profile_contacts'])) {
+            if (isset($projectData['applicant_contacts'])) {
                 $applicant = new Profile();
 
-                $nameParts = preg_split('/\s+/', trim($projectData['profile_full_name']));
-                $occupation_ids = $projectData['profile_occupation_ids'];
+                $nameParts = preg_split('/\s+/', trim($projectData['applicant_full_name']));
+                $occupation_ids = $projectData['applicant_occupation_ids'];
 
                 $profile_privacy_hide = [];
 
-                if ($projectData['profile_contacts']['telVisible'] === false) {
+                if ($projectData['applicant_contacts']['telVisible'] === false) {
                     $profile_privacy_hide[] = 'phone';
                 }
 
-                if ($projectData['profile_contacts']['emailVisible'] === false) {
+                if ($projectData['applicant_contacts']['emailVisible'] === false) {
                     $profile_privacy_hide[] = 'email';
                 }
 
@@ -178,7 +178,7 @@ class ProjectController extends Controller
                 ]);
                 $project->applicant_id = $newApplicant->id;
 
-                $applicantContacts = $projectData['profile_contacts'];
+                $applicantContacts = $projectData['applicant_contacts'];
 
                 $newApplicant->contact()->create([
                     'user_id' => $user->id,

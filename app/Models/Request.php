@@ -9,11 +9,11 @@ class Request extends Model
 {
     use HasFactory;
 
-    const REQUEST_TYPE_MAPPING = [
-        'location_requests' => 'location',
-        'equipment_requests' => 'equipment',
-        'specialists_requests' => 'specialist',
-        'other_requests' => 'other',
+    const REQUEST_TYPES = [
+        'location',
+        'equipment',
+        'specialist',
+        'other',
     ];
 
     protected $fillable = [
