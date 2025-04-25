@@ -63,6 +63,13 @@ class ProjectResource extends JsonResource
             'decorations' => new MediaResource($this->getFirstMedia(Project::DECORATIONS_MEDIA)),
             'location_reference' => new MediaResource($this->getFirstMedia(Project::LOCATIONS_MEDIA)),
 
+            'synopsys' => MediaResource::collection($this->getMedia(Project::SYNOPSYS)),
+            'scenario' => MediaResource::collection($this->getMedia(Project::SCENARIO)),
+            'director' => MediaResource::collection($this->getMedia(Project::DIRECTOR)),
+            'producer' => MediaResource::collection($this->getMedia(Project::PRODUCER)),
+            'estimate' => MediaResource::collection($this->getMedia(Project::ESTIMATE)),
+            'plan' => MediaResource::collection($this->getMedia(Project::PLAN)),
+
             'financial_plan' => $this->when($can_view_budget, new MediaResource($this->getFirstMedia(Project::FINANCIAL_PLAN_MEDIA))),
             'financial_proof' => $this->when($can_view_budget, new MediaResource($this->getFirstMedia(Project::FINANCIAL_PROOF_MEDIA))),
 
