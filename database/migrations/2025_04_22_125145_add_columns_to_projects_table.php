@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('years_rating')->nullable();
             $table->foreignIdFor(Region::class)->nullable()->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('city')->nullable();
+            $table->jsonb('privacy_hide')->default('[]');
         });
     }
 
@@ -32,7 +33,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('projects', function (Blueprint $table) {
-            $table->dropColumn(['start_date', 'end_date', 'applicant_id', 'years_rating', 'region_id', 'city']);
+            $table->dropColumn(['start_date', 'end_date', 'applicant_id', 'years_rating', 'region_id', 'city', 'privacy_hide']);
         });
     }
 };

@@ -128,6 +128,19 @@ class ProjectController extends Controller
             if (isset($projectData['project_contacts'])) {
                 $contacts = $projectData['project_contacts'];
 
+                $project_privacy_hide = [];
+
+                if ($projectData['project_contacts']['telVisible'] === false) {
+                    $project_privacy_hide[] = 'phone';
+                }
+
+                if ($projectData['project_contacts']['emailVisible'] === false) {
+                    $project_privacy_hide[] = 'email';
+                }
+
+                $project->privacy_hide = $project_privacy_hide;
+                $project->save();
+
                 $project->contact()->create([
                     'user_id' => $user->id,
                     'phone' => $contacts['phone'] ?? [],
@@ -143,14 +156,25 @@ class ProjectController extends Controller
                 $applicant = new Profile();
 
                 $nameParts = preg_split('/\s+/', trim($projectData['profile_full_name']));
-
                 $occupation_ids = $projectData['profile_occupation_ids'];
+
+                $profile_privacy_hide = [];
+
+                if ($projectData['profile_contacts']['telVisible'] === false) {
+                    $profile_privacy_hide[] = 'phone';
+                }
+
+                if ($projectData['profile_contacts']['emailVisible'] === false) {
+                    $profile_privacy_hide[] = 'email';
+                }
+
                 $newApplicant = $applicant->create([
                     'firstname' => $nameParts[0] ?? '',
                     'lastname' => $nameParts[1] ?? '',
                     'middlename' => $nameParts[2] ?? '',
                     'gender' => 'm',
-                    'occupation_ids' => $occupation_ids
+                    'occupation_ids' => $occupation_ids,
+                    'privacy_hide' => $profile_privacy_hide
                 ]);
                 $project->applicant_id = $newApplicant->id;
 

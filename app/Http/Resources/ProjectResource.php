@@ -97,7 +97,8 @@ class ProjectResource extends JsonResource
             }),
 
             'is_favorite' => (bool) $this->is_favorite,
-            'is_archived' => $this->is_archived
+            'is_archived' => $this->is_archived,
+            'privacy_hide' => $this->privacy_hide
         ];
     }
 }

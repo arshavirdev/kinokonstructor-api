@@ -62,6 +62,8 @@ class Project extends AppModel implements HasMedia
             "series_count" => "integer",
             "genres" => "array",
             "genres.*" => "integer",
+            'privacy_hide' => 'array',
+            'privacy_hide.*' => 'string|in:phone,email,website,socials',
         ],
         "additional" => [
             "detailed_description" => "string|max:500",
@@ -119,7 +121,8 @@ class Project extends AppModel implements HasMedia
         "budget",
         "co_financing",
         "custom_members",
-        "is_archived"
+        "is_archived",
+        'privacy_hide'
     ];
 
     protected $casts = [
@@ -128,7 +131,8 @@ class Project extends AppModel implements HasMedia
         'custom_members' => 'array',
         'budget' => 'integer',
         'co_financing' => 'integer',
-        'is_archived' => 'boolean'
+        'is_archived' => 'boolean',
+        'privacy_hide' => 'array'
     ];
 
     public function memberInvites()
