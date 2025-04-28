@@ -4,7 +4,9 @@ namespace App\Http\Resources;
 
 use App\Models\Profile;
 use App\Models\Project;
+use App\Models\Request;
 use App\Traits\Moderation\Status;
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,16 +22,14 @@ class ProjectResource extends JsonResource
     {
         $user = Auth::user();
         $moderation = \Arr::get($this->moderationStatus, '0');
-        $is_owner = (string) $this->owner_id === (string) $user?->profile?->id;
+        $is_owner = (string)$this->owner_id === (string)$user?->profile?->id;
         $is_privileged = in_array($user->role, ['admin', 'moderator']);
         $can_view_budget = $is_owner || $is_privileged;
         $organization = $this->owner->org
             ? array_merge($this->owner->org, ['email' => $this->owner->user->email, 'id' => $this->owner->id])
             : [];
-
-        if ($this->applicant_id) {
-            $applicant = new ProfileResource(Profile::find($this->applicant_id));
-        }
+        $start_date = Carbon::parse($this->start_date);
+        $end_data = Carbon::parse($this->end_date);
 
         return [
             'id' => $this->id,
@@ -47,18 +47,19 @@ class ProjectResource extends JsonResource
             'created_at' => $this->created_at,
             "start_date" => $this->start_date,
             "end_date" => $this->end_date,
+            'days_left' => $end_data->diffInDays($start_date),
             "years_rating" => $this->years_rating,
             "region_id" => $this->region_id,
             "city" => $this->city,
             "applicant_id" => $this->applicant_id,
-            'applicant_full_name' => isset($applicant) ? $applicant->fullName : '',
-            'applicant_occupation_ids' => isset($applicant) ? $applicant->occupations->pluck('id') : [],
+            'applicant_full_name' => isset($this->applicant) ? $this->applicant->fullName : '',
+            'applicant_occupation_ids' => isset($this->applicant) ? $this->applicant->occupations->pluck('id') : [],
             'applicant_contacts' => [
-                'phone' => isset($applicant->contact) ? $applicant->contact->phone : [],
-                'email' => isset($applicant->contact) ? $applicant->contact->email : [],
-                'website' => isset($applicant->contact) ? $applicant->contact->website : [],
-                'socials' => isset($applicant->contact) ? $applicant->contact->socials : [],
-                'other' => isset($applicant->contact) ? $applicant->contact->other : []
+                'phone' => isset($this->applicant->contact) ? $this->applicant->contact->phone : [],
+                'email' => isset($this->applicant->contact) ? $this->applicant->contact->email : [],
+                'website' => isset($this->applicant->contact) ? $this->applicant->contact->website : [],
+                'socials' => isset($this->applicant->contact) ? $this->applicant->contact->socials : [],
+                'other' => isset($this->applicant->contact) ? $this->applicant->contact->other : []
             ],
 
             'budget' => $this->when($can_view_budget, $this->budget),
@@ -76,13 +77,6 @@ class ProjectResource extends JsonResource
             'makeup' => new MediaResource($this->getFirstMedia(Project::MAKEUP_MEDIA)),
             'decorations' => new MediaResource($this->getFirstMedia(Project::DECORATIONS_MEDIA)),
             'location_reference' => new MediaResource($this->getFirstMedia(Project::LOCATIONS_MEDIA)),
-
-            'synopsys' => MediaResource::collection($this->getMedia(Project::SYNOPSYS)),
-            'scenario' => MediaResource::collection($this->getMedia(Project::SCENARIO)),
-            'director' => MediaResource::collection($this->getMedia(Project::DIRECTOR)),
-            'producer' => MediaResource::collection($this->getMedia(Project::PRODUCER)),
-            'estimate' => MediaResource::collection($this->getMedia(Project::ESTIMATE)),
-            'plan' => MediaResource::collection($this->getMedia(Project::PLAN)),
 
             'financial_plan' => $this->when($can_view_budget, new MediaResource($this->getFirstMedia(Project::FINANCIAL_PLAN_MEDIA))),
             'financial_proof' => $this->when($can_view_budget, new MediaResource($this->getFirstMedia(Project::FINANCIAL_PROOF_MEDIA))),
@@ -110,11 +104,26 @@ class ProjectResource extends JsonResource
                 ];
             }),
 
-            'is_favorite' => (bool) $this->is_favorite,
+            'is_favorite' => (bool)$this->is_favorite,
             'is_archived' => $this->is_archived,
             'privacy_hide' => $this->privacy_hide,
             'project_images' => MediaResource::collection($this->getMedia(Project::IMAGES)),
-            'requests' => $this->requests()
+            'total_requests_count' => $this->requests->count(),
+            'requests' => [
+                Request::LOCATION_REQUEST => RequestResource::collection($this->requests->where('type', Request::LOCATION_REQUEST)),
+                Request::SPECIFICATION_REQUEST => RequestResource::collection($this->requests->where('type', Request::SPECIFICATION_REQUEST)),
+                Request::EQUIPMENT_REQUEST => RequestResource::collection($this->requests->where('type', Request::EQUIPMENT_REQUEST)),
+                Request::OTHER_REQUEST => RequestResource::collection($this->requests->where('type', Request::OTHER_REQUEST)),
+                Request::SERVICES_REQUEST => RequestResource::collection($this->requests->where('type', Request::SERVICES_REQUEST)),
+            ],
+            'files_section' => [
+                Project::SYNOPSYS => MediaResource::collection($this->getMedia(Project::SYNOPSYS)),
+                Project::SCENARIO => MediaResource::collection($this->getMedia(Project::SCENARIO)),
+                Project::DIRECTOR => MediaResource::collection($this->getMedia(Project::DIRECTOR)),
+                Project::PRODUCER => MediaResource::collection($this->getMedia(Project::PRODUCER)),
+                Project::ESTIMATE => MediaResource::collection($this->getMedia(Project::ESTIMATE)),
+                Project::PLAN => MediaResource::collection($this->getMedia(Project::PLAN)),
+            ],
         ];
     }
 }

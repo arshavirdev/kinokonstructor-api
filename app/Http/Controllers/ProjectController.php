@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreProjectRequestNEW;
+use App\Http\Requests\UpdateProjectRequestNEW;
 use App\Http\Resources\ProjectBriefResource;
 use App\Http\Resources\ProjectLocationResource;
 use App\Http\Resources\ProjectResource;
@@ -9,13 +11,13 @@ use App\Http\Resources\ProjectResource;
 use Auth;
 use App\Service\ProjectService;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
-use App\Models\Profile;
-use App\Models\Request as ModelsRequest;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\Response;
 
 class ProjectController extends Controller
 {
@@ -32,7 +34,7 @@ class ProjectController extends Controller
                 'favorites as is_favorite' => function ($query) use ($user) {
                     $query->where('user_id', $user->id);
                 }
-            ]);
+            ])->orderBy('created_at', 'desc');
 
         if ($request->has('type')) {
             $type = $request->get('type');
@@ -90,142 +92,24 @@ class ProjectController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \App\Http\Requests\StoreProjectRequest $request
-     * @return \Illuminate\Http\Response
+     * @param StoreProjectRequestNEW $request
+     * @param ProjectService $projectService
+     * @return JsonResponse|ProjectResource
      */
-    public function store(StoreProjectRequest $request)
+    public function store(StoreProjectRequestNEW $request, ProjectService $projectService): JsonResponse|ProjectResource
     {
-        DB::beginTransaction();
+        $request->validated();
 
         try {
-            $user = Auth::user();
-            $projectData = $request->except(['files_section']);
-            $projectData['owner_id'] = $user->profile->id;
-
-            $project = Project::create($projectData);
-
-            // Handle requests section
-            if (isset($projectData['requests'])) {
-                $data = $projectData['requests'];
-
-                foreach (ModelsRequest::REQUEST_TYPES as $type) {
-                    if (!empty($data[$type]) && is_array($data[$type])) {
-                        foreach ($data[$type] as $entry) {
-                            $project->requests()->create([
-                                'user_id' => $user->id,
-                                'name' => $entry['name'] ?? '',
-                                'location' => $entry['location'] ?? '',
-                                'season' => $entry['season'] ?? '',
-                                'info' => $entry['info'] ?? '',
-                                'type' => $type,
-                            ]);
-                        }
-                    }
-                }
-            }
-
-            // Handle project contacts creation
-            if (isset($projectData['project_contacts'])) {
-                $contacts = $projectData['project_contacts'];
-
-                $project_privacy_hide = [];
-
-                if ($projectData['project_contacts']['telVisible'] === false) {
-                    $project_privacy_hide[] = 'phone';
-                }
-
-                if ($projectData['project_contacts']['emailVisible'] === false) {
-                    $project_privacy_hide[] = 'email';
-                }
-
-                $project->privacy_hide = $project_privacy_hide;
-                $project->save();
-
-                $project->contact()->create([
-                    'user_id' => $user->id,
-                    'phone' => $contacts['phone'] ?? [],
-                    'email' => $contacts['email'] ?? [],
-                    'website' => $contacts['website'] ?? [],
-                    'socials' => $contacts['socials'] ?? [],
-                    'other' => $contacts['other'] ?? [],
-                ]);
-            }
-
-            // Handle applicant(profile) and applicant contacts creation
-            if (isset($projectData['applicant_contacts'])) {
-                $applicant = new Profile();
-
-                $nameParts = preg_split('/\s+/', trim($projectData['applicant_full_name']));
-                $occupation_ids = $projectData['applicant_occupation_ids'];
-
-                $profile_privacy_hide = [];
-
-                if ($projectData['applicant_contacts']['telVisible'] === false) {
-                    $profile_privacy_hide[] = 'phone';
-                }
-
-                if ($projectData['applicant_contacts']['emailVisible'] === false) {
-                    $profile_privacy_hide[] = 'email';
-                }
-
-                $newApplicant = $applicant->create([
-                    'firstname' => $nameParts[0] ?? '',
-                    'lastname' => $nameParts[1] ?? '',
-                    'middlename' => $nameParts[2] ?? '',
-                    'gender' => 'm',
-                    'privacy_hide' => $profile_privacy_hide
-                ]);
-                $newApplicant->occupations()->sync($occupation_ids);
-
-                $project->applicant_id = $newApplicant->id;
-                $project->save();
-
-                $applicantContacts = $projectData['applicant_contacts'];
-
-                $newApplicant->contact()->create([
-                    'user_id' => $user->id,
-                    'phone' => $applicantContacts['phone'] ?? [],
-                    'email' => $applicantContacts['email'] ?? [],
-                    'website' => $applicantContacts['website'] ?? [],
-                    'socials' => $applicantContacts['socials'] ?? [],
-                    'other' => $applicantContacts['other'] ?? [],
-                ]);
-            }
-
-            // Handle file uploads from files_section
-            if ($request->has('files_section')) {
-
-                foreach (Project::MEDIA_FILE_TYPES_MAPPING as $sectionKey => $mediaCollection) {
-                    $sectionGroups = $request->file("files_section.$sectionKey", []);
-
-                    foreach ($sectionGroups as $group) {
-                        $files = $group['files'] ?? [];
-
-                        foreach ($files as $file) {
-                            if ($file && $file->isValid()) {
-                                $project->addMedia($file)->toMediaCollection($mediaCollection);
-                            }
-                        }
-                    }
-                }
-            }
-
-            if ($request->has('project_images')) {
-                $projectImages = $request->file('project_images');
-                foreach ($projectImages as $image) {
-                    $file = $image;
-                    if ($file && $file->isValid()) {
-                        $project->addMedia($file)->toMediaCollection(Project::IMAGES);
-                    }
-                }
-            }
-
-            DB::commit();
+            $project = DB::transaction(function () use ($request, $projectService) {
+                return $projectService->store($request);
+            });
 
             return new ProjectResource($project);
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            return response()->json(['error' => $e->getMessage()], 500);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -247,21 +131,23 @@ class ProjectController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \App\Http\Requests\UpdateProjectRequest $request
-     * @param \App\Models\Project $project
-     * @return \Illuminate\Http\Response
+     * @param UpdateProjectRequest $request
+     * @param ProjectService $projectService
+     * @return ProjectResource|JsonResponse
      */
-    public function update(UpdateProjectRequest $request, Project $project)
+    public function update(Project $project, UpdateProjectRequestNEW $request, ProjectService $projectService): ProjectResource|JsonResponse
     {
-        $params = $request->validated();
+        try {
+            $project = DB::transaction(function () use ($request, $projectService, $project) {
+                return $projectService->update($request, $project);
+            });
 
-        $this->syncMedia($project, $params);
-        $project->fill($params);
-        $project->save();
-
-        $this->syncRelations($project, $params);
-
-        return [];
+            return new ProjectResource($project);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
     public function moderate(Project $project): array

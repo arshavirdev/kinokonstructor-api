@@ -10,6 +10,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
+/**
+ * @property number applicant_id
+ * @property Profile $applicant
+ * @property Request[] $requests
+ */
 class Project extends AppModel implements HasMedia
 {
     use HasFactory;
@@ -46,6 +51,15 @@ class Project extends AppModel implements HasMedia
     public const ESTIMATE = 'estimate';
     public const PLAN = 'plan';
 
+    public const MEDIA_FILE_TYPES = [
+        self::SYNOPSYS,
+        self::SCENARIO,
+        self::DIRECTOR,
+        self::PRODUCER,
+        self::ESTIMATE,
+        self::PLAN
+    ];
+
     public const MEDIA_FILE_TYPES_MAPPING = [
         'synopsys' => self::SYNOPSYS,
         'scenario' => self::SCENARIO,
@@ -57,8 +71,8 @@ class Project extends AppModel implements HasMedia
 
     public static $validation = [
         'basic' => [
-            "title" => "required|string",
-            "format" => "required|in:movie,series",
+            "title" => "string",
+            "format" => "in:movie,series",
             "short_description" => "string",
             "genre_type" => "in:documentary,fictional",
             "chronography" => "integer",
@@ -168,6 +182,10 @@ class Project extends AppModel implements HasMedia
         return $this->morphOne(Contact::class, 'contactable');
     }
 
+    public function applicant()
+    {
+        return $this->belongsTo(Profile::class, 'applicant_id');
+    }
 
     public function registerMediaCollections(): void
     {
