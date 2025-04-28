@@ -83,7 +83,7 @@ class ProjectController extends Controller
         if ($request->has('genre_type'))
             $query = $query->where('genre_type', $request->input('genre_type'));
 
-        $projects = $query->paginate($request->input('pageSize', 10));
+        $projects = $query->orderBy('created_at')->paginate($request->input('pageSize', 10));
         return ProjectBriefResource::collection($projects);
     }
 
@@ -206,6 +206,16 @@ class ProjectController extends Controller
                                 $project->addMedia($file)->toMediaCollection($mediaCollection);
                             }
                         }
+                    }
+                }
+            }
+
+            if ($request->has('project_images')) {
+                $projectImages = $request->file('project_images');
+                foreach ($projectImages as $image) {
+                    $file = $image;
+                    if ($file && $file->isValid()) {
+                        $project->addMedia($file)->toMediaCollection(Project::IMAGES);
                     }
                 }
             }

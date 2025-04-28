@@ -29,6 +29,9 @@ class Project extends AppModel implements HasMedia
     public const FINANCIAL_PLAN_MEDIA = 'financial_plan';
     public const FINANCIAL_PROOF_MEDIA = 'financial_proof';
     public const PARTNERSHIP_PROOF_MEDIA = 'partnership_proof';
+
+    public const IMAGES = 'images';
+
     public const MEDIA_TYPES = [
         self::EXTENDED_SYNOPSIS_MEDIA, self::ATTACHMENTS_MEDIA,
         self::COSTUMES_MEDIA, self::MAKEUP_MEDIA,
@@ -54,8 +57,8 @@ class Project extends AppModel implements HasMedia
 
     public static $validation = [
         'basic' => [
-            "title" => "string",
-            "format" => "in:movie,series",
+            "title" => "required|string",
+            "format" => "required|in:movie,series",
             "short_description" => "string",
             "genre_type" => "in:documentary,fictional",
             "chronography" => "integer",
@@ -178,5 +181,8 @@ class Project extends AppModel implements HasMedia
         $this->addMediaCollection(self::FINANCIAL_PLAN_MEDIA)->singleFile();
         $this->addMediaCollection(self::FINANCIAL_PROOF_MEDIA)->singleFile();
         $this->addMediaCollection(self::PARTNERSHIP_PROOF_MEDIA);
+
+        // NEW
+        $this->addMediaCollection(self::IMAGES);
     }
 }

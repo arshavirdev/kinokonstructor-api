@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Project;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProjectBriefResource extends JsonResource
@@ -28,6 +29,7 @@ class ProjectBriefResource extends JsonResource
             'created_at' => $this->created_at,
             'is_favorite' => (bool) $this->is_favorite,
             'is_archived' => $this->is_archived,
+            'project_images' => MediaResource::collection($this->getMedia(Project::IMAGES)),
         ];
     }
 }

@@ -112,7 +112,9 @@ class ProjectResource extends JsonResource
 
             'is_favorite' => (bool) $this->is_favorite,
             'is_archived' => $this->is_archived,
-            'privacy_hide' => $this->privacy_hide
+            'privacy_hide' => $this->privacy_hide,
+            'project_images' => MediaResource::collection($this->getMedia(Project::IMAGES)),
+            'requests' => $this->requests()
         ];
     }
 }
