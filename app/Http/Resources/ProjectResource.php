@@ -96,8 +96,8 @@ class ProjectResource extends JsonResource
                 'data' => $moderation?->data
             ], null),
 
-            'project_contacts' => $this->whenLoaded('contact', function () {
-                return [
+            'project_contacts' => isset($this->contact) ?
+                [
                     'phone' => $this->contact->phone ?? [],
                     'email' => $this->contact->email ?? [],
                     'website' => $this->contact->website ?? [],
@@ -105,8 +105,8 @@ class ProjectResource extends JsonResource
                     'other' => $this->contact->other ?? [],
                     'telVisible' => !isset($this->privacy_hide) || !in_array('phone', $this->privacy_hide),
                     'emailVisible' => !isset($this->privacy_hide) || !in_array('email', $this->privacy_hide),
-                ];
-            }),
+                ]
+                : [],
 
             'is_favorite' => (bool)$this->is_favorite,
             'is_archived' => $this->is_archived,

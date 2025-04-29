@@ -15,19 +15,19 @@ class UpdateProjectRequestNEW extends FormRequest
     {
         return [
             // Project base fields
-            'title' => 'sometimes|string|max:255',
-            'logline' => 'nullable|string|max:500',
-            'start_date' => 'sometimes|date',
-            'end_date' => 'sometimes|date|after_or_equal:start_date',
-            'format' => 'sometimes|string|in:movie,series',
-            'genre_type' => 'sometimes|string|in:documentary,fictional',
+            'title' => 'required|string|max:255',
+            'logline' => 'required|string|max:500',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'format' => 'required|string|in:movie,series',
+            'genre_type' => 'required|string|in:documentary,fictional',
+            'chronography' => 'required|integer|min:1',
+            'genres' => 'required|array',
+            'genres.*' => 'required|integer',
+            'years_rating' => 'required|string|max:10',
+            'region_id' => 'required|integer|exists:regions,id',
+            'city' => 'required|string|max:255',
             'series_count' => 'nullable|integer|min:1',
-            'chronography' => 'nullable|integer|min:1',
-            'genres' => 'sometimes|array',
-            'genres.*' => 'integer|exists:genres,id',
-            'years_rating' => 'nullable|string|max:10',
-            'region_id' => 'sometimes|integer|exists:regions,id',
-            'city' => 'nullable|string|max:255',
 
             // Requests section
             'requests' => 'nullable|array',
@@ -52,8 +52,8 @@ class UpdateProjectRequestNEW extends FormRequest
             'project_contacts.emailVisible' => 'sometimes|boolean',
 
             // Applicant info
-            'applicant_full_name' => 'sometimes|string|max:255',
-            'applicant_occupation_ids' => 'nullable|array',
+            'applicant_full_name' => 'required|string|max:255',
+            'applicant_occupation_ids' => 'required|array',
             'applicant_occupation_ids.*' => 'integer|exists:occupations,id',
             'applicant_contacts' => 'sometimes|array',
             'applicant_contacts.phone' => 'nullable|array',
