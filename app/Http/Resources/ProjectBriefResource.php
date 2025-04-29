@@ -16,8 +16,6 @@ class ProjectBriefResource extends JsonResource
      */
     public function toArray($request)
     {
-        $requestCounts = $this->requests->groupBy('type')->map->count();
-
         return [
             'id' => $this->id,
             'title' => $this->title,
@@ -35,12 +33,12 @@ class ProjectBriefResource extends JsonResource
             'project_images' => MediaResource::collection($this->getMedia(Project::IMAGES)),
             'total_requests_count' => $this->requests->count(),
             'requests' => [
-                Request::LOCATION_REQUEST => $requestCounts->get(Request::LOCATION_REQUEST, 0),
-                Request::SPECIFICATION_REQUEST => $requestCounts->get(Request::SPECIFICATION_REQUEST, 0),
-                Request::SERVICES_REQUEST => $requestCounts->get(Request::SERVICES_REQUEST, 0),
-                Request::EQUIPMENT_REQUEST => $requestCounts->get(Request::EQUIPMENT_REQUEST, 0),
-                Request::OTHER_REQUEST => $requestCounts->get(Request::OTHER_REQUEST, 0),
-            ]
+                Request::LOCATION_REQUEST => RequestResource::collection($this->requests->where('type', Request::LOCATION_REQUEST)),
+                Request::SPECIFICATION_REQUEST => RequestResource::collection($this->requests->where('type', Request::SPECIFICATION_REQUEST)),
+                Request::EQUIPMENT_REQUEST => RequestResource::collection($this->requests->where('type', Request::EQUIPMENT_REQUEST)),
+                Request::OTHER_REQUEST => RequestResource::collection($this->requests->where('type', Request::OTHER_REQUEST)),
+                Request::SERVICES_REQUEST => RequestResource::collection($this->requests->where('type', Request::SERVICES_REQUEST)),
+            ],
         ];
     }
 }
