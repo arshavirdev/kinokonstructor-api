@@ -26,8 +26,10 @@ class ProjectBriefResource extends JsonResource
             'series_count' => $this->series_count,
             'genres' => $this->genres,
             'logline' => $this->logline,
+            "region_id" => $this->region_id,
+            "city" => $this->city,
             'locations' => ProjectLocationResource::collection($this->locations),
-            'created_at' => $this->created_at,
+            'start_date' => $this->start_date,
             'is_favorite' => (bool) $this->is_favorite,
             'is_archived' => $this->is_archived,
             'project_images' => MediaResource::collection($this->getMedia(Project::IMAGES)),
@@ -36,8 +38,7 @@ class ProjectBriefResource extends JsonResource
                 Request::LOCATION_REQUEST => RequestResource::collection($this->requests->where('type', Request::LOCATION_REQUEST)),
                 Request::SPECIFICATION_REQUEST => RequestResource::collection($this->requests->where('type', Request::SPECIFICATION_REQUEST)),
                 Request::EQUIPMENT_REQUEST => RequestResource::collection($this->requests->where('type', Request::EQUIPMENT_REQUEST)),
-                Request::OTHER_REQUEST => RequestResource::collection($this->requests->where('type', Request::OTHER_REQUEST)),
-                Request::SERVICES_REQUEST => RequestResource::collection($this->requests->where('type', Request::SERVICES_REQUEST)),
+                Request::OTHER_REQUEST => RequestResource::collection($this->requests->where('type', Request::OTHER_REQUEST))
             ],
         ];
     }
