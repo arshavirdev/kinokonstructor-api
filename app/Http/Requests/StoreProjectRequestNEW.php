@@ -59,7 +59,7 @@ class StoreProjectRequestNEW extends FormRequest
             'project_contacts.emailVisible' => 'nullable|boolean',
 
             // Applicant info
-            'applicant_full_name' => 'nullable|string|max:255',
+            'applicant_full_name' => 'sometimes|string|max:255',
             'applicant_occupation_ids' => 'nullable|array',
             'applicant_occupation_ids.*' => 'integer|exists:occupations,id',
             'applicant_contacts' => 'nullable|array',

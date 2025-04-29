@@ -85,11 +85,11 @@ class ProjectService
 
             $project_privacy_hide = [];
 
-            if ($projectData['project_contacts']['telVisible'] === false) {
+            if (isset($contacts['telVisible']) && $contacts['telVisible'] === false) {
                 $project_privacy_hide[] = 'phone';
             }
 
-            if ($projectData['project_contacts']['emailVisible'] === false) {
+            if (isset($contacts['emailVisible']) && $contacts['emailVisible'] === false) {
                 $project_privacy_hide[] = 'email';
             }
 
@@ -193,11 +193,11 @@ class ProjectService
 
             $project_privacy_hide = [];
 
-            if ($contacts['telVisible'] === false) {
+            if (isset($contacts['telVisible']) && $contacts['telVisible'] === false) {
                 $project_privacy_hide[] = 'phone';
             }
 
-            if ($contacts['emailVisible'] === false) {
+            if (isset($contacts['emailVisible']) && $contacts['emailVisible'] === false) {
                 $project_privacy_hide[] = 'email';
             }
 
@@ -277,17 +277,18 @@ class ProjectService
     private function createOrUpdateApplicant(User $user, Project $project, $projectData): void
     {
         $applicant = $project->applicant;
+        $applicantContacts = $projectData['applicant_contacts'];
 
         $nameParts = preg_split('/\s+/', trim($projectData['applicant_full_name']));
         $occupation_ids = $projectData['applicant_occupation_ids'];
 
         $profile_privacy_hide = [];
 
-        if ($projectData['applicant_contacts']['telVisible'] === false) {
+        if (isset ($applicantContacts['telVisible']) && $applicantContacts['telVisible'] === false) {
             $profile_privacy_hide[] = 'phone';
         }
 
-        if ($projectData['applicant_contacts']['emailVisible'] === false) {
+        if (isset ($applicantContacts['emailVisible']) && $applicantContacts['emailVisible'] === false) {
             $profile_privacy_hide[] = 'email';
         }
 

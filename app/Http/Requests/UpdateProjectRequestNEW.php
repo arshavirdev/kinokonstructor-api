@@ -42,27 +42,27 @@ class UpdateProjectRequestNEW extends FormRequest
 //            'requests.*.*.images_files.*' => 'sometimes|file|mimes:jpg,jpeg,png|max:5120',
 
             // Project contacts
-            'project_contacts' => 'nullable|array',
+            'project_contacts' => 'sometimes|array',
             'project_contacts.phone' => 'nullable|array',
             'project_contacts.email' => 'nullable|array',
             'project_contacts.website' => 'nullable|array',
             'project_contacts.socials' => 'nullable|array',
             'project_contacts.other' => 'nullable|array',
-            'project_contacts.telVisible' => 'nullable|boolean',
-            'project_contacts.emailVisible' => 'nullable|boolean',
+            'project_contacts.telVisible' => 'sometimes|boolean',
+            'project_contacts.emailVisible' => 'sometimes|boolean',
 
             // Applicant info
-            'applicant_full_name' => 'nullable|string|max:255',
+            'applicant_full_name' => 'sometimes|string|max:255',
             'applicant_occupation_ids' => 'nullable|array',
             'applicant_occupation_ids.*' => 'integer|exists:occupations,id',
-            'applicant_contacts' => 'nullable|array',
+            'applicant_contacts' => 'sometimes|array',
             'applicant_contacts.phone' => 'nullable|array',
             'applicant_contacts.email' => 'nullable|array',
             'applicant_contacts.website' => 'nullable|array',
             'applicant_contacts.socials' => 'nullable|array',
             'applicant_contacts.other' => 'nullable|array',
-            'applicant_contacts.telVisible' => 'nullable|boolean',
-            'applicant_contacts.emailVisible' => 'nullable|boolean',
+            'applicant_contacts.telVisible' => 'sometimes|boolean',
+            'applicant_contacts.emailVisible' => 'sometimes|boolean',
 
             // Files uploads
             'files_section' => 'nullable|array',

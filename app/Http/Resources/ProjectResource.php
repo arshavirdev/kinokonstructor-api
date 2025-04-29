@@ -59,7 +59,9 @@ class ProjectResource extends JsonResource
                 'email' => isset($this->applicant->contact) ? $this->applicant->contact->email : [],
                 'website' => isset($this->applicant->contact) ? $this->applicant->contact->website : [],
                 'socials' => isset($this->applicant->contact) ? $this->applicant->contact->socials : [],
-                'other' => isset($this->applicant->contact) ? $this->applicant->contact->other : []
+                'other' => isset($this->applicant->contact) ? $this->applicant->contact->other : [],
+                'telVisible' => !isset($this->applicant->privacy_hide) || !in_array('phone', $this->applicant->privacy_hide),
+                'emailVisible' => !isset($this->applicant->privacy_hide) || !in_array('email', $this->applicant->privacy_hide),
             ],
 
             'budget' => $this->when($can_view_budget, $this->budget),
@@ -94,13 +96,15 @@ class ProjectResource extends JsonResource
                 'data' => $moderation?->data
             ], null),
 
-            'contacts' => $this->whenLoaded('contact', function () {
+            'project_contacts' => $this->whenLoaded('contact', function () {
                 return [
                     'phone' => $this->contact->phone ?? [],
                     'email' => $this->contact->email ?? [],
                     'website' => $this->contact->website ?? [],
                     'socials' => $this->contact->socials ?? [],
                     'other' => $this->contact->other ?? [],
+                    'telVisible' => !isset($this->privacy_hide) || !in_array('phone', $this->privacy_hide),
+                    'emailVisible' => !isset($this->privacy_hide) || !in_array('email', $this->privacy_hide),
                 ];
             }),
 
