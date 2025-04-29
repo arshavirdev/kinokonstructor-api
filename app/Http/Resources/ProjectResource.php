@@ -28,7 +28,7 @@ class ProjectResource extends JsonResource
         $organization = $this->owner->org
             ? array_merge($this->owner->org, ['email' => $this->owner->user->email, 'id' => $this->owner->id])
             : [];
-        $start_date = Carbon::parse($this->start_date);
+        $now = Carbon::now();
         $end_data = Carbon::parse($this->end_date);
 
         return [
@@ -47,7 +47,7 @@ class ProjectResource extends JsonResource
             'created_at' => $this->created_at,
             "start_date" => $this->start_date,
             "end_date" => $this->end_date,
-            'days_left' => $end_data->diffInDays($start_date),
+            'days_left' => $end_data->greaterThan($now) ? $end_data->diffInDays(Carbon::now()) : 0,
             "years_rating" => $this->years_rating,
             "region_id" => $this->region_id,
             "city" => $this->city,
@@ -106,7 +106,7 @@ class ProjectResource extends JsonResource
 
             'is_favorite' => (bool)$this->is_favorite,
             'is_archived' => $this->is_archived,
-            'privacy_hide' => $this->privacy_hide,
+            'privacy_hide' => $this->privacy_hide ?? [],
             'project_images' => MediaResource::collection($this->getMedia(Project::IMAGES)),
             'total_requests_count' => $this->requests->count(),
             'requests' => [
@@ -117,12 +117,12 @@ class ProjectResource extends JsonResource
                 Request::SERVICES_REQUEST => RequestResource::collection($this->requests->where('type', Request::SERVICES_REQUEST)),
             ],
             'files_section' => [
-                Project::SYNOPSYS => MediaResource::collection($this->getMedia(Project::SYNOPSYS)),
-                Project::SCENARIO => MediaResource::collection($this->getMedia(Project::SCENARIO)),
-                Project::DIRECTOR => MediaResource::collection($this->getMedia(Project::DIRECTOR)),
-                Project::PRODUCER => MediaResource::collection($this->getMedia(Project::PRODUCER)),
-                Project::ESTIMATE => MediaResource::collection($this->getMedia(Project::ESTIMATE)),
-                Project::PLAN => MediaResource::collection($this->getMedia(Project::PLAN)),
+                Project::SYNOPSYS => ['files' => MediaResource::collection($this->getMedia(Project::SYNOPSYS))],
+                Project::SCENARIO => ['files' => MediaResource::collection($this->getMedia(Project::SCENARIO))],
+                Project::DIRECTOR => ['files' => MediaResource::collection($this->getMedia(Project::DIRECTOR))],
+                Project::PRODUCER => ['files' => MediaResource::collection($this->getMedia(Project::PRODUCER))],
+                Project::ESTIMATE => ['files' => MediaResource::collection($this->getMedia(Project::ESTIMATE))],
+                Project::PLAN => ['files' => MediaResource::collection($this->getMedia(Project::PLAN))],
             ],
         ];
     }

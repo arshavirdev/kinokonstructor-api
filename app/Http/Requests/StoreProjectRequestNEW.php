@@ -41,10 +41,12 @@ class StoreProjectRequestNEW extends FormRequest
             'requests.*' => 'array',
             'requests.*.*.name' => 'nullable|string|max:255',
             'requests.*.*.location' => 'nullable|string|max:255',
-            'requests.*.*.season' => 'nullable|string|max:100',
+            'requests.*.*.season' => 'sometimes|array',
             'requests.*.*.info' => 'nullable|string',
             'requests.*.*.docs_files' => 'sometimes|array',
-            'requests.*.*.docs_files.*' => 'sometimes|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:5120',
+            'requests.*.*.images_files' => 'sometimes|array',
+//            'requests.*.*.docs_files.*' => 'sometimes|file|mimes:pdf,doc,docx|max:5120',
+//            'requests.*.*.images_files.*' => 'sometimes|file|mimes:jpg,jpeg,png|max:5120',
 
             // Project contacts
             'project_contacts' => 'nullable|array',
@@ -73,11 +75,11 @@ class StoreProjectRequestNEW extends FormRequest
             'files_section' => 'nullable|array',
             'files_section.*' => 'array',
             'files_section.*.*.files' => 'nullable|array',
-            'files_section.*.*.files.*' => 'file|mimes:jpg,jpeg,png,pdf|max:10240',
+//            'files_section.*.*.files.*' => 'file|mimes:jpg,jpeg,png,pdf|max:10240',
 
             // Project images
             'project_images' => 'nullable|array',
-            'project_images.*' => 'file|mimes:jpg,jpeg,png|max:5120',
+//            'project_images.*' => 'file|mimes:jpg,jpeg,png|max:5120',
         ];
     }
 }

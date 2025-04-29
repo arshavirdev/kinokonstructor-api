@@ -23,6 +23,7 @@ class RequestResource extends JsonResource
             'season' => $this->season,
             'info' => $this->info,
             'docs_files' => MediaResource::collection($this->getMedia(Request::DOCS_FILES)),
+            'images_files' => MediaResource::collection($this->getMedia(Request::IMAGES_FILES)),
         ];
     }
 }

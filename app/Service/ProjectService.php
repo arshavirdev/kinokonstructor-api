@@ -55,7 +55,7 @@ class ProjectService
             foreach (ModelsRequest::REQUEST_TYPES as $type) {
                 if (!empty($data[$type]) && is_array($data[$type])) {
                     foreach ($data[$type] as $entry) {
-                        $request = $project->requests()->create([
+                        $projectRequest = $project->requests()->create([
                             'user_id' => $user->id,
                             'name' => $entry['name'] ?? '',
                             'location' => $entry['location'] ?? '',
@@ -66,7 +66,12 @@ class ProjectService
 
                         if (isset($entry['docs_files']) && is_array($entry['docs_files'])) {
                             foreach ($entry['docs_files'] as $file) {
-                                $request->addMedia($file)->toMediaCollection(ModelsRequest::DOCS_FILES);
+                                $projectRequest->addMedia($file)->toMediaCollection(ModelsRequest::DOCS_FILES);
+                            }
+                        }
+                        if (isset($entry['images_files']) && is_array($entry['images_files'])) {
+                            foreach ($entry['images_files'] as $file) {
+                                $projectRequest->addMedia($file)->toMediaCollection(ModelsRequest::IMAGES_FILES);
                             }
                         }
                     }
@@ -169,6 +174,12 @@ class ProjectService
                         if (isset($entry['docs_files']) && is_array($entry['docs_files'])) {
                             foreach ($entry['docs_files'] as $file) {
                                 $projectRequest->addMedia($file)->toMediaCollection(ModelsRequest::DOCS_FILES);
+                            }
+                        }
+                        $projectRequest->clearMediaCollection(ModelsRequest::IMAGES_FILES);
+                        if (isset($entry['images_files']) && is_array($entry['images_files'])) {
+                            foreach ($entry['images_files'] as $file) {
+                                $projectRequest->addMedia($file)->toMediaCollection(ModelsRequest::IMAGES_FILES);
                             }
                         }
                     }

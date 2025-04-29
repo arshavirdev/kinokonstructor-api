@@ -19,6 +19,7 @@ class Request extends Model implements HasMedia
     const OTHER_REQUEST =  'other';
 
     const DOCS_FILES = 'docs_files';
+    const IMAGES_FILES = 'images_files';
 
     const REQUEST_TYPES = [
         self::LOCATION_REQUEST,
@@ -40,6 +41,10 @@ class Request extends Model implements HasMedia
         'type'
     ];
 
+    protected $casts = [
+        'season' => 'array',
+    ];
+
     public function requestable()
     {
         return $this->morphTo();
@@ -48,5 +53,6 @@ class Request extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection(self::DOCS_FILES);
+        $this->addMediaCollection(self::IMAGES_FILES);
     }
 }
