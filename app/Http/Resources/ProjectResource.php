@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\Profile;
 use App\Models\Project;
+use App\Models\ProjectMember;
 use App\Models\Request;
 use App\Traits\Moderation\Status;
 use Carbon\Carbon;
@@ -30,6 +31,9 @@ class ProjectResource extends JsonResource
             : [];
         $now = Carbon::now();
         $end_data = Carbon::parse($this->end_date);
+        $accepted_members = $this->memberInvites
+            ->whereIn('role', ProjectMember::FILTER_ROLES)
+            ->where('status', ProjectMember::STATUS_ACCEPTED);
 
         return [
             'id' => $this->id,
@@ -67,9 +71,10 @@ class ProjectResource extends JsonResource
             'budget' => $this->when($can_view_budget, $this->budget),
             'co_financing' => $this->when($can_view_budget, $this->co_financing),
 
-            'custom_members' => $this->custom_members,
             'audio_reference' => $this->audio_reference,
             'members' => ProfileMemberResource::collection($this->memberInvites),
+            'accepted_members' => ProfileMemberResource::collection($accepted_members),
+            'custom_members' => $this->custom_members,
             'locations' => ProjectLocationResource::collection($this->locations),
 
             'extended_synopsis' => new MediaResource($this->getFirstMedia(Project::EXTENDED_SYNOPSIS_MEDIA)),

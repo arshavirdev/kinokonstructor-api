@@ -76,7 +76,6 @@ class ProjectService
         $project->update($projectData);
 
         if (isset($projectData['requests'])) {
-            $project->requests()->delete();
             $this->handleRequests($project, $projectData['requests'], $user);
         }
 
@@ -109,6 +108,8 @@ class ProjectService
 
     private function handleRequests(Project $project, array $data, User $user): void
     {
+        $project->requests()->delete();
+
         foreach (ModelsRequest::REQUEST_TYPES as $type) {
             if (!empty($data[$type]) && is_array($data[$type])) {
                 foreach ($data[$type] as $entry) {
@@ -116,7 +117,8 @@ class ProjectService
                         'user_id' => $user->id,
                         'name' => $entry['name'] ?? '',
                         'location' => $entry['location'] ?? '',
-                        'season' => $entry['season'] ?? '',
+                        'season' => $entry['season'] ?? [],
+                        'category' => $entry['category'] ?? [],
                         'info' => $entry['info'] ?? '',
                         'type' => $type,
                     ]);

@@ -37,12 +37,14 @@ class Request extends Model implements HasMedia
         'name',
         'location',
         'season',
+        'category',
         'info',
         'type'
     ];
 
     protected $casts = [
         'season' => 'array',
+        'category' => 'array'
     ];
 
     public function requestable()

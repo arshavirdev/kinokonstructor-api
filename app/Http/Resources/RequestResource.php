@@ -21,6 +21,7 @@ class RequestResource extends JsonResource
             'name' => $this->name,
             'location' => $this->location,
             'season' => $this->season,
+            'category' => $this->category,
             'info' => $this->info,
             'docs_files' => MediaResource::collection($this->getMedia(Request::DOCS_FILES)),
             'images_files' => MediaResource::collection($this->getMedia(Request::IMAGES_FILES)),

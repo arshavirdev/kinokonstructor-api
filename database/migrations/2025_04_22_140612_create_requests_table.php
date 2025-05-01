@@ -19,7 +19,8 @@ return new class extends Migration
             $table->morphs('requestable');
             $table->string('name');
             $table->string('location');
-            $table->string('season');
+            $table->json('season')->nullable();
+            $table->json('category')->nullable();
             $table->text('info');
             $table->string('type');
             $table->timestamps();

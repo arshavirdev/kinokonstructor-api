@@ -29,12 +29,19 @@ class UpdateProjectRequestNEW extends FormRequest
             'city' => 'required|string|max:255',
             'series_count' => 'nullable|integer|min:1',
 
+            // Custom members (team)
+            'custom_members' => 'sometimes|array',
+            'custom_members.*.full_name' => 'required|string|max:255',
+            'custom_members.*.role' => 'required|array',
+            'custom_members.*.additional_information' => 'sometimes|string|max:1000',
+
             // Requests section
             'requests' => 'nullable|array',
             'requests.*' => 'array',
             'requests.*.*.name' => 'nullable|string|max:255',
             'requests.*.*.location' => 'nullable|string|max:255',
             'requests.*.*.season' => 'sometimes|array',
+            'requests.*.*.category' => 'sometimes|array',
             'requests.*.*.info' => 'nullable|string',
             'requests.*.*.docs_files' => 'sometimes|array',
             'requests.*.*.images_files' => 'sometimes|array',
