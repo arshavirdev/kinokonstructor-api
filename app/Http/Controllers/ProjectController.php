@@ -13,7 +13,6 @@ use App\Service\ProjectService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
 use Illuminate\Support\Facades\DB;
@@ -56,7 +55,7 @@ class ProjectController extends Controller
 
         if ($request->has('filter')) {
             if ($request->has('filter.date')) {
-                $query = $query->whereBetween('created_at', [$request->input('filter.date')[0], $request->input('filter.date')[1]]);
+                $query = $query->whereBetween('start_date', [$request->input('filter.date')[0], $request->input('filter.date')[1]]);
             }
 
             if ($request->has('filter.genre')) {
@@ -68,13 +67,20 @@ class ProjectController extends Controller
             }
 
             if ($request->has('filter.location')) {
-                $locationFilter = $request->input('filter.location');
-                $query = $query->whereHas('locations', function ($q) use ($locationFilter) {
-                    $q->whereIn('locations.id', (array) $locationFilter);
+                $regionId = $request->input('filter.location');
+                $query = $query->where('region_id', $regionId);
+//                $query = $query->whereHas('locations', function ($q) use ($locationFilter) {
+//                    $q->whereIn('locations.id', (array) $locationFilter);
+//                });
+            }
+
+            if ($request->has('filter.requests')) {
+                $filterRequests = $request->input('filter.requests');
+                $query = $query->whereHas('requests', function ($q) use ($filterRequests) {
+                    $q->whereIn('requests.type', $filterRequests);
                 });
             }
         }
-
 
         if ($request->has('title'))
             $query = $query->where('title', 'like', '%' . $request->input('title') . '%');
