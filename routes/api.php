@@ -14,6 +14,7 @@ use App\Http\Controllers\ContestController;
 use App\Http\Controllers\VerifyEmailController;
 use App\Http\Controllers\InviteController;
 use App\Http\Controllers\PasswordController;
+use App\Http\Controllers\VideoController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\TokenController;
@@ -97,6 +98,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         // REPORT
         Route::post('/report', [ReportController::class, 'store']);
+
+        // VIDEO
+        Route::apiResource('/videos', VideoController::class);
+        Route::post('/videos/{video}/comments', [VideoController::class, 'storeComment']);
+        Route::post('/videos/{video}/{action}', [VideoController::class, 'action'])
+            ->where('action', 'favorite');
     });
     Route::middleware(['moderator'])->group(function () {
         Route::apiResource('users', UserAdminController::class);

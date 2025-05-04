@@ -34,7 +34,7 @@ class ProjectController extends Controller
                 'favorites as is_favorite' => function ($query) use ($user) {
                     $query->where('user_id', $user->id);
                 }
-            ])->orderBy('created_at', 'desc');
+            ]);
 
         if ($request->has('type')) {
             $type = $request->get('type');
@@ -85,7 +85,7 @@ class ProjectController extends Controller
         if ($request->has('genre_type'))
             $query = $query->where('genre_type', $request->input('genre_type'));
 
-        $projects = $query->orderBy('created_at')->paginate($request->input('pageSize', 10));
+        $projects = $query->orderBy('created_at', 'desc')->paginate($request->input('pageSize', 10));
         return ProjectBriefResource::collection($projects);
     }
 
