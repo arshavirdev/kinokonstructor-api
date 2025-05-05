@@ -39,7 +39,7 @@ class ProjectService
     public function store(StoreProjectRequestNEW $request): ?Project
     {
         $user = Auth::user();
-        $projectData = $request->except(['files_section']);
+        $projectData = $request->except(['files_section', 'id']);
         $projectData['owner_id'] = $user->profile->id;
 
         $project = Project::create($projectData);
@@ -70,7 +70,7 @@ class ProjectService
     public function update(UpdateProjectRequestNEW $request, Project $project): ?Project
     {
         $user = Auth::user();
-        $projectData = $request->except(['files_section']);
+        $projectData = $request->except(['files_section', 'id']);
         $projectData['owner_id'] = $user->profile->id;
 
         $project->update($projectData);

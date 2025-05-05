@@ -26,7 +26,7 @@ class UpdateProjectRequestNEW extends FormRequest
             'genres.*' => 'required|integer',
             'years_rating' => 'required|string|max:10',
             'region_id' => 'required|integer|exists:regions,id',
-            'city' => 'required|string|max:255',
+            'city' => 'sometimes|string|max:255',
             'series_count' => 'nullable|integer|min:1',
 
             // Custom members (team)
