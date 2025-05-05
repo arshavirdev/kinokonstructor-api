@@ -56,12 +56,12 @@ class ProjectService
             $this->createOrUpdateApplicant($user, $project, $projectData);
         }
 
-        if ($request->has('files_section')) {
-            $this->handleFileUploads($project, $request->file('files_section'));
+        if (!empty($request->file('files_section'))) {
+            $this->handleFileUploads($project, $request->file('files_section'), true);
         }
 
-        if ($request->has('project_images')) {
-            $this->handleImagesUpload($project, $request->file('project_images'));
+        if (!empty($request->file('project_images'))) {
+            $this->handleImagesUpload($project, $request->file('project_images'), true);
         }
 
         return $project;
@@ -87,11 +87,11 @@ class ProjectService
             $this->createOrUpdateApplicant($user, $project, $projectData);
         }
 
-        if ($request->has('files_section')) {
+        if (!empty($request->file('files_section'))) {
             $this->handleFileUploads($project, $request->file('files_section'), true);
         }
 
-        if ($request->has('project_images')) {
+        if (!empty($request->file('project_images'))) {
             $this->handleImagesUpload($project, $request->file('project_images'), true);
         }
 
