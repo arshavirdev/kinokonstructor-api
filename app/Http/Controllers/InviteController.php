@@ -19,15 +19,21 @@ class InviteController extends Controller
 
     public function inviteMember(Project $project, Request $request)
     {
-        $profile = Profile::findOrFail($request->integer('profileId'));
-        $data = $request->input('data');
+        $request->validate([
+            'profileId' => 'required|exists:profiles,id',
+            'role' => 'required|string',
+            'type' => 'required|string'
+        ]);
+
+        $profile = Profile::find($request->integer('profileId'));
+
         $member = new ProjectMember([
             'project_id' => $project->id,
             'profile_id' => $profile->id,
             'role' => (string)$request->string('role'),
             'type' => (string)$request->string('type'),
             'invitation_code' => \Str::random(32),
-            'data' => $data
+            'data' => $request->input('data', [])
         ]);
         $previousCount = ProjectMember::query()
             ->where('project_id', $member->project_id)
@@ -40,7 +46,11 @@ class InviteController extends Controller
         $member->save();
         $invitedUser = $profile->user;
 
-        \Mail::to($invitedUser)->send(new ProjectInvitation($invitedUser, $member, $project));
+        try {
+            \Mail::to($invitedUser)->send(new ProjectInvitation($invitedUser, $member, $project));
+        } catch (\Exception $exception) {
+
+        }
         return $invitedUser;
     }
 

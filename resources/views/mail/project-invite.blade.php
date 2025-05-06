@@ -1,7 +1,7 @@
 @component('mail::message')
 # Приглашение в проект
 
-Вы были приглашены в проект **{{$invitation->data['title']}}** в качестве **{{$type}}**
+Вы были приглашены в проект **{{$invitation->data['title'] ?? ''}}** в качестве **{{$type}}**
 
 @isset($invitation->data['title'])
 **Название**: {{$invitation->data['title']}}
