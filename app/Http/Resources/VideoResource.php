@@ -34,9 +34,9 @@ class VideoResource extends JsonResource
             'comments' => $this->when($this->withDetails,
                 CommentResource::collection($this->comments)
             ),
-            'is_owner' => $this->owner_id === $userId,
             'is_favorite' => (bool) $this->is_favorite,
             'video' => new MediaResource($this->getFirstMedia(Video::VIDEO_FILE)),
+            'is_owner' => $this->owner_id === $userId,
             'owner' => isset($this->owner) ? [
                 'fullname' => $this->owner->profile->fullname,
                 'avatar' => new AvatarResource($this->owner->profile->getFirstMedia(Profile::AVATAR_MEDIA)),

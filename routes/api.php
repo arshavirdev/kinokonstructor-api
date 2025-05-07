@@ -15,6 +15,9 @@ use App\Http\Controllers\VerifyEmailController;
 use App\Http\Controllers\InviteController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\VideoController;
+use App\Http\Controllers\RegionalBranchController;
+use App\Http\Controllers\BranchMemberController;
+use App\Http\Controllers\BranchNewsController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\TokenController;
@@ -98,12 +101,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         // REPORT
         Route::post('/report', [ReportController::class, 'store']);
-
-        // VIDEO
-        Route::apiResource('/videos', VideoController::class);
-        Route::post('/videos/{video}/comments', [VideoController::class, 'storeComment']);
-        Route::post('/videos/{video}/{action}', [VideoController::class, 'action'])
-            ->where('action', 'favorite');
     });
     Route::middleware(['moderator'])->group(function () {
         Route::apiResource('users', UserAdminController::class);
@@ -127,4 +124,19 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // CONTACT ORGANIZER
     Route::post('/organizer/contact', [UserController::class, 'contactOrganizer']);
+
+    // VIDEO
+    Route::apiResource('/videos', VideoController::class);
+    Route::post('/videos/{video}/comments', [VideoController::class, 'storeComment']);
+    Route::post('/videos/{video}/{action}', [VideoController::class, 'action'])
+        ->where('action', 'favorite');
+
+    // REGIONAL BRANCH
+    Route::apiResource('/regional-branches', RegionalBranchController::class);
+
+    // BRANCH MEMBERS AND NEWS
+    Route::prefix('/regional-branches/{regionalBranch}')->group(function () {
+        Route::apiResource('/members', BranchMemberController::class)->only(['store']);
+        Route::apiResource('/news', BranchNewsController::class)->only(['store']);
+    });
 });

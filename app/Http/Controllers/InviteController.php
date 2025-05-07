@@ -21,7 +21,6 @@ class InviteController extends Controller
     {
         $request->validate([
             'profileId' => 'required|exists:profiles,id',
-            'role' => 'required|string',
             'type' => 'required|string'
         ]);
 
@@ -30,7 +29,7 @@ class InviteController extends Controller
         $member = new ProjectMember([
             'project_id' => $project->id,
             'profile_id' => $profile->id,
-            'role' => (string)$request->string('role'),
+            'role' => '',
             'type' => (string)$request->string('type'),
             'invitation_code' => \Str::random(32),
             'data' => $request->input('data', [])
