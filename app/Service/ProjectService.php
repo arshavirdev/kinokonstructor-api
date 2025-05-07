@@ -220,7 +220,12 @@ class ProjectService
         if ($applicant) {
             $applicant->update($profileData);
             $applicant->occupations()->sync($occupation_ids);
-            $applicant->contact->update($contactData);
+
+            if (!$applicant->contact) {
+                $applicant->contact()->create($contactData);
+            } else {
+                $applicant->contact->update($contactData);
+            }
         } else {
             $newApplicant = Profile::create(array_merge($profileData, ['gender' => 'm']));
             $newApplicant->occupations()->sync($occupation_ids);

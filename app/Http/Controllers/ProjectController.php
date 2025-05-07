@@ -111,6 +111,8 @@ class ProjectController extends Controller
                 return $projectService->store($request);
             });
 
+            $project->load(['media', 'contact', 'memberInvites']);
+
             return new ProjectResource($project);
         } catch (\Exception $e) {
             return response()->json([
@@ -127,9 +129,7 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        //        if ($project->owner_id !== Auth::user()->profile->id || $project->status !== Status::ACCEPTED) abort(403);
-
-        $project->load(['media', 'memberInvites', 'memberInvites.profile', 'locations', 'owner']);
+        $project->load(['media', 'memberInvites', 'memberInvites.profile', 'locations', 'owner', 'contact']);
 
         return new ProjectResource($project);
     }
@@ -147,6 +147,8 @@ class ProjectController extends Controller
             $project = DB::transaction(function () use ($request, $projectService, $project) {
                 return $projectService->update($request, $project);
             });
+
+            $project->load(['media', 'contact', 'memberInvites']);
 
             return new ProjectResource($project);
         } catch (\Exception $e) {

@@ -12,8 +12,10 @@ class ProjectMember extends Model
     const STATUS_ACCEPTED = 'accepted';
     const STATUS_REJECTED = 'rejected';
 
-    const FILTER_ROLES = [
-        'Режиссор', 'Сценарист', 'Продюсер'
+    const FILTER_ROLES_IDS = [
+        92, // Сценарист
+        109, //Продюсер
+        103 // Режиссер
     ];
 
     protected $fillable = [

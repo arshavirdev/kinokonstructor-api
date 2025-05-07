@@ -31,9 +31,11 @@ class ProjectResource extends JsonResource
             : [];
         $now = Carbon::now();
         $end_data = Carbon::parse($this->end_date);
-        $accepted_members = $this->memberInvites
-            ->whereIn('role', ProjectMember::FILTER_ROLES)
-            ->where('status', ProjectMember::STATUS_ACCEPTED);
+        $accepted_members = $this->memberInvites()
+            ->where('status', ProjectMember::STATUS_ACCEPTED)
+            ->whereHas('profile.occupations', function ($query) {
+                $query->whereIn('occupation_id', ProjectMember::FILTER_ROLES_IDS);
+            })->get();
 
         return [
             'id' => $this->id,
