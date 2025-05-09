@@ -8,7 +8,7 @@ RUN set -x && \
     apk add --no-cache --virtual phpize $PHPIZE_DEPS && \
     apk add --no-cache \
     freetype freetype-dev libpng libpng-dev libjpeg-turbo libjpeg-turbo-dev libwebp libwebp-dev libxpm libxpm-dev \
-    oniguruma-dev zip libzip-dev libmcrypt-dev icu-dev libxml2-dev libpq-dev && linux-headers \
+    oniguruma-dev zip libzip-dev libmcrypt-dev icu-dev libxml2-dev libpq-dev linux-headers && \
 # Install nginx
     addgroup -g 101 -S nginx && \
     adduser -S -D -H -u 101 -h /var/cache/nginx -s /sbin/nologin -G nginx -g nginx nginx && \
