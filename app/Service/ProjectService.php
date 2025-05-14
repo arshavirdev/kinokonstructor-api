@@ -7,7 +7,6 @@ use App\Http\Requests\UpdateProjectRequestNEW;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
 use App\Models\Profile;
 use App\Models\Project;
 use App\Models\Request as ModelsRequest;
@@ -20,7 +19,10 @@ class ProjectService
         $userId = Auth::id();
         $exists = $project->favorites()->where('user_id', $userId)->exists();
 
-        $project->favorites()->where('user_id', $userId)->deleteIf($exists);
+        if ($exists) {
+            $project->favorites()->where('user_id', $userId)->delete();
+            return ['is_favorite' => false];
+        }
 
         if (!$exists) {
             $project->favorites()->create(['user_id' => $userId]);
