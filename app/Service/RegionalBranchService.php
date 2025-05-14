@@ -69,7 +69,7 @@ class RegionalBranchService
             'other' => $contacts['other'] ?? [],
         ];
 
-        if ($branch->contacts) {
+        if ($branch->contacts->count()) {
             $branch->contacts()->update($data);
             return;
         }
