@@ -25,7 +25,7 @@ class RegionalBranchService
         ], RegionalBranch::DOCS_FILES);
 
         if ($request->has('contacts')) {
-            $this->handleContacts($branch, $request->input('contacts')['project_contacts'], $authUser);
+            $this->handleContacts($branch, $request->input('contacts'), $authUser);
         }
 
         // Reload the relation to access media, news and member

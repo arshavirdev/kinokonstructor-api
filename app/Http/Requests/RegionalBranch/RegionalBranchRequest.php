@@ -26,9 +26,9 @@ class RegionalBranchRequest extends FormRequest
         return [
             'title' => 'required|string',
             'description' => 'required|string',
-            'year' => 'numeric',
+            'year' => 'sometimes|numeric',
             'region_id' => 'required|exists:regions,id',
-            'city' => '|string',
+            'city' => 'sometimes|string',
             'manager' => 'sometimes|array',
             'address' => 'sometimes|string',
         ];
