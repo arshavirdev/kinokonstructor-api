@@ -26,7 +26,9 @@ class ContestController extends Controller
             ->orderBy('id', 'desc')
             ->withCount([
                 'favorites as is_favorite' => function ($query) use ($user) {
-                    $query->where('user_id', $user->id);
+                    if ($user) {
+                        $query->where('user_id', $user->id);
+                    }
                 }
             ]);
 
@@ -43,9 +45,9 @@ class ContestController extends Controller
         return ContestResource::collection($contests);
     }
 
-    public function show($id)
+    public function show(Contest $contest)
     {
-        $contest = Contest::with(['contacts', 'media'])->findOrFail($id);
+        $contest = $contest->load(['contacts', 'media']);
         return new ContestResource($contest);
     }
 

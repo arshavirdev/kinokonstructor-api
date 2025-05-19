@@ -43,6 +43,11 @@ Route::get('/project/invite/reject', [InviteController::class, 'rejectInvite']);
 
 Route::post('/auth/checkId', [MemberController::class, 'checkId']);
 
+// PUBLIC ROUTES
+Route::get('dictionaries/{dictionary?}', [DictionaryController::class, 'show']);
+Route::apiResource('/videos', VideoController::class)->only(['show', 'index']);
+Route::apiResource('/contests', ContestController::class)->only(['show', 'index']);
+Route::apiResource('/regional-branches', RegionalBranchController::class)->only(['show', 'index']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('auth/user/password', [PasswordController::class,'update']);
@@ -70,10 +75,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
             Route::patch('profile', 'updateProfile');
         });
 
-        Route::get('dictionaries/{dictionary?}', [DictionaryController::class, 'show']);
         Route::apiResource('profiles', ProfileController::class, ['only' => ['index', 'show']]);
         Route::apiResource('locations', LocationController::class);
-        Route::apiResource('contests', ContestController::class);
+        Route::apiResource('contests', ContestController::class)->except(['index', 'show']);
         Route::post('/contests/{contest}/{action}', [ContestController::class, 'action'])
                 ->where('action', 'favorite|archive|unarchive');
 
@@ -126,13 +130,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/organizer/contact', [UserController::class, 'contactOrganizer']);
 
     // VIDEO
-    Route::apiResource('/videos', VideoController::class);
+    Route::apiResource('/videos', VideoController::class)->except(['show', 'index']);
     Route::post('/videos/{video}/comments', [VideoController::class, 'storeComment']);
     Route::post('/videos/{video}/{action}', [VideoController::class, 'action'])
         ->where('action', 'favorite');
 
     // REGIONAL BRANCH
-    Route::apiResource('/regional-branches', RegionalBranchController::class);
+    Route::apiResource('/regional-branches', RegionalBranchController::class)->except(['show', 'index']);;
 
     // BRANCH MEMBERS AND NEWS
     Route::prefix('/regional-branches/{regionalBranch}')->group(function () {
