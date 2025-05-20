@@ -80,7 +80,7 @@ class Contest extends AppModel implements HasMedia
         $this->addMediaCollection(self::DOCUMENTS);
 
         // Logo Collection (Single File)
-        $this->addMediaCollection(self::LOGO)->singleFile()
+        $this->addMediaCollection(self::LOGO)
             ->registerMediaConversions(function (Media $media) {
                 $this->addMediaConversion('thumb')
                     ->fit(Manipulations::FIT_MAX, 100, 100)

@@ -82,6 +82,12 @@ class ProjectController extends Controller
             }
         }
 
+        if ($request->has('favorite') && $request->input('favorite') === 'true' ) {
+            $query->whereHas('favorites', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            });
+        }
+
         if ($request->has('title'))
             $query = $query->where('title', 'like', '%' . $request->input('title') . '%');
 

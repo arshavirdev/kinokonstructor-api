@@ -15,21 +15,32 @@ class MediaResource extends JsonResource
      */
     public function toArray($request)
     {
-        if (count($this->generated_conversions) === 0) {
-            $url = $this->getFullUrl();
-        } else {
-            $url = [];
-            foreach ($this->generated_conversions as $name => $isset) {
-                $url[$name] = $this->getFullUrl($name);
-            }
+
+        // TODO: improve
+        // if (count($this->generated_conversions) === 0) {
+        //     $url = $this->getFullUrl();
+        // } else {
+        //     $url = [];
+        //     foreach ($this->generated_conversions as $name => $isset) {
+        //         $url[$name] = $this->getFullUrl($name);
+        //     }
+        // }
+
+        $originalUrl = $this->getFullUrl();
+
+        $thumbUrl = null;
+        if (!empty($this->generated_conversions['thumb'])) {
+            $thumbUrl = $this->getFullUrl('thumb');
         }
+
         $name = $this->name . '.' . pathinfo($this->file_name, PATHINFO_EXTENSION);
         return [
             'id' => $this->id,
             'name' => $name,
             'mime' => $this->mime_type,
             'size' => $this->size,
-            'url' => $url,
+            'url' => $originalUrl,
+            'thumbUrl' => $thumbUrl
         ];
     }
 }

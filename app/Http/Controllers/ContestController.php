@@ -38,6 +38,12 @@ class ContestController extends Controller
             $query = $query->where('owner_id', $profileId);
         }
 
+        if ($request->has('favorite') && $request->input('favorite') === 'true' ) {
+            $query->whereHas('favorites', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            });
+        }
+
         if ($request->has('title'))
             $query = $query->where('title', 'ILIKE', '%' . $request->input('title') . '%');
 
@@ -81,7 +87,9 @@ class ContestController extends Controller
 
         // Handle logo upload (single file)
         if ($request->hasFile('logo')) {
-            $contest->addMedia($request->file('logo'))->toMediaCollection(Contest::LOGO);
+            foreach ($request->file('logo') as $document) {
+                $contest->addMedia($document)->toMediaCollection(Contest::LOGO);
+            }
         }
 
         // Handle photo gallery images
@@ -134,9 +142,11 @@ class ContestController extends Controller
         }
 
         // Handle logo upload (Replace old logo)
-        if ($request->hasFile('logo')) {
+       if ($request->hasFile('logo')) {
             $contest->clearMediaCollection(Contest::LOGO);
-            $contest->addMedia($request->file('logo'))->toMediaCollection(Contest::LOGO);
+            foreach ($request->file('logo') as $document) {
+                $contest->addMedia($document)->toMediaCollection(Contest::LOGO);
+            }
         }
 
         // Handle photo gallery images

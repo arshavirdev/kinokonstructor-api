@@ -47,7 +47,7 @@ class UpdateContestRequest extends FormRequest
 
             'online_application' => 'nullable|string|max:255',
             // Logo (Single File)
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            // 'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'video' => 'nullable|string',
 
             // Photo Gallery (Multiple Images)
@@ -56,7 +56,7 @@ class UpdateContestRequest extends FormRequest
 
             // Partners (Multiple Images)
             'partners' => 'nullable|array',
-            'partners.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            // 'partners.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
 
             'contacts.website' => 'nullable|string|max:255',
             'contacts.social_media' => 'nullable|string|max:255',
