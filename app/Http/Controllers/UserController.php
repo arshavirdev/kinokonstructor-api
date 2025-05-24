@@ -33,7 +33,7 @@ class UserController extends Controller
         if (array_key_exists('attachments', $params)) {
             $requestAttachments = collect($params['attachments']);
             $toSaveAttachments = $requestAttachments->filter(fn($item) => is_object($item));
-            $toKeepAttachments = $requestAttachments->filter(fn($item) => !is_object($item))->map(fn($id) => ['id' => (int)$id]);
+            $toKeepAttachments = $requestAttachments->filter(fn($item) => !is_object($item))->map(fn($id) => ['id' => (int) $id]);
             $profile->clearMediaCollectionExcept(Profile::ATTACHMENT_MEDIA, $toKeepAttachments);
             foreach ($toSaveAttachments as $attachment) {
                 $profile->addMedia($attachment)->toMediaCollection(Profile::ATTACHMENT_MEDIA);
@@ -66,7 +66,7 @@ class UserController extends Controller
         $user = User::with('profile.contact')->find(Auth::id());
 
         if ($user->profile) {
-            return response()->json(['message' => 'This user already has profile'], 400);   
+            return response()->json(['message' => 'This user already has profile'], 400);
         }
 
         $params = $request->validated();
@@ -99,7 +99,9 @@ class UserController extends Controller
     {
         $user = User::with('profile.contact')->find(Auth::id());
         $profile = $user->profile;
-        if (!$profile) throw new ModelNotFoundException();
+        if (!$profile) {
+            throw new ModelNotFoundException();
+        }
 
         $params = $request->validated();
 
@@ -138,11 +140,22 @@ class UserController extends Controller
     {
         $params = $request->validated();
         $profile = Profile::find($params['profile_id']);
-        
+
         if (!$profile || !$profile->is_org) {
             return response()->json(['message' => 'The profile id is incorrect or it is not an organizer'], 400);
         }
 
         return response()->json([]);
+    }
+
+    public function deleteProfile()
+    {
+        $authUser = auth()->user();
+        try {
+            $authUser->delete();
+            return response()->json(['message' => 'Profile successfully deleted'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
     }
 }

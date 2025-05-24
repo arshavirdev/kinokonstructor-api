@@ -14,6 +14,5 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-//Route::get('/', function () {
-//    return view('welcome');
-//});
+Route::get( '/', fn () => 'Kinokonstructor API');
+Route::get('/login', action: fn () => 'Login')->name('login');
