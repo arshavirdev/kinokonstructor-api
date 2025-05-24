@@ -32,9 +32,10 @@ class Profile extends AppModel implements HasMedia
      * @var array<string, string>
      */
     protected $casts = [
-        'birthday' => 'date',
-        'regions' => 'array',
-        'privacy_hide' => 'array'
+        'birthday'     => 'date',
+        'regions'      => 'array',
+        'privacy_hide' => 'array',
+        'preferences'  => 'array',
     ];
 
     protected $guarded = ['status'];
@@ -57,7 +58,8 @@ class Profile extends AppModel implements HasMedia
         'privacy_hide',
         'org',
         'entrepreneur',
-        'additional_information'
+        'additional_information',
+        'preferences'
     ];
 
     public function org(): Attribute

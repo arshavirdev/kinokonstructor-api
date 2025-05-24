@@ -91,6 +91,11 @@ class UpdateProfileRequest extends FormRequest
             'projects.*.start' => 'integer|between:1900,2100',
             'projects.*.end' => 'integer|between:1900,2100',
             'projects.*.description' => 'string',
+
+            'preferences' => 'sometimes|nullable|array',
+            'preferences.notify_chat_messages' => 'boolean',
+            'preferences.notify_industry_news' => 'boolean',
+            'preferences.notify_project_responses' => 'boolean'
         ];
     }
 }

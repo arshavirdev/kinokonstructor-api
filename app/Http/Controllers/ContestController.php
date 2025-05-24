@@ -44,6 +44,11 @@ class ContestController extends Controller
             });
         }
 
+        if ($request->has('filter.location')) {
+            $regionId = $request->input('filter.location');
+            $query = $query->where('region', $regionId);
+        }
+
         if ($request->has('title'))
             $query = $query->where('title', 'ILIKE', '%' . $request->input('title') . '%');
 

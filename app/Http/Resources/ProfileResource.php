@@ -56,6 +56,7 @@ class ProfileResource extends JsonResource
 
             'occupation_ids' => $this->occupations->pluck('id'),
             'privacy_hide' => $this->privacy_hide,
+            'preferences' => $this->preferences,
 
             'contacts' => $this->whenLoaded('contact', function () {
                 return [

@@ -2,18 +2,25 @@
 
 namespace App\Service;
 
+use App\DataTransferObjects\MediaSyncDataDTO;
 use App\Http\Requests\StoreProjectRequestNEW;
 use App\Http\Requests\UpdateProjectRequestNEW;
+use App\Service\Media\MediaService;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Request as ModelsRequest;
 use App\Models\Profile;
 use App\Models\Project;
-use App\Models\Request as ModelsRequest;
-use Spatie\MediaLibrary\HasMedia;
 
 class ProjectService
 {
+    private MediaService $mediaService;
+
+    public function __construct(MediaService $mediaService)
+    {
+        $this->mediaService = $mediaService;
+    }
+
     public function favorite(Project $project)
     {
         $userId = Auth::id();
@@ -49,10 +56,22 @@ class ProjectService
 
         $project = Project::create($projectData);
 
-        $this->handleRequests($project, [
-            'files' => $request->file('requests', []),
-            'post' => $request->post('requests', []),
-        ], $user);
+        $requestsMediaDto = new MediaSyncDataDTO(
+            $request->file('requests', []),
+            $request->post('requests', [])
+        );
+
+        $imagesMediaDto = new MediaSyncDataDTO(
+            $request->file('project_images', []),
+            $request->post('project_images', [])
+        );
+
+        $filesMediaDto = new MediaSyncDataDTO(
+            $request->file('files_section', []),
+            $request->post('files_section', [])
+        );
+
+        $this->handleRequests($project, $requestsMediaDto, $user);
 
         if (isset($projectData['project_contacts'])) {
             $this->handleProjectContacts($project, $projectData['project_contacts'], $user);
@@ -62,15 +81,9 @@ class ProjectService
             $this->createOrUpdateApplicant($user, $project, $projectData);
         }
 
-        $this->handleFileUploads($project, [
-            'files' => $request->file('files_section', []),
-            'post' => $request->post('files_section', []),
-        ]);
+        $this->handleFileUploads($project, $filesMediaDto);
 
-        $this->syncMediaCollection($project, [
-            'files' => $request->file('project_images', []),
-            'post' => $request->post('project_images', []),
-        ], Project::IMAGES);
+        $this->mediaService->syncMediaCollection($project, $imagesMediaDto, Project::IMAGES);
 
         return $project;
     }
@@ -83,10 +96,22 @@ class ProjectService
 
         $project->update($projectData);
 
-        $this->handleRequests($project, [
-            'files' => $request->file('requests', []),
-            'post' => $request->post('requests', []),
-        ], $user);
+        $requestsMediaDto = new MediaSyncDataDTO(
+            $request->file('requests', []),
+            $request->post('requests', [])
+        );
+
+        $imagesMediaDto = new MediaSyncDataDTO(
+            $request->file('project_images', []),
+            $request->post('project_images', [])
+        );
+
+        $filesMediaDto = new MediaSyncDataDTO(
+            $request->file('files_section', []),
+            $request->post('files_section', [])
+        );
+
+        $this->handleRequests($project, $requestsMediaDto, $user);
 
         if (isset($projectData['project_contacts'])) {
             $this->handleProjectContacts($project, $projectData['project_contacts'], $user);
@@ -96,16 +121,9 @@ class ProjectService
             $this->createOrUpdateApplicant($user, $project, $projectData);
         }
 
-        $this->handleFileUploads($project, [
-            'files' => $request->file('files_section', []),
-            'post' => $request->post('files_section', []),
-        ]);
+        $this->handleFileUploads($project, $filesMediaDto);
 
-        $this->syncMediaCollection($project, [
-            'files' => $request->file('project_images', []),
-            'post' => $request->post('project_images', []),
-        ], Project::IMAGES);
-
+        $this->mediaService->syncMediaCollection($project, $imagesMediaDto, Project::IMAGES);
 
         return $project;
     }
@@ -118,33 +136,44 @@ class ProjectService
         return ['is_archived' => $status];
     }
 
-    private function handleRequests(Project $project, array $data, $user): void
+    private function handleRequests(Project $project, MediaSyncDataDTO $mediaDto, $user): void
     {
-        $postData = $data['post'];
-        $project->requests()->delete();
+        foreach (ModelsRequest::REQUEST_TYPES as $requestType) {
+            if (isset($mediaDto->post[$requestType])) {
+                $requests = $mediaDto->post[$requestType];
+                // Keep passed post requests and delete rest...
+                $keepRequestIds = collect($requests)->pluck('id')->toArray();
+                $project->requests()
+                    ->whereNotIn('id', $keepRequestIds)
+                    ->where('type', $requestType)
+                    ->delete();
 
-        foreach (ModelsRequest::REQUEST_TYPES as $type) {
-            if (isset($postData[$type])) {
-                foreach ($postData[$type] as $index => $entry) {
-                    $request = $project->requests()->create([
-                        'user_id' => $user->id,
-                        'name' => $entry['name'] ?? '',
-                        'location' => $entry['location'] ?? '',
-                        'season' => $entry['season'] ?? [],
-                        'category' => $entry['category'] ?? [],
-                        'info' => $entry['info'] ?? '',
-                        'type' => $type,
-                    ]);
+                foreach ($requests as $index => $entry) {
+                    $request = $project->requests()->updateOrCreate(
+                        ['id' => $entry['id'] ?? null],
+                        [
+                            'user_id' => $user->id,
+                            'name' => $entry['name'] ?? '',
+                            'location' => $entry['location'] ?? '',
+                            'season' => $entry['season'] ?? [],
+                            'category' => $entry['category'] ?? [],
+                            'info' => $entry['info'] ?? '',
+                            'type' => $requestType,
+                        ]
+                    );
 
-                    $this->syncMediaCollection($request, [
-                        'files' => $data['files'][$type][$index][ModelsRequest::DOCS_FILES] ?? [],
-                        'post' => $entry[ModelsRequest::DOCS_FILES] ?? [],
-                    ], ModelsRequest::DOCS_FILES);
+                    $mediaFilesDto = new MediaSyncDataDTO(
+                        $mediaDto->files[$requestType][$index][ModelsRequest::DOCS_FILES] ?? [],
+                        $entry[ModelsRequest::DOCS_FILES] ?? [],
+                    );
 
-                    $this->syncMediaCollection($request, [
-                        'files' => $data['files'][$type][$index][ModelsRequest::IMAGES_FILES] ?? [],
-                        'post' => $entry[ModelsRequest::IMAGES_FILES] ?? [],
-                    ], ModelsRequest::IMAGES_FILES);
+                    $this->mediaService->syncMediaCollection($request, $mediaFilesDto, ModelsRequest::DOCS_FILES);
+
+                    $mediaImagesDto = new MediaSyncDataDTO(
+                        $mediaDto->files[$requestType][$index][ModelsRequest::IMAGES_FILES] ?? [],
+                        $entry[ModelsRequest::IMAGES_FILES] ?? [],
+                    );
+                    $this->mediaService->syncMediaCollection($request, $mediaImagesDto, ModelsRequest::IMAGES_FILES);
                 }
             }
         }
@@ -176,15 +205,14 @@ class ProjectService
         $contact ? $contact->update($data) : $project->contact()->create(array_merge(['user_id' => $user->id], $data));
     }
 
-    private function handleFileUploads(Project $project, $data): void
+    private function handleFileUploads(Project $project, MediaSyncDataDTO $mediaDto): void
     {
         foreach (Project::MEDIA_FILE_TYPES_MAPPING as $sectionKey => $mediaCollection) {
-            $files = $data['files'][$sectionKey][0]['files'] ?? [];
-            $postData = $data['post'][$sectionKey][0]['files'] ?? [];
-            $this->syncMediaCollection($project, [
-                'files' => $files,
-                'post' => $postData,
-            ], $mediaCollection);
+            $sectionMediaDto = new MediaSyncDataDTO(
+                $mediaDto->files[$sectionKey][0]['files'] ?? [],
+                $mediaDto->post[$sectionKey][0]['files'] ?? []
+            );
+            $this->mediaService->syncMediaCollection($project, $sectionMediaDto, $mediaCollection);
         }
     }
 
@@ -233,28 +261,6 @@ class ProjectService
             $newApplicant->occupations()->sync($occupation_ids);
             $project->update(['applicant_id' => $newApplicant->id]);
             $newApplicant->contact()->create($contactData);
-        }
-    }
-
-    private function syncMediaCollection(HasMedia $model, array $data, string $collectionName): void
-    {
-        $files = $data['files'] ?? [];
-        $postData = $data['post'] ?? [];
-
-        $mediaIdsToKeep = collect($postData)
-            ->pluck('id')
-            ->filter()
-            ->toArray();
-
-        //  Delete all media files exclude media IDs form req.body
-        $model->getMedia($collectionName)
-            ->reject(fn($media) => in_array($media->id, $mediaIdsToKeep))
-            ->each->delete();
-
-        foreach ($files as $file) {
-            if ($file instanceof UploadedFile) {
-                $model->addMedia($file)->toMediaCollection($collectionName);
-            }
         }
     }
 }

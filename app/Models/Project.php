@@ -189,16 +189,20 @@ class Project extends AppModel implements HasMedia
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection(self::EXTENDED_SYNOPSIS_MEDIA)->singleFile();
-        $this->addMediaCollection(self::ATTACHMENTS_MEDIA);
-        $this->addMediaCollection(self::COSTUMES_MEDIA)->singleFile();
-        $this->addMediaCollection(self::MAKEUP_MEDIA)->singleFile();
-        $this->addMediaCollection(self::CAST_MEDIA)->singleFile();
-        $this->addMediaCollection(self::DECORATIONS_MEDIA)->singleFile();
-        $this->addMediaCollection(self::LOCATIONS_MEDIA)->singleFile();
-        $this->addMediaCollection(self::FINANCIAL_PLAN_MEDIA)->singleFile();
-        $this->addMediaCollection(self::FINANCIAL_PROOF_MEDIA)->singleFile();
-        $this->addMediaCollection(self::PARTNERSHIP_PROOF_MEDIA);
+        // $this->addMediaCollection(self::EXTENDED_SYNOPSIS_MEDIA)->singleFile();
+        // $this->addMediaCollection(self::ATTACHMENTS_MEDIA);
+        // $this->addMediaCollection(self::COSTUMES_MEDIA)->singleFile();
+        // $this->addMediaCollection(self::MAKEUP_MEDIA)->singleFile();
+        // $this->addMediaCollection(self::CAST_MEDIA)->singleFile();
+        // $this->addMediaCollection(self::DECORATIONS_MEDIA)->singleFile();
+        // $this->addMediaCollection(self::LOCATIONS_MEDIA)->singleFile();
+        // $this->addMediaCollection(self::FINANCIAL_PLAN_MEDIA)->singleFile();
+        // $this->addMediaCollection(self::FINANCIAL_PROOF_MEDIA)->singleFile();
+        // $this->addMediaCollection(self::PARTNERSHIP_PROOF_MEDIA);
+
+        foreach (self::MEDIA_FILE_TYPES as $collection) {
+            $this->addMediaCollection($collection);
+        }
 
         // NEW
         $this->addMediaCollection(self::IMAGES);
