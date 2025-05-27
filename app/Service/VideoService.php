@@ -10,14 +10,21 @@ class VideoService
 {
     public function store(Request $request): Video
     {
-        $data = $request->all();
+        $data = $request->except(['video_file', 'image_file']);
         $data['owner_id'] = Auth::id();
 
         $video = Video::create($data);
 
         if ($request->hasFile('video_file')) {
             $videoFile = $request->file('video_file');
+            $video->clearMediaCollection(Video::IMAGE_FILE);
             $video->addMedia($videoFile)->toMediaCollection(Video::VIDEO_FILE);
+        }
+
+        if ($request->hasFile('image_file')) {
+            $videoFile = $request->file('image_file');
+            $video->clearMediaCollection(Video::IMAGE_FILE);
+            $video->addMedia($videoFile)->toMediaCollection(Video::IMAGE_FILE);
         }
 
         return $video;
@@ -25,13 +32,19 @@ class VideoService
 
     public function update(Video $video, Request $request): Video
     {
-        $data = $request->except('video_file');
+        $data = $request->except(['video_file', 'image_file']);
         $video->update($data);
 
-        if ($request->hasFile('video_file')) {
-            $video->clearMediaCollection(Video::VIDEO_FILE);
+         if ($request->hasFile('video_file')) {
             $videoFile = $request->file('video_file');
+            $video->clearMediaCollection(Video::IMAGE_FILE);
             $video->addMedia($videoFile)->toMediaCollection(Video::VIDEO_FILE);
+        }
+
+        if ($request->hasFile('image_file')) {
+            $videoFile = $request->file('image_file');
+            $video->clearMediaCollection(Video::IMAGE_FILE);
+            $video->addMedia($videoFile)->toMediaCollection(Video::IMAGE_FILE);
         }
 
         return $video;

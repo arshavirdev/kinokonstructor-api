@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\VideoRequest;
+use App\Http\Resources\CommentResource;
 use App\Http\Resources\VideoResource;
 use App\Models\Video;
 use App\Service\VideoService;
@@ -11,11 +12,9 @@ use Illuminate\Support\Facades\Auth;
 
 class VideoController extends Controller
 {
-    protected VideoService $videoService;
-
-    public function __construct(VideoService $videoService)
+    public function __construct(private VideoService $videoService)
     {
-        $this->videoService = $videoService;
+
     }
 
     public function index(Request $request)
@@ -63,7 +62,7 @@ class VideoController extends Controller
             'body' => $validated['body'],
         ]);
 
-        return response()->json($comment, 201);
+        return new CommentResource($comment);
     }
 
     public function action(Video $video, string $action)

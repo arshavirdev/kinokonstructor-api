@@ -1,7 +1,7 @@
 @component('mail::message')
 # Подтверждение email
 
-Уважаемый {{ $user->username }}, вы только что зарегистровались на [{{ config('app.name') }}]({{ env('SPA_URL') }}).
+Уважаемый {{ $user->username }}, вы только что зарегистровались на [{{ config('app.name') }}]({{ config('front.base_url') }}).
 Для завершения регистрации, Вам необходимо подтвердить Ваш адрес электронной почты
 
 @component('mail::button', ['url' => $actionUrl])

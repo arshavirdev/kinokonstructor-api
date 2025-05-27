@@ -25,7 +25,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         JsonResource::withoutWrapping();
-        if (!app()->environment("local")) {
+        if (!app()->environment('local')) {
             \URL::forceScheme('https');
         }
     }

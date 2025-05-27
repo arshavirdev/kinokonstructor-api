@@ -19,6 +19,7 @@ class VideoRequest extends FormRequest
             'category' => 'required|array',
 //            'details' => 'nullable|string',
             'video_file' => 'sometimes|file|mimetypes:video/mp4,video/avi,video/mpeg,video/quicktime|max:51200', // max 50MB
+            'image_file' => 'sometimes|file|mimetypes:image/jpg,image/jpeg,image/png',
         ];
     }
 }

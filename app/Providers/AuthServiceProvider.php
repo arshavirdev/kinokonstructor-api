@@ -40,7 +40,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        ResetPassword::toMailUsing(fn(User $user, string $token) => (new CustomResetPassword($user, env('SPA_URL') . '/auth/reset-password?token=' . $token)));
+        ResetPassword::toMailUsing(fn(User $user, string $token) => (new CustomResetPassword($user, config('front.base_url') . '/auth/reset-password?token=' . $token)));
 
         VerifyEmail::toMailUsing(fn(User $user, string $verificationUrl) => (new CustomVerifyEmail($user, $verificationUrl)));
         VerifyEmail::createUrlUsing(function (User $notifiable) {

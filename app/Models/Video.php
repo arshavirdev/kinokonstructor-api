@@ -13,6 +13,7 @@ class Video extends AppModel implements HasMedia
     use Favoritable;
 
     const VIDEO_FILE = 'video_file';
+    const IMAGE_FILE = 'image_file';
 
     protected $fillable = [
         'title',

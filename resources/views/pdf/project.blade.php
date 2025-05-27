@@ -152,7 +152,7 @@
         @if($project->locations->count() > 0)
         <ul>
         @foreach($project->locations as $location)
-            <li><span>[id: {{$location->id}}, <a href="{{ env('SPA_URL') }}/locations/{{$location->id}}">{{ env('SPA_URL') }}/locations/{{$location->id}}</a> ]:</span> {{$location->name}}</li>
+            <li><span>[id: {{$location->id}}, <a href="{{ config('front.base_url') }}/locations/{{$location->id}}">{{ config('front.base_url') }}/locations/{{$location->id}}</a> ]:</span> {{$location->name}}</li>
         @endforeach
         </ul>
         @else

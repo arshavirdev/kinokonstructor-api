@@ -67,7 +67,7 @@ class InviteController extends Controller
         if (!$invite) abort(401);
         $invite->status = 'accepted';
         $invite->save();
-        $url = env('SPA_URL') . '/projects/';
+        $url = config('front.base_url') . '/projects/';
         return redirect($url);
     }
 
@@ -77,7 +77,7 @@ class InviteController extends Controller
         if (!$invite) abort(401);
         $invite->status = 'rejected';
         $invite->save();
-        $url = env('SPA_URL') . '/projects/';
+        $url = config('front.base_url') . '/projects/';
         return redirect($url);
     }
 }

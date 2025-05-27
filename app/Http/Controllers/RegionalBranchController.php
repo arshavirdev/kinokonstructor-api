@@ -11,11 +11,9 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class RegionalBranchController extends Controller
 {
-    protected RegionalBranchService $regionalBranchService;
-
-    public function __construct(RegionalBranchService $regionalBranchService)
+    public function __construct(private RegionalBranchService $regionalBranchService)
     {
-        $this->regionalBranchService = $regionalBranchService;
+
     }
 
     public function index(Request $request): AnonymousResourceCollection

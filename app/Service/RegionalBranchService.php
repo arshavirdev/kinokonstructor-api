@@ -2,15 +2,20 @@
 
 namespace App\Service;
 
+use App\DataTransferObjects\MediaSyncDataDTO;
 use App\Http\Requests\RegionalBranch\RegionalBranchRequest;
 use App\Models\RegionalBranch;
-use Illuminate\Http\UploadedFile;
-use Spatie\MediaLibrary\HasMedia;
+use App\Service\Media\MediaService;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
 
 class RegionalBranchService
 {
+    function __construct(private MediaService $mediaService)
+    {
+
+    }
+
     public function store(RegionalBranchRequest $request): ?RegionalBranch
     {
         $authUser = auth()->user();
@@ -19,10 +24,12 @@ class RegionalBranchService
 
         $branch = RegionalBranch::create($insertData);
 
-        $this->syncMediaCollection($branch, [
-            'files' => $request->file(RegionalBranch::DOCS_FILES, []),
-            'post' => $request->post(RegionalBranch::DOCS_FILES, []),
-        ], RegionalBranch::DOCS_FILES);
+        $mediaDataDto = new MediaSyncDataDTO(
+            $request->file(RegionalBranch::DOCS_FILES, []),
+            $request->post(RegionalBranch::DOCS_FILES, [])
+        );
+
+        $this->mediaService->syncMediaCollection($branch, $mediaDataDto, RegionalBranch::DOCS_FILES);
 
         if ($request->has('contacts')) {
             $this->handleContacts($branch, $request->input('contacts'), $authUser);
@@ -43,10 +50,12 @@ class RegionalBranchService
         $authUser = auth()->user();
         $branch->update($request->validated());
 
-        $this->syncMediaCollection($branch, [
-            'files' => $request->file(RegionalBranch::DOCS_FILES, []),
-            'post' => $request->post(RegionalBranch::DOCS_FILES, []),
-        ], RegionalBranch::DOCS_FILES);
+        $mediaDataDto = new MediaSyncDataDTO(
+            $request->file(RegionalBranch::DOCS_FILES, []),
+            $request->post(RegionalBranch::DOCS_FILES, [])
+        );
+
+        $this->mediaService->syncMediaCollection($branch, $mediaDataDto, RegionalBranch::DOCS_FILES);
 
         if ($request->has('contacts')) {
             $this->handleContacts($branch, $request->input('contacts'), $authUser);
@@ -75,31 +84,5 @@ class RegionalBranchService
         }
 
         $branch->contacts()->create(array_merge(['user_id' => $user->id], $data));
-    }
-
-    /**
-     * @throws FileDoesNotExist
-     * @throws FileIsTooBig
-     */
-    private function syncMediaCollection(HasMedia $model, array $data, string $collectionName): void
-    {
-        $files = $data['files'] ?? [];
-        $postData = $data['post'] ?? [];
-
-        $mediaIdsToKeep = collect($postData)
-            ->pluck('id')
-            ->filter()
-            ->toArray();
-
-        //  Delete all media files exclude media IDs form req.body
-        $model->getMedia($collectionName)
-            ->reject(fn($media) => in_array($media->id, $mediaIdsToKeep))
-            ->each->delete();
-
-        foreach ($files as $file) {
-            if ($file instanceof UploadedFile) {
-                $model->addMedia($file)->toMediaCollection($collectionName);
-            }
-        }
     }
 }

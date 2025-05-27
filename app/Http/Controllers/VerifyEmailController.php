@@ -23,14 +23,14 @@ class VerifyEmailController extends Controller
         if ($request->user()->hasVerifiedEmail()) {
             return $request->wantsJson()
                 ? new JsonResponse(['success' => true], 204)
-                : redirect()->intended(env('SPA_URL'));
+                : redirect()->intended(config('front.base_url'));
         }
 
         $request->user()->sendEmailVerificationNotification();
 
         return $request->wantsJson()
             ? new JsonResponse('', 202)
-            : redirect()->intended(env('SPA_URL'));
+            : redirect()->intended(config('front.base_url'));
     }
 
     public function verify(VerifyEmailRequest $request)
@@ -56,7 +56,7 @@ class VerifyEmailController extends Controller
 
     public static function getSignedUrl(User $user, $expires)
     {
-        return env('SPA_URL') . '/auth/verify-email?' . http_build_query([
+        return config('front.base_url') . '/auth/verify-email?' . http_build_query([
                 'id' => $user->id,
                 'hash' => sha1($user->getEmailForVerification()),
                 'expires' => $expires,
