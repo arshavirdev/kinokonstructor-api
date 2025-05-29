@@ -110,8 +110,6 @@ class ProjectController extends Controller
      */
     public function store(StoreProjectRequestNEW $request, ProjectService $projectService): JsonResponse|ProjectResource
     {
-        $request->validated();
-
         try {
             $project = DB::transaction(function () use ($request, $projectService) {
                 return $projectService->store($request);
@@ -131,7 +129,7 @@ class ProjectController extends Controller
      * Display the specified resource.
      *
      * @param \App\Models\Project $project
-     * @return \Illuminate\Http\Response
+     * @return ProjectResource
      */
     public function show(Project $project)
     {
@@ -149,6 +147,7 @@ class ProjectController extends Controller
      */
     public function update(Project $project, UpdateProjectRequestNEW $request, ProjectService $projectService): ProjectResource|JsonResponse
     {
+        $this->authorize('update', $project);
         try {
             $project = DB::transaction(function () use ($request, $projectService, $project) {
                 return $projectService->update($request, $project);
@@ -181,7 +180,11 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        //
+        $this->authorize('delete', $project);
+
+        $project->delete();
+
+        return response()->noContent();
     }
 
     private function syncMedia(Project $project, $params)
@@ -260,13 +263,6 @@ class ProjectController extends Controller
 
     public function action(Project $project, string $action, ProjectService $projectService)
     {
-        // Allowed actions
-        $allowedActions = ['favorite', 'archive', 'unarchive'];
-
-        if (!in_array($action, $allowedActions)) {
-            return response()->json(['message' => 'Invalid action'], 400);
-        }
-
         if (in_array($action, ['archive', 'unarchive'])) {
             $this->authorize($action, $project);
         }

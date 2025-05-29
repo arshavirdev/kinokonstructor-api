@@ -8,7 +8,6 @@ use App\Http\Resources\VideoResource;
 use App\Models\Video;
 use App\Service\VideoService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class VideoController extends Controller
 {
@@ -37,16 +36,16 @@ class VideoController extends Controller
 
     public function update(VideoRequest $request, Video $video)
     {
+        $this->authorize( 'update', $video);
+
         $video = $this->videoService->update($video, $request);
         return new VideoResource($video, true);
     }
 
     public function destroy(Video $video)
     {
-        $user = Auth::user();
-        if (!$user->can('delete', $video)) {
-            abort(403);
-        }
+        $this->authorize( 'delete', $video);
+
         $this->videoService->delete($video);
         return response()->json(['message' => 'Video deleted successfully.']);
     }
@@ -67,13 +66,6 @@ class VideoController extends Controller
 
     public function action(Video $video, string $action)
     {
-        // Allowed actions
-        $allowedActions = ['favorite'];
-
-        if (!in_array($action, $allowedActions)) {
-            return response()->json(['message' => 'Invalid action'], 400);
-        }
-
         $result = match ($action) {
             'favorite' => $this->videoService->favorite($video),
             default => response()->json(['message' => 'Invalid action'], 400)

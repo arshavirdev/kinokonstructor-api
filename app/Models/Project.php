@@ -11,7 +11,8 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
- * @property number applicant_id
+ * @property number $applicant_id
+ * @property number $owner_id
  * @property Profile $applicant
  * @property Request[] $requests
  */

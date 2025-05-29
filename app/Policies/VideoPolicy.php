@@ -2,11 +2,11 @@
 
 namespace App\Policies;
 
-use App\Models\Project;
 use App\Models\User;
+use App\Models\Video;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class ProjectPolicy
+class VideoPolicy
 {
     use HandlesAuthorization;
 
@@ -25,10 +25,10 @@ class ProjectPolicy
      * Determine whether the user can view the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Project  $project
+     * @param  \App\Models\Video  $video
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(User $user, Project $project)
+    public function view(User $user, Video $video)
     {
         //
     }
@@ -48,34 +48,34 @@ class ProjectPolicy
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Project  $project
+     * @param  \App\Models\Video  $video
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(User $user, Project $project)
+    public function update(User $user, Video $video)
     {
-        return $user->id === $project->owner->user->id;
+        return $user->id === $video->owner_id;
     }
 
     /**
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Project  $project
+     * @param  \App\Models\Video  $video
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete(User $user, Project $project)
+    public function delete(User $user, Video $video)
     {
-        //
+       return $user->id === $video->owner_id;
     }
 
     /**
      * Determine whether the user can restore the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Project  $project
+     * @param  \App\Models\Video  $video
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore(User $user, Project $project)
+    public function restore(User $user, Video $video)
     {
         //
     }
@@ -84,35 +84,11 @@ class ProjectPolicy
      * Determine whether the user can permanently delete the model.
      *
      * @param  \App\Models\User  $user
-     * @param  \App\Models\Project  $project
+     * @param  \App\Models\Video  $video
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDelete(User $user, Project $project)
+    public function forceDelete(User $user, Video $video)
     {
         //
-    }
-
-     /**
-     * Determine whether the user can archive the model.
-     *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\Project  $project
-     * @return \Illuminate\Auth\Access\Response|bool
-     */
-    public function archive(User $user, Project $project)
-    {
-        return $user->id === $project->owner->user->id;
-    }
-
-     /**
-     * Determine whether the user can archive the model.
-     *
-     * @param  \App\Models\User  $user
-     * @param  \App\Models\Project  $project
-     * @return \Illuminate\Auth\Access\Response|bool
-     */
-    public function unarchive(User $user, Project $project)
-    {
-        return $user->id === $project->owner->user->id;
     }
 }

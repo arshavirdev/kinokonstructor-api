@@ -180,13 +180,6 @@ class ContestController extends Controller
 
     public function action(Contest $contest, string $action, ContestService $contestService)
     {
-        // Allowed actions
-        $allowedActions = ['favorite', 'archive', 'unarchive'];
-
-        if (!in_array($action, $allowedActions)) {
-            return response()->json(['message' => 'Invalid action'], 400);
-        }
-
         if (in_array($action, ['archive', 'unarchive'])) {
             $this->authorize($action, $contest);
         }
