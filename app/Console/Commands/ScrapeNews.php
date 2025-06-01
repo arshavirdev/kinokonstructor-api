@@ -10,7 +10,7 @@ use App\Service\News\KinoNewsScraper;
 class ScrapeNews extends Command
 {
     protected $signature = 'news:scrape {--purge}';
-    protected $description = 'Scrape news from external source';
+    protected $description = 'Scrape news from external sources';
 
     public function __construct(
         private KinoNewsScraper $kinoNewsScraper,
@@ -20,60 +20,60 @@ class ScrapeNews extends Command
         parent::__construct();
     }
 
-    public function handle()
+    public function handle(): void
     {
+        $sources = [
+            $this->kinoNewsScraper,
+            $this->movieStartScraper,
+        ];
+
         if ($this->option('purge')) {
-            $this->strapiService->deleteNewsByVendor(KinoNewsScraper::VENDOR);
-            $this->strapiService->deleteNewsByVendor(MovieStartScraper::VENDOR);
-            return $this->info('News successfully removed');
-        }
-
-        $this->info('Starting news scrapping');
-        $this->processKinoNews();
-        $this->processMovieStart();
-        $this->info('News scrape finished.');
-    }
-
-    private function processKinoNews()
-    {
-        $news = $this->kinoNewsScraper->process();
-
-        if (!count($news)) {
-            $this->info('No news found for ' . KinoNewsScraper::VENDOR);
-            return;
-        }
-
-        $this->info('Found ' . count($news) . ' ' . KinoNewsScraper::VENDOR);
-
-        $this->strapiService->deleteNewsByVendor(KinoNewsScraper::VENDOR);
-
-        foreach ($news as $newsData) {
-            try {
-                $this->strapiService->createNews($newsData);
-            } catch (\Throwable $th) {
-                $this->error('' . $th->getMessage());
+            foreach ($sources as $source) {
+                $this->strapiService->deleteNewsByVendor($source::VENDOR);
             }
-        }
-    }
-
-    private function processMovieStart()
-    {
-        $news = $this->movieStartScraper->process();
-
-        if (!count($news)) {
-            $this->info('No news found for ' . MovieStartScraper::VENDOR);
+            $this->info('News successfully removed.');
             return;
         }
 
-        $this->info('Found ' . count($news) . ' ' . MovieStartScraper::VENDOR);
+        $this->info('Starting news scraping...');
 
-        $this->strapiService->deleteNewsByVendor(MovieStartScraper::VENDOR);
+        foreach ($sources as $source) {
+            $this->processSource($source);
+        }
+
+        $this->info('News scraping finished.');
+    }
+
+    private function processSource(object $scraper): void
+    {
+        $vendor = $scraper::VENDOR;
+
+        try {
+            $news = $scraper->process();
+        } catch (\Throwable $e) {
+            $this->error("Failed to process $vendor: " . $e->getMessage());
+            return;
+        }
+
+        if (empty($news)) {
+            $this->info("No news found for $vendor.");
+            return;
+        }
+
+        $this->info("Found " . count($news) . " items for $vendor.");
+
+        try {
+            $this->strapiService->deleteNewsByVendor($vendor);
+        } catch (\Throwable $e) {
+            $this->error("Failed to delete existing news for $vendor: " . $e->getMessage());
+            return;
+        }
 
         foreach ($news as $newsData) {
             try {
                 $this->strapiService->createNews($newsData);
-            } catch (\Throwable $th) {
-                $this->error('' . $th->getMessage());
+            } catch (\Throwable $e) {
+                $this->error("Failed to create news item for $vendor: " . $e->getMessage());
             }
         }
     }
