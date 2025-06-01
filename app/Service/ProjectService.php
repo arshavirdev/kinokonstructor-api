@@ -2,7 +2,7 @@
 
 namespace App\Service;
 
-use App\DataTransferObjects\MediaSyncDataDTO;
+use App\DTOs\MediaSyncDataDTO;
 use App\Http\Requests\StoreProjectRequestNEW;
 use App\Http\Requests\UpdateProjectRequestNEW;
 use App\Service\Media\MediaService;

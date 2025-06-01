@@ -1,6 +1,6 @@
 <?php
 
-namespace App\DataTransferObjects;
+namespace App\DTOs;
 use Illuminate\Http\UploadedFile;
 
 class MediaSyncDataDTO

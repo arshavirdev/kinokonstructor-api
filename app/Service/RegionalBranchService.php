@@ -2,7 +2,7 @@
 
 namespace App\Service;
 
-use App\DataTransferObjects\MediaSyncDataDTO;
+use App\DTOs\MediaSyncDataDTO;
 use App\Http\Requests\RegionalBranch\RegionalBranchRequest;
 use App\Models\RegionalBranch;
 use App\Service\Media\MediaService;

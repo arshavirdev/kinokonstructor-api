@@ -3,7 +3,7 @@
 namespace App\Service\Media;
 
 use Log;
-use App\DataTransferObjects\MediaSyncDataDTO;
+use App\DTOs\MediaSyncDataDTO;
 use Illuminate\Http\UploadedFile;
 use Spatie\MediaLibrary\HasMedia;
 
