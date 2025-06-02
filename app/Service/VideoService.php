@@ -17,7 +17,7 @@ class VideoService
 
         if ($request->hasFile('video_file')) {
             $videoFile = $request->file('video_file');
-            $video->clearMediaCollection(Video::IMAGE_FILE);
+            $video->clearMediaCollection(Video::VIDEO_FILE);
             $video->addMedia($videoFile)->toMediaCollection(Video::VIDEO_FILE);
         }
 
@@ -37,7 +37,7 @@ class VideoService
 
          if ($request->hasFile('video_file')) {
             $videoFile = $request->file('video_file');
-            $video->clearMediaCollection(Video::IMAGE_FILE);
+            $video->clearMediaCollection(Video::VIDEO_FILE);
             $video->addMedia($videoFile)->toMediaCollection(Video::VIDEO_FILE);
         }
 
@@ -53,6 +53,7 @@ class VideoService
     public function delete(Video $video): bool
     {
         $video->clearMediaCollection(Video::VIDEO_FILE);
+        $video->clearMediaCollection(Video::IMAGE_FILE);
         return $video->delete();
     }
 

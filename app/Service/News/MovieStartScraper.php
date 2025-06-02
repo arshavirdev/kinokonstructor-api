@@ -26,7 +26,7 @@ class MovieStartScraper
 
         $crawler = new Crawler($html);
 
-        $newsLinks = $crawler->filter('div.news_block')
+        $newsLinks = $crawler->filter('div.post-item')
             ->slice(0, self::NEWS_LIMIT)
             ->each(function (Crawler $node) {
                 $linkUrl = $node->filter('a')->attr('href');
@@ -53,29 +53,33 @@ class MovieStartScraper
         $client = HttpClient::create();
 
         try {
-            $response = $client->request('GET', $link);
+            $response = $client->request('GET', self::BASE_URL . $link);
             $html = $response->getContent();
         } catch (TransportExceptionInterface $e) {
             throw new \RuntimeException("Failed to fetch single news article: " . $e->getMessage());
         }
 
         $crawler = new Crawler($html);
-        return $this->parseSingleNews($crawler, $link);
+        try {
+            return $this->parseSingleNews($crawler, $link);
+        } catch (\Throwable $th) {
+            echo "" . $th->getMessage();
+        }
     }
 
     private function parseSingleNews(Crawler $crawler, string $link): array
     {
+        $parsedLink = explode('/', $link);
+
         $date = $crawler->filter('meta[property="article:published_time"]')->attr('content', '');
         $imgUrl = $crawler->filter('meta[property="og:image"]')->attr('content', '');
         $brief = $crawler->filter('meta[name="description"]')->attr('content', '');
 
-        $title = $crawler->filter('h1.entry-title')->text('');
+        $title = $crawler->filter('h1.title')->text('');
         $content = $crawler->filter('div.layout__content')->count() ? $crawler->filter('div.layout__content')->html() : '';
 
-        $articleId = $crawler->filter('article')->attr('id');
-
         $brief = mb_strlen($brief, 'UTF-8') > 100 ? mb_substr($brief, 0, 80, 'UTF-8') . "..." : $brief;
-        $slug = self::VENDOR . '-' . $articleId;
+        $slug = self::VENDOR . '-' . ($parsedLink[4] ?? time());
 
         return [
             'vendor' => self::VENDOR,
