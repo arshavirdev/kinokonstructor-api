@@ -201,8 +201,8 @@ class ProjectService
             'other' => $contacts['other'] ?? [],
         ];
 
-        $contact = $project->contact;
-        $contact ? $contact->update($data) : $project->contact()->create(array_merge(['user_id' => $user->id], $data));
+        $contact = $project->contacts;
+        $contact ? $contact->update($data) : $project->contacts()->create(array_merge(['user_id' => $user->id], $data));
     }
 
     private function handleFileUploads(Project $project, MediaSyncDataDTO $mediaDto): void

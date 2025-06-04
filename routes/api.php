@@ -7,6 +7,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\Admin\UserAdminController;
@@ -106,6 +107,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         // REPORT
         Route::post('/report', [ReportController::class, 'store']);
+
+        // RESOURCE
+        Route::apiResource('/resources', ResourceController::class);
     });
     Route::middleware(['moderator'])->group(function () {
         Route::apiResource('users', UserAdminController::class);
