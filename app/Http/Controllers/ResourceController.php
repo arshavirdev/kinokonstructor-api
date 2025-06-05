@@ -21,8 +21,29 @@ class ResourceController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Resource::query()->with(['owner']);
-        $resources = $query->orderBy('created_at', 'desc')->paginate($request->input('pageSize', 10));
+        $user = auth()->user();
+        $userId = $user?->id;
+        $profileId = $user?->profile?->id;
+
+        $query = Resource::query()->with(['owner'])
+            ->withCount([
+                'favorites as is_favorite' => fn($q) => $q->where('user_id', $userId),
+            ]);
+
+        $query->when($request->get('type') === 'my', function ($q) use ($profileId) {
+            $q->where('owner_id', $profileId);
+        });
+
+        $query->when($request->filled('search'), function ($q) use ($request) {
+            $q->where('title', 'like', '%' . $request->get('search') . '%');
+        });
+
+        $query->when(filter_var($request->input('favorite'), FILTER_VALIDATE_BOOLEAN), function ($q) use ($profileId) {
+            $q->whereHas('favorites', fn($subQ) => $subQ->where('owner_id', $profileId));
+        });
+
+        $resources = $query->orderBy('created_at', 'DESC')
+            ->paginate($request->input('pageSize', 10));
         return ResourceResource::collection($resources);
     }
 
@@ -59,6 +80,8 @@ class ResourceController extends Controller
      */
     public function update(ResourceRequest $request, Resource $resource)
     {
+        $this->authorize('update', $resource);
+
         $resource = $this->resourceService->update($resource, $request);
         return new ResourceResource($resource, true);
     }
@@ -71,7 +94,23 @@ class ResourceController extends Controller
      */
     public function destroy(Resource $resource)
     {
+        $this->authorize('delete', $resource);
+
         $this->resourceService->delete($resource);
         return response()->json(['success' => true]);
+    }
+
+    public function action(Resource $resource, string $action)
+    {
+        $result = match ($action) {
+            'favorite' => $this->resourceService->favorite($resource),
+            default => ['error' => 'Invalid action'] // TODO: fix
+        };
+
+        if (isset($result['error'])) {
+            return response()->json(['message' => 'Invalid action'], 400);
+        }
+
+        return response()->json($result);
     }
 }

@@ -7,7 +7,6 @@ use App\Models\Resource;
 use App\Http\Requests\ResourceRequest;
 use App\Models\User;
 use App\Service\Media\MediaService;
-use Illuminate\Auth\Authenticatable;
 use Illuminate\Support\Facades\Auth;
 
 class ResourceService
@@ -33,10 +32,21 @@ class ResourceService
             $request->post(Resource::IMAGES_FILES, [])
         );
 
+        $filesMediaDto = new MediaSyncDataDTO(
+            $request->file(Resource::FILES, []),
+            $request->post(Resource::FILES, [])
+        );
+
         $this->mediaService->syncMediaCollection(
             $resource,
             $imagesMediaDto,
             Resource::IMAGES_FILES
+        );
+
+        $this->mediaService->syncMediaCollection(
+            $resource,
+            $filesMediaDto,
+            Resource::FILES
         );
 
         $resource->load(['media', 'contacts']);
@@ -59,10 +69,21 @@ class ResourceService
             $request->post(Resource::IMAGES_FILES, [])
         );
 
+        $filesMediaDto = new MediaSyncDataDTO(
+            $request->file(Resource::FILES, []),
+            $request->post(Resource::FILES, [])
+        );
+
         $this->mediaService->syncMediaCollection(
             $resource,
             $imagesMediaDto,
             Resource::IMAGES_FILES
+        );
+
+        $this->mediaService->syncMediaCollection(
+            $resource,
+            $filesMediaDto,
+            Resource::FILES
         );
 
         $resource->load(['media', 'contacts']);

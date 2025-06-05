@@ -49,9 +49,10 @@ Route::get('dictionaries/{dictionary?}', [DictionaryController::class, 'show']);
 Route::apiResource('/videos', VideoController::class)->only(['show', 'index']);
 Route::apiResource('/contests', ContestController::class)->only(['show', 'index']);
 Route::apiResource('/regional-branches', RegionalBranchController::class)->only(['show', 'index']);
+Route::apiResource('/resources', ResourceController::class)->only(['show', 'index']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::put('auth/user/password', [PasswordController::class,'update']);
+    Route::put('auth/user/password', [PasswordController::class, 'update']);
     Route::controller(UserController::class)->prefix('user')->group(function () {
         Route::get('', 'showCurrentUser');
     });
@@ -79,10 +80,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         Route::apiResource('profiles', ProfileController::class, ['only' => ['index', 'show']]);
         Route::apiResource('locations', LocationController::class);
+
+        // CONTEST
         Route::apiResource('contests', ContestController::class)->except(['index', 'show']);
         Route::post('/contests/{contest}/{action}', [ContestController::class, 'action'])
-                ->where('action', 'favorite|archive|unarchive');
+            ->where('action', 'favorite|archive|unarchive');
 
+        // PROJECT
         Route::apiResource('projects', ProjectController::class);
         Route::prefix('projects/{project}')->group(function () {
             Route::post('/moderate', [ProjectController::class, 'moderate']);
@@ -107,9 +111,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         // REPORT
         Route::post('/report', [ReportController::class, 'store']);
-
-        // RESOURCE
-        Route::apiResource('/resources', ResourceController::class);
     });
     Route::middleware(['moderator'])->group(function () {
         Route::apiResource('users', UserAdminController::class);
@@ -141,11 +142,17 @@ Route::middleware(['auth:sanctum'])->group(function () {
         ->where('action', 'favorite');
 
     // REGIONAL BRANCH
-    Route::apiResource('/regional-branches', RegionalBranchController::class)->except(['show', 'index']);;
+    Route::apiResource('/regional-branches', RegionalBranchController::class)->except(['show', 'index']);
+    ;
 
     // BRANCH MEMBERS AND NEWS
     Route::prefix('/regional-branches/{regionalBranch}')->group(function () {
         Route::apiResource('/members', BranchMemberController::class)->only(['store']);
         Route::apiResource('/news', BranchNewsController::class)->only(['store']);
     });
+
+    // RESOURCE
+    Route::apiResource('/resources', ResourceController::class)->except(['index', 'show']);
+    Route::post('/resources/{resource}/{action}', [ResourceController::class, 'action'])
+        ->where('action', 'favorite');
 });

@@ -23,6 +23,7 @@ class ResourceRequest extends FormRequest
             'parameters' => 'sometimes|nullable|array',
             'company' => 'sometimes|nullable|array',
             'images_files' => 'sometimes|nullable|array',
+            'files_section' => 'sometimes|nullable|array',
             // Contacts
             'contacts' => 'nullable|array',
             'contacts.phone' => 'nullable|array',

@@ -26,6 +26,7 @@ class Resource extends Model implements HasMedia
     use Favoritable;
 
     const IMAGES_FILES = "images_files";
+    const FILES = "files_section";
 
     protected $fillable = [
         "title",
@@ -47,6 +48,7 @@ class Resource extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection(self::IMAGES_FILES);
+        $this->addMediaCollection(self::FILES);
     }
 
     public function owner()
