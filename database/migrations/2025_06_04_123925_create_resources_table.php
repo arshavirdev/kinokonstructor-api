@@ -20,7 +20,7 @@ return new class extends Migration {
             $table->jsonb('category')->default('[]');
             $table->foreignId('owner_id')->constrained('profiles')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('region_id')->constrained('regions')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->jsonb('parameters')->default('{}');
+            $table->jsonb('parameters')->default('[]');
             $table->jsonb(column: 'company')->default('{}');
             $table->timestamps();
         });

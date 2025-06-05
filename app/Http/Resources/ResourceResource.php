@@ -29,13 +29,13 @@ class ResourceResource extends JsonResource
             'description' => $this->description,
             'short_description' => $this->short_description,
             'company' => $this->company,
+            'parameters' => $this->parameters,
             'category' => $this->category,
             'region_id' => $this->region_id,
             'created_at' => $this->created_at,
             'is_owner' => $is_owner,
             'is_favorite' => (bool) $this->is_favorite,
-            'images_files' => MediaResource::collection($this->getMedia(Resource::IMAGES_FILES)),
-
+            'images_files' => MediaResource::collection($this->getMedia(Resource::IMAGES_FILES))
         ];
 
         if ($this->withDetails) {
