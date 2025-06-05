@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\Service\TelegramService;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
@@ -44,7 +45,8 @@ class Handler extends ExceptionHandler
     public function register()
     {
         $this->reportable(function (Throwable $e) {
-
+            $message = TelegramService::formatException($e);
+            TelegramService::sendMessage($message);
         });
     }
 }

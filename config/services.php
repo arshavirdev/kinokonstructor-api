@@ -34,5 +34,13 @@ return [
     'strapi' => [
         'url' => env('STRAPI_API_URL'),
         'token' => env('STRAPI_API_TOKEN'),
+    ],
+
+    'telegram' => [
+        'bot_token' => env('TELEGRAM_BOT_TOKEN'),
+        'chat_ids' => array_filter(
+            array_map('trim', explode(',', env('TELEGRAM_CHAT_IDS', ''))),
+            fn($id) => $id !== ''
+        ),
     ]
 ];
