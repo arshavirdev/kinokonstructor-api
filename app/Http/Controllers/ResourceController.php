@@ -104,7 +104,9 @@ class ResourceController extends Controller
     {
         $result = match ($action) {
             'favorite' => $this->resourceService->favorite($resource),
-            default => ['error' => 'Invalid action'] // TODO: fix
+            'archive' => $this->resourceService->archive($resource),
+            'unarchive' => $this->resourceService->unarchive($resource),
+            default => ['error' => 'Invalid action']
         };
 
         if (isset($result['error'])) {

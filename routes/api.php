@@ -154,5 +154,5 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // RESOURCE
     Route::apiResource('/resources', ResourceController::class)->except(['index', 'show']);
     Route::post('/resources/{resource}/{action}', [ResourceController::class, 'action'])
-        ->where('action', 'favorite');
+        ->where('action', 'favorite|archive|unarchive');
 });

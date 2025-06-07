@@ -117,6 +117,11 @@ class ResourceService
         $resource->contacts()->create(array_merge(['user_id' => $user->id], $data));
     }
 
+    /**
+     * Favorite/Unfavorite
+     * @param \App\Models\Resource $resource
+     * @return array{is_favorite: bool}
+     */
     public function favorite(Resource $resource)
     {
         $userId = Auth::id();
@@ -129,5 +134,33 @@ class ResourceService
 
         $resource->favorites()->create(['user_id' => $userId]);
         return ['is_favorite' => true];
+    }
+
+    /**
+     * Archive
+     * @param \App\Models\Resource $resource
+     * @return array{is_archived: bool}
+     */
+    public function archive(Resource $resource)
+    {
+        if ($resource->update(['is_archived' => true])) {
+            return ['is_archived' => true];
+        }
+
+        return ['is_archived' => false];
+    }
+
+    /**
+     * Unarchive
+     * @param \App\Models\Resource $resource
+     * @return array{is_archived: bool}
+     */
+    public function unarchive(Resource $resource)
+    {
+        if ($resource->update(['is_archived' => false])) {
+            return ['is_archived' => false];
+        }
+
+        return ['is_archived' => true];
     }
 }

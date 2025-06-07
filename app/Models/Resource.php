@@ -18,6 +18,9 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property array $category
  * @property array $parameters
  * @property array $company
+ * @property bool $is_archived
+ * @property-read \Date $created_at
+ * @property-read \Date $updated_at
  */
 class Resource extends Model implements HasMedia
 {
@@ -36,13 +39,15 @@ class Resource extends Model implements HasMedia
         "region_id",
         "owner_id",
         "parameters",
-        "company"
+        "company",
+        "is_archived"
     ];
 
     protected $casts = [
         "parameters" => "array",
         "company" => "array",
-        "category" => "array"
+        "category" => "array",
+        'is_archived' => 'bool',
     ];
 
     public function registerMediaCollections(): void

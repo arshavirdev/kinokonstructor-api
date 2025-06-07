@@ -22,6 +22,7 @@ return new class extends Migration {
             $table->foreignId('region_id')->constrained('regions')->cascadeOnUpdate()->cascadeOnDelete();
             $table->jsonb('parameters')->default('[]');
             $table->jsonb(column: 'company')->default('{}');
+            $table->boolean('is_archived')->default(false);
             $table->timestamps();
         });
     }

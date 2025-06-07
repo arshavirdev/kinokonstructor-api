@@ -35,6 +35,7 @@ class ResourceResource extends JsonResource
             'created_at' => $this->created_at,
             'is_owner' => $is_owner,
             'is_favorite' => (bool) $this->is_favorite,
+            'is_archived' => $this->is_archived,
             Resource::IMAGES_FILES => MediaResource::collection($this->getMedia(Resource::IMAGES_FILES)),
             Resource::FILES => MediaResource::collection($this->getMedia(Resource::FILES))
         ];
