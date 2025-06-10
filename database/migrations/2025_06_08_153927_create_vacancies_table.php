@@ -1,0 +1,36 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('vacancies', function (Blueprint $table) {
+            $table->id();
+            $table->enum('format', ['remote', 'office', 'hybrid']);
+            $table->integer('position_id');
+            $table->text('description');
+            $table->string('salary_range')->nullable();
+            $table->string('experience_required')->nullable();
+            $table->foreignId('owner_id')->constrained('profiles')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('vacancies');
+    }
+};

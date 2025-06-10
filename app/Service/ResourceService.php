@@ -7,11 +7,12 @@ use App\Models\Resource;
 use App\Http\Requests\ResourceRequest;
 use App\Models\User;
 use App\Service\Media\MediaService;
+use App\Service\Shared\ContactHandlerService;
 use Illuminate\Support\Facades\Auth;
 
 class ResourceService
 {
-    function __construct(private MediaService $mediaService)
+    function __construct(private MediaService $mediaService, private ContactHandlerService $contactHandlerService)
     {
     }
 
@@ -24,7 +25,7 @@ class ResourceService
         $resource = Resource::create($data);
 
         if ($request->has('contacts')) {
-            $this->handleResourceContacts($resource, $request->get('contacts'), $authUser);
+            $this->contactHandlerService->handle($resource, $request->get('contacts'), $authUser);
         }
 
         $imagesMediaDto = new MediaSyncDataDTO(
@@ -61,7 +62,7 @@ class ResourceService
         $resource->update($data);
 
         if ($request->has('contacts')) {
-            $this->handleResourceContacts($resource, $data['contacts'], $authUser);
+            $this->contactHandlerService->handle($resource, $request->get('contacts'), $authUser);
         }
 
         $imagesMediaDto = new MediaSyncDataDTO(
@@ -95,26 +96,6 @@ class ResourceService
     {
         $resource->clearMediaCollection(Resource::IMAGES_FILES);
         return $resource->delete();
-    }
-
-    private function handleResourceContacts(Resource $resource, array $contacts, User $user): void
-    {
-        $data = [
-            'phone' => $contacts['phone'] ?? [],
-            'email' => $contacts['email'] ?? [],
-            'website' => $contacts['website'] ?? [],
-            'socials' => $contacts['socials'] ?? [],
-            'other' => $contacts['other'] ?? [],
-        ];
-
-        $contacts = $resource->contacts;
-
-        if (!$contacts->isEmpty()) {
-            $resource->contacts()->update($data);
-            return;
-        }
-
-        $resource->contacts()->create(array_merge(['user_id' => $user->id], $data));
     }
 
     /**

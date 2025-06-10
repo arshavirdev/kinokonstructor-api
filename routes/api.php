@@ -12,6 +12,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\Admin\UserAdminController;
 use App\Http\Controllers\ContestController;
+use App\Http\Controllers\VacancyController;
 use App\Http\Controllers\VerifyEmailController;
 use App\Http\Controllers\InviteController;
 use App\Http\Controllers\PasswordController;
@@ -154,5 +155,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // RESOURCE
     Route::apiResource('/resources', ResourceController::class)->except(['index', 'show']);
     Route::post('/resources/{resource}/{action}', [ResourceController::class, 'action'])
+        ->where('action', 'favorite|archive|unarchive');
+
+    // VACANCY
+    Route::apiResource('/vacancies', VacancyController::class);
+    Route::post('/vacancies/{resource}/{action}', [VacancyController::class, 'action'])
         ->where('action', 'favorite|archive|unarchive');
 });

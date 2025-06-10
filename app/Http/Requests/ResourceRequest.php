@@ -2,10 +2,13 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Requests\Traits\HasContactRules;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ResourceRequest extends FormRequest
 {
+    use HasContactRules;
+
     public function authorize(): bool
     {
         return true;
@@ -24,15 +27,7 @@ class ResourceRequest extends FormRequest
             'company' => 'sometimes|nullable|array',
             'images_files' => 'sometimes|nullable|array',
             'files_section' => 'sometimes|nullable|array',
-            // Contacts
-            'contacts' => 'nullable|array',
-            'contacts.phone' => 'nullable|array',
-            'contacts.email' => 'nullable|array',
-            'contacts.website' => 'nullable|array',
-            'contacts.socials' => 'nullable|array',
-            'contacts.other' => 'nullable|array',
-            'contacts.telVisible' => 'nullable|boolean',
-            'contacts.emailVisible' => 'nullable|boolean',
+            ...$this->contactRules(),
         ];
     }
 }
