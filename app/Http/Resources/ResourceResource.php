@@ -28,7 +28,7 @@ class ResourceResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'short_description' => $this->short_description,
-            'company' => $this->company,
+            'company' => (object) ($this->company ?? []),
             'parameters' => $this->parameters,
             'category' => $this->category,
             'region_id' => $this->region_id,

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Vacancy;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,11 +15,16 @@ return new class extends Migration {
     {
         Schema::create('vacancies', function (Blueprint $table) {
             $table->id();
-            $table->enum('format', ['remote', 'office', 'hybrid']);
+            $table->enum('format', Vacancy::FORMATS)->default(Vacancy::OFFICE);
+            $table->enum('employment_type', Vacancy::EMPLOYMENT_TYPES)->default(Vacancy::FULL_TIME);
             $table->integer('position_id');
+            $table->integer('department_id')->nullable();
             $table->text('description');
-            $table->string('salary_range')->nullable();
-            $table->string('experience_required')->nullable();
+            $table->jsonb( 'company')->default(DB::raw("'{}'::jsonb"));
+            $table->decimal('salary', 10, 2)->nullable();
+            $table->integer('experience')->nullable();
+            $table->boolean('is_experience_required')->default(true);
+            $table->foreignId('region_id')->constrained('regions')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('owner_id')->constrained('profiles')->cascadeOnUpdate()->cascadeOnDelete();
             $table->timestamps();
         });

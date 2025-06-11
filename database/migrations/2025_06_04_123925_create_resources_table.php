@@ -21,7 +21,7 @@ return new class extends Migration {
             $table->foreignId('owner_id')->constrained('profiles')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('region_id')->constrained('regions')->cascadeOnUpdate()->cascadeOnDelete();
             $table->jsonb('parameters')->default('[]');
-            $table->jsonb(column: 'company')->default('{}');
+            $table->jsonb( 'company')->default('{}');
             $table->boolean('is_archived')->default(false);
             $table->timestamps();
         });

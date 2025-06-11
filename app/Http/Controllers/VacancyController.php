@@ -42,6 +42,18 @@ class VacancyController extends Controller
             $q->whereHas('favorites', fn($subQ) => $subQ->where('owner_id', $profileId));
         });
 
+        $query->when($request->filled('region_id'), function ($q) use ($request) {
+            $q->where('region_id', $request->input('region_id'));
+        });
+
+        $query->when($request->filled('experience'), function ($q) use ($request) {
+            $q->where('experience', $request->input('experience'));
+        });
+
+        $query->when($request->filled('format'), function ($q) use ($request) {
+            $q->where('format', $request->input('format'));
+        });
+
         $resources = $query->orderBy('created_at', 'DESC')
             ->paginate($request->input('pageSize', 10));
         return VacancyResource::collection($resources);
