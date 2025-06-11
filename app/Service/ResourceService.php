@@ -24,7 +24,7 @@ class ResourceService
 
         $resource = Resource::create($data);
 
-        if ($request->has('contacts')) {
+        if ($request->has('contacts') && isset($data['contacts'])) {
             $this->contactHandlerService->handle($resource, $request->get('contacts'), $authUser);
         }
 
@@ -61,7 +61,7 @@ class ResourceService
         $data = $request->except([Resource::IMAGES_FILES]);
         $resource->update($data);
 
-        if ($request->has('contacts')) {
+        if ($request->has('contacts') && isset($data['contacts'])) {
             $this->contactHandlerService->handle($resource, $request->get('contacts'), $authUser);
         }
 

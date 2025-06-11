@@ -21,7 +21,7 @@ class VacancyService
 
         $vacancy = Vacancy::create($data);
 
-        if ($request->has('contacts')) {
+        if ($request->has('contacts') && isset($data['contacts'])) {
             $this->contactHandlerService->handle($vacancy, $data['contacts'], $authUser);
         }
 
@@ -35,7 +35,7 @@ class VacancyService
         $authUser = auth()->user();
         $vacancy->update($data);
 
-        if ($request->has('contacts')) {
+        if ($request->has('contacts') && isset($data['contacts'])) {
             $this->contactHandlerService->handle($vacancy, $data['contacts'], $authUser);
         }
 
