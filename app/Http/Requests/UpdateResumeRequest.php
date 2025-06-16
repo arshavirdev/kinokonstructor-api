@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Http\Requests\Traits\HasContactRules;
+use App\Models\Resume;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateResumeRequest extends FormRequest
@@ -33,7 +34,7 @@ class UpdateResumeRequest extends FormRequest
             'work_format' => 'required|in:' . implode(',', Resume::FORMATS),
             'salary_expectation' => 'nullable|numeric|min:0',
             'location' => 'nullable|string|max:255',
-            'experience_years' => 'nullable|string|max:255',
+            'experience_years' => 'nullable|numeric|min:0',
             'experience_description' => 'nullable|string',
             'bio' => 'nullable|string',
             ...$this->contactRules()

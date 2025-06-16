@@ -34,7 +34,7 @@ class StoreResumeRequest extends FormRequest
             'work_format' => 'required|in:' . implode(',', Resume::FORMATS),
             'salary_expectation' => 'nullable|numeric|min:0',
             'location' => 'nullable|string|max:255',
-            'experience_years' => 'nullable|string|max:255',
+            'experience_years' => 'nullable|numeric|min:0',
             'experience_description' => 'nullable|string',
             'bio' => 'nullable|string',
             ...$this->contactRules()

@@ -23,6 +23,9 @@ class Resume extends Model
         self::WORK_FORMAT_ANY
     ];
 
+    protected $casts = [
+        'experience_years' => 'int'
+    ];
 
     protected $fillable = [
         'first_name',
@@ -30,7 +33,6 @@ class Resume extends Model
         'position_id',
         'work_format',
         'location',
-        'employment_type',
         'experience_years',
         'experience_description',
         'owner_id',
