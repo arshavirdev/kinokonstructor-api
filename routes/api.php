@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ResourceController;
+use App\Http\Controllers\ResumeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\Admin\UserAdminController;
@@ -159,6 +160,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // VACANCY
     Route::apiResource('/vacancies', VacancyController::class);
-    Route::post('/vacancies/{resource}/{action}', [VacancyController::class, 'action'])
+    Route::post('/vacancies/{vacancy}/{action}', [VacancyController::class, 'action'])
+        ->where('action', 'favorite|archive|unarchive');
+
+    // RESUME
+    Route::apiResource('/resumes', ResumeController::class);
+    Route::post('/resumes/{resume}/{action}', [ResumeController::class, 'action'])
         ->where('action', 'favorite|archive|unarchive');
 });
