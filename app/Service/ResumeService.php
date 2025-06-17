@@ -2,8 +2,9 @@
 
 namespace App\Service;
 
+use App\Http\Requests\UpdateEventRequest;
 use App\Models\Resume;
-use App\Http\Requests\StoreResumeRequest;
+use App\Http\Requests\StoreEventRequest;
 use App\Service\Shared\ContactHandlerService;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,7 +14,7 @@ class ResumeService
     {
     }
 
-    public function store(StoreResumeRequest $request): Resume
+    public function store(StoreEventRequest $request): Resume
     {
         $authUser = auth()->user();
         $data = $request->validated();
@@ -29,7 +30,7 @@ class ResumeService
         return $resume;
     }
 
-    public function update(Resume $resume, StoreResumeRequest $request): Resume
+    public function update(Resume $resume, UpdateEventRequest $request): Resume
     {
         $data = $request->validated();
         $authUser = auth()->user();
