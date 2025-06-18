@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->jsonb('category')->default('[]');
             $table->string('format');
             $table->text('description');
+            $table->string('location')->nullable();
             $table->jsonb('parameters')->default('[]');
             $table->jsonb('company')->default('{}');
             $table->dateTime('date')->default('now()');

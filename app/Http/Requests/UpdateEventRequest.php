@@ -30,6 +30,7 @@ class UpdateEventRequest extends FormRequest
             'title' => 'required|string|max:255',
             'short_description' => 'required|string',
             'description' => 'required|string',
+            'location' => 'nullable|string',
             'date' => 'nullable|date',
             'category' => 'required|array',
             'format' => 'required|string',

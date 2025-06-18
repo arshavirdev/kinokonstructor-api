@@ -29,12 +29,14 @@ class EventBriefResource extends JsonResource
             'short_description' => $this->short_description,
             'description' => $this->description,
             'category' => $this->category,
+            'location' => $this->location,
             'format' => $this->format,
             'is_owner' => $is_owner,
             'is_favorite' => (bool) $this->is_favorite,
             'is_archived' => $this->is_archived,
             'created_at' => $this->created_at,
-            'date' => $this->date
+            'date' => $this->date,
+            Event::IMAGES_FILES => MediaResource::collection($this->getMedia(Event::IMAGES_FILES))
         ];
     }
 }

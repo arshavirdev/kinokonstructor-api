@@ -9,6 +9,24 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
+/**
+ * Class Event
+ * 
+ * @property int $id
+ * @property string $title
+ * @property string $short_description
+ * @property string $description
+ * @property array $category
+ * @property array $format
+ * @property array $parameters
+ * @property string|null $location
+ * @property int $owner_id
+ * @property \Illuminate\Support\Carbon|string $date
+ * @property array $company
+ * @property bool $is_archived
+ * @property-read \Illuminate\Support\Carbon $created_at
+ * @property-read \Illuminate\Support\Carbon $updated_at
+ */
 class Event extends Model implements HasMedia
 {
     use HasFactory;
@@ -27,6 +45,7 @@ class Event extends Model implements HasMedia
         'category',
         'format',
         'parameters',
+        'location',
         'owner_id',
         'date',
         'company',

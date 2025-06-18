@@ -27,7 +27,7 @@ class EventController extends Controller
         $userId = $user?->id;
         $profileId = $user?->profile?->id;
 
-        $query = Event::query()->with(['owner'])
+        $query = Event::query()->with(['owner', 'media'])
             ->withCount([
                 'favorites as is_favorite' => fn($q) => $q->where('user_id', $userId),
             ]);
