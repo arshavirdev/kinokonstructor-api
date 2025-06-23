@@ -72,7 +72,14 @@ class Profile extends AppModel implements HasMedia
                 'position' => $attributes['org_position'],
                 'phone' => $attributes['phone'],
                 'socials_tg' => $attributes['socials_tg']
-            ] : null,
+            ] : [
+                'id' => '',
+                'reg_id' => '',
+                'name' => '',
+                'position' => '',
+                'phone' => '',
+                'socials_tg' => ''
+            ],
             set: fn($value) => [
                 'is_org' => !is_null($value),
                 'org_reg_id' => is_null($value) ? null : $value['reg_id'],
@@ -97,7 +104,9 @@ class Profile extends AppModel implements HasMedia
         return Attribute::make(
             get: fn($value, $attributes) => $attributes['is_entrepreneur'] ? [
                 'reg_id' => $attributes['entrepreneur_reg_id']
-            ] : null,
+            ] : [
+                'reg_id' => ''
+            ],
             set: fn($value) => [
                 'is_entrepreneur' => !is_null($value),
                 'entrepreneur_reg_id' => is_null($value) ? null : $value['reg_id'],
