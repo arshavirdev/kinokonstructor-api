@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DictionaryController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\LessonController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
@@ -54,6 +56,8 @@ Route::apiResource('/contests', ContestController::class)->only(['show', 'index'
 Route::apiResource('/regional-branches', RegionalBranchController::class)->only(['show', 'index']);
 Route::apiResource('/resources', ResourceController::class)->only(['show', 'index']);
 Route::apiResource('/events', EventController::class)->only(['index', 'show']);
+Route::apiResource('/courses', CourseController::class)->only(['index', 'show']);
+Route::apiResource('/lessons', LessonController::class)->only('show');
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('auth/user/password', [PasswordController::class, 'update']);
@@ -173,5 +177,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // EVENT
     Route::apiResource('/events', EventController::class)->except(['index', 'show']);
     Route::post('/events/{event}/{action}', [EventController::class, 'action'])
+        ->where('action', 'favorite|archive|unarchive');
+
+    // COURSE
+    Route::apiResource('/courses', CourseController::class)->except(['index', 'show']);
+    Route::post('/courses/{course}/{action}', [CourseController::class, 'action'])
         ->where('action', 'favorite|archive|unarchive');
 });

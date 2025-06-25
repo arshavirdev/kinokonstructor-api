@@ -2,17 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\DTOs\MediaSyncDataDTO;
 use App\Http\Requests\StoreProfileRequest;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Models\Profile;
+use App\Service\Media\MediaService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\ContactOrganizerRequest;
 
 class UserController extends Controller
 {
+    public function __construct(private MediaService $mediaService)
+    {
+
+    }
+
     public function showCurrentUser()
     {
         $user = User::with(['profile.contact'])->find(Auth::id());
@@ -72,7 +79,11 @@ class UserController extends Controller
         $params = $request->validated();
         $profile = $user->profile()->create($params);
 
-        $this->syncMedia($profile, $params);
+        $this->mediaService->syncMediaCollection($profile, new MediaSyncDataDTO(
+            [$request->file(Profile::AVATAR_MEDIA)],
+            [$request->post(Profile::AVATAR_MEDIA)]
+        ), Profile::AVATAR_MEDIA);
+
         $this->syncRelations($profile, $params);
 
         // Handle contacts creation
@@ -105,7 +116,10 @@ class UserController extends Controller
 
         $params = $request->validated();
 
-        $this->syncMedia($profile, $params);
+        $this->mediaService->syncMediaCollection($profile, new MediaSyncDataDTO(
+            [$request->file(Profile::AVATAR_MEDIA)],
+            [$request->post(Profile::AVATAR_MEDIA)]
+        ), Profile::AVATAR_MEDIA);
 
         $profile->fill($params);
         $profile->save();
