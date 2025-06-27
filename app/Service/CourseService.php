@@ -30,7 +30,11 @@ class CourseService
 
 
         if ($request->has('semesters')) {
-            $this->handleSemesters($course, $data['semesters']);
+            $lessonsAvatarsMediaDto = new MediaSyncDataDTO(
+                $request->file('semesters', []),
+                $request->post('semesters', [])
+            );
+            $this->handleSemesters($course, $data['semesters'], $lessonsAvatarsMediaDto);
         }
 
         if ($request->has('teachers')) {
@@ -38,7 +42,11 @@ class CourseService
         }
 
         if ($request->has('lessons')) {
-            $this->handleCourseLessons($course, $data['lessons']);
+            $avatarsMediaDto = new MediaSyncDataDTO(
+                $request->file('lessons', []),
+                $request->post('lessons', [])
+            );
+            $this->handleCourseLessons($course, $data['lessons'], $avatarsMediaDto);
         }
 
         // Handle media files
@@ -59,11 +67,19 @@ class CourseService
         }
 
         if ($request->has('lessons')) {
-            $this->handleCourseLessons($course, $data['lessons']);
+            $avatarsMediaDto = new MediaSyncDataDTO(
+                $request->file('lessons', []),
+                $request->post('lessons', [])
+            );
+            $this->handleCourseLessons($course, $data['lessons'], $avatarsMediaDto);
         }
 
         if ($request->has('semesters')) {
-            $this->handleSemesters($course, $data['semesters']);
+             $lessonsAvatarsMediaDto = new MediaSyncDataDTO(
+                $request->file('semesters', []),
+                $request->post('semesters', [])
+            );
+            $this->handleSemesters($course, $data['semesters'], $lessonsAvatarsMediaDto);
         }
 
         // Handle media files
@@ -111,7 +127,7 @@ class CourseService
         $course->teachers()->sync($teacherIds);
     }
 
-    function handleSemesterLessons(Semester $semester, array $lessons)
+    function handleSemesterLessons(Semester $semester, array $lessons, MediaSyncDataDTO $lessonsMediaDTO)
     {
         $existingLessonIds = array_filter(array_column($lessons, 'id'));
         $existingLessons = Lesson::whereIn('id', $existingLessonIds)
@@ -131,19 +147,26 @@ class CourseService
                 ->delete();
         }
 
-        foreach ($lessons as $lessonData) {
+        foreach ($lessons as $index => $lessonData) {
             $lessonData['course_id'] = $semester->course_id;
             $lessonData['semester_id'] = $semester->id;
+            $lessonMediaDto = new MediaSyncDataDTO(
+                $lessonsMediaDTO->files[$index][Lesson::SPEAKER_AVATAR_MEDIA] ?? [],
+                $lessonsMediaDTO->post[$index][Lesson::SPEAKER_AVATAR_MEDIA] ?? [],
+            );
+
             if (!empty($lessonData['id']) && $existingLessons->has($lessonData['id'])) {
                 $lesson = $existingLessons[$lessonData['id']];
                 $lesson->update($lessonData);
             } else {
-                Lesson::create($lessonData);
+                $lesson = Lesson::create($lessonData);
             }
+
+            $this->mediaService->syncMediaCollection($lesson, $lessonMediaDto, Lesson::SPEAKER_AVATAR_MEDIA);
         }
     }
 
-    function handleCourseLessons(Course $course, array $lessons)
+    function handleCourseLessons(Course $course, array $lessons, MediaSyncDataDTO $mediaSyncDataDTO)
     {
         $existingLessonIds = array_filter(array_column($lessons, 'id'));
         $existingLessons = Lesson::whereIn('id', $existingLessonIds)
@@ -163,18 +186,25 @@ class CourseService
                 ->delete();
         }
 
-        foreach ($lessons as $lessonData) {
+        foreach ($lessons as $index => $lessonData) {
+            $lessonMediaDto = new MediaSyncDataDTO(
+                $mediaSyncDataDTO->files[$index][Lesson::SPEAKER_AVATAR_MEDIA] ?? [],
+                $mediaSyncDataDTO->post[$index][Lesson::SPEAKER_AVATAR_MEDIA] ?? [],
+            );
+
             $lessonData['course_id'] = $course->id;
             if (!empty($lessonData['id']) && $existingLessons->has($lessonData['id'])) {
                 $lesson = $existingLessons[$lessonData['id']];
                 $lesson->update($lessonData);
             } else {
-                Lesson::create($lessonData);
+                $lesson = Lesson::create($lessonData);
             }
+
+            $this->mediaService->syncMediaCollection($lesson, $lessonMediaDto, Lesson::SPEAKER_AVATAR_MEDIA);
         }
     }
 
-    function handleSemesters(Course $course, array $semesters)
+    function handleSemesters(Course $course, array $semesters, MediaSyncDataDTO $semestersMediaSyncDataDTO)
     {
         $existingSemesterIds = array_filter(array_column($semesters, 'id'));
         $existingSemesters = Semester::whereIn('id', $existingSemesterIds)
@@ -199,9 +229,13 @@ class CourseService
             $course->semesters()->whereIn('id', $semestersToDelete->pluck('id'))->delete();
         }
 
-        foreach ($semesters as $semesterData) {
+        foreach ($semesters as $index => $semesterData) {
             $semesterData['course_id'] = $course->id;
             $semesterId = $semesterData['id'] ?? null;
+            $lessonsMediaDTO = new MediaSyncDataDTO(
+                $semestersMediaSyncDataDTO->files[$index]['lessons'] ?? [],
+                $semestersMediaSyncDataDTO->post[$index]['lessons'] ?? []
+            );
 
             if (!empty($semesterData['id']) && $existingSemesters->has($semesterData['id'])) {
                 $semester = $existingSemesters[$semesterId];
@@ -213,7 +247,7 @@ class CourseService
 
             // Handle semester lessons
             if (!empty($semesterData['lessons'])) {
-                $this->handleSemesterLessons($semester, $semesterData['lessons']);
+                $this->handleSemesterLessons($semester, $semesterData['lessons'], $lessonsMediaDTO);
             }
         }
     }

@@ -17,6 +17,9 @@ class CourseResource extends JsonResource
     {
         $user = auth()->user();
         $is_owner = (string) $this->owner_id === (string) $user?->profile?->id;
+        $organization = $this->owner->org
+            ? array_merge($this->owner->org, ['email' => $this->owner->user->email, 'id' => $this->owner->id])
+            : [];
 
         return [
             'id' => $this->id,
@@ -33,6 +36,7 @@ class CourseResource extends JsonResource
             'semesters' => SemesterResource::collection($this->semesters()->get()),
             'lessons' => LessonResource::collection($this->lessons()->withoutSemester()->get()),
             'is_owner' => $is_owner,
+            'organization' => $organization,
             'created_at' => $this->created_at,
             'is_favorite' => (bool) $this->is_favorite,
             'is_archived' => $this->is_archived,

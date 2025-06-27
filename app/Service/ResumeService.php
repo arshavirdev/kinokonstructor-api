@@ -2,7 +2,7 @@
 
 namespace App\Service;
 
-use App\Http\Requests\UpdateEventRequest;
+use App\Http\Requests\StoreResumeRequest;
 use App\Models\Resume;
 use App\Http\Requests\StoreEventRequest;
 use App\Service\Shared\ContactHandlerService;
@@ -30,7 +30,7 @@ class ResumeService
         return $resume;
     }
 
-    public function update(Resume $resume, UpdateEventRequest $request): Resume
+    public function update(Resume $resume, StoreResumeRequest $request): Resume
     {
         $data = $request->validated();
         $authUser = auth()->user();

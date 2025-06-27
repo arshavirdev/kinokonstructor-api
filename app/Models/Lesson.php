@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
  * Class Lesson
@@ -20,9 +22,12 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null    $course_id
  * @property int|null    $semester_id
  */
-class Lesson extends Model
+class Lesson extends Model implements HasMedia
 {
     use HasFactory;
+    use InteractsWithMedia;
+
+    const SPEAKER_AVATAR_MEDIA = "speaker_avatar";
 
     protected $fillable = [
         'type',
@@ -44,6 +49,7 @@ class Lesson extends Model
         'lessons.*.description' => 'required|string',
         'lessons.*.video_link' => 'nullable|url',
         'lessons.*.address' => 'nullable|string',
+        'lessons.*.avatar' => 'nullable|array',
         'lessons.*.speaker_first_name' => 'required|string',
         'lessons.*.speaker_last_name' => 'required|string',
         'lessons.*.speaker_bio' => 'required|string'
@@ -56,6 +62,7 @@ class Lesson extends Model
         'semesters.*.lessons.*.description' => 'required|string',
         'semesters.*.lessons.*.video_link' => 'nullable|url',
         'semesters.*.lessons.*.address' => 'nullable|string',
+        'semesters.*.lessons.*.avatar' => 'nullable|array',
         'semesters.*.lessons.*.speaker_first_name' => 'required|string',
         'semesters.*.lessons.*.speaker_last_name' => 'required|string',
         'semesters.*.lessons.*.speaker_bio' => 'required|string'

@@ -34,7 +34,7 @@ class StoreContestRequest extends FormRequest
             
             // Gallery (Multiple Images)
             'gallery' => 'nullable|array',
-            'gallery.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            // 'gallery.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
 
             'conditions' => 'nullable|string',
 
@@ -57,7 +57,7 @@ class StoreContestRequest extends FormRequest
 
             // Photo Gallery (Multiple Images)
             'photo_gallery' => 'nullable|array',
-            'photo_gallery.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            // 'photo_gallery.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
 
             // Partners (Multiple Images)
             'partners' => 'nullable|array',

@@ -54,6 +54,7 @@ class Course extends Model implements HasMedia
         'start_date',
         'study_format',
         'region_id',
+        'owner_id',
         'is_archived'
     ];
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Lesson;
 use App\Models\Teacher;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -22,7 +23,8 @@ class LessonResource extends JsonResource
             'description' => $this->description,
             'video_link' => $this->video_link,
             'address' => $this->address,
-
+            
+            Lesson::SPEAKER_AVATAR_MEDIA => new MediaResource($this->getFirstMedia(Lesson::SPEAKER_AVATAR_MEDIA)),
             'speaker_first_name' => $this->speaker_first_name,
             'speaker_last_name' => $this->speaker_last_name,
             'speaker_bio' => $this->speaker_bio,
