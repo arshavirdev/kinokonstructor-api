@@ -101,6 +101,17 @@ class ProjectController extends Controller
         return ProjectBriefResource::collection($projects);
     }
 
+    public function forApplication()
+    {
+        $profileId = auth()->user()?->profile?->id;
+
+        $projects = Project::select(['id', 'title'])
+            ->where('owner_id', $profileId)
+            ->get();
+
+        return response()->json(['projects' => $projects]);
+    }
+
     /**
      * Store a newly created resource in storage.
      *

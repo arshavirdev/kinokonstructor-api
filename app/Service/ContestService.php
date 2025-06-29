@@ -2,8 +2,10 @@
 
 namespace App\Service;
 
-use App\Models\Contest;
+use App\Http\Requests\StoreContestApplicationRequest;
 use Auth;
+use App\Models\ContestApplication;
+use App\Models\Contest;
 
 class ContestService
 {
@@ -31,5 +33,33 @@ class ContestService
     {
         $contest->update(['is_archived' => false]);
         return ['is_archived' => false];
+    }
+
+    public function apply(Contest $contest, StoreContestApplicationRequest $request)
+    {
+        $authUser = auth()->user();
+        $profileId = $authUser->profile->id;
+
+        $exists = ContestApplication::where('contest_id', $contest->id)
+            ->where('applicant_id', $profileId)
+            ->first();
+
+        if ($exists) {
+            return [
+                'success' => false,
+                'error' => 'You have already applied to this contest.',
+            ];
+        }
+
+        $application = ContestApplication::create([
+            'applicant_id' => $profileId,
+            'contest_id' => $contest->id,
+            'project_id' => $request->get('project_id')
+        ]);
+
+        return [
+            'success' => true,
+            'data' => $application
+        ];
     }
 }

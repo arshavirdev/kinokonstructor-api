@@ -91,11 +91,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         // CONTEST
         Route::apiResource('contests', ContestController::class)->except(['index', 'show']);
+        Route::post('/contests/{contest}/apply', [ContestController::class, 'apply']);
         Route::post('/contests/{contest}/{action}', [ContestController::class, 'action'])
             ->where('action', 'favorite|archive|unarchive');
 
         // PROJECT
         Route::apiResource('projects', ProjectController::class);
+        Route::get('/application-projects', [ProjectController::class,'forApplication']);
         Route::prefix('projects/{project}')->group(function () {
             Route::post('/moderate', [ProjectController::class, 'moderate']);
             Route::controller(ProjectController::class)->prefix('moderation')->group(function () {

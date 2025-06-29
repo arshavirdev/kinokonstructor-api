@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreContestApplicationRequest;
 use App\Http\Requests\StoreContestRequest;
 use App\Http\Requests\UpdateContestRequest;
 use App\Http\Resources\ContestResource;
@@ -13,6 +14,11 @@ use Illuminate\Support\Facades\Auth;
 
 class ContestController extends Controller
 {
+
+    public function __construct(private ContestService $contestService)
+    {
+
+    }
     /**
      * Display a listing of the resource.
      *
@@ -176,6 +182,18 @@ class ContestController extends Controller
     public function destroy(Contest $contest)
     {
         $contest->delete();
+    }
+
+    public function apply(Contest $contest, StoreContestApplicationRequest $request) {
+        $result = $this->contestService->apply($contest, $request);
+
+        if (!$result['success']) {
+            return response()->json([
+                'error' => $result['error'],
+            ], 409);
+        }
+
+        return response()->json($result);
     }
 
     public function action(Contest $contest, string $action, ContestService $contestService)
