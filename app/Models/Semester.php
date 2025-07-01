@@ -5,6 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Summary of Semester
+ * @property string $name
+ * @property string $description
+ * @property \Date $start_date
+ * @property \Date $end_date
+ * @property \Date $course_id
+ */
 class Semester extends Model
 {
     use HasFactory;

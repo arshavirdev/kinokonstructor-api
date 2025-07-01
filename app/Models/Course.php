@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property \DateTimeInterface|null $start_date
  * @property string|null $study_format
  * @property int|null $region_id
+ * @property int|null $owner_id
  * @property bool $is_archived
  */
 class Course extends Model implements HasMedia
@@ -59,7 +60,9 @@ class Course extends Model implements HasMedia
     ];
 
     protected $casts = [
-        'is_archived' => 'boolean'
+        'price' => 'float',
+        'duration' => 'integer',
+        'is_archived' => 'bool'
     ];
 
     public function owner()

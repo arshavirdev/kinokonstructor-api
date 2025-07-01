@@ -24,7 +24,7 @@ class LessonResource extends JsonResource
             'video_link' => $this->video_link,
             'address' => $this->address,
             
-            Lesson::SPEAKER_AVATAR_MEDIA => new MediaResource($this->getFirstMedia(Lesson::SPEAKER_AVATAR_MEDIA)),
+            Lesson::SPEAKER_AVATAR_MEDIA => MediaResource::collection($this->getMedia(Lesson::SPEAKER_AVATAR_MEDIA)),
             'speaker_first_name' => $this->speaker_first_name,
             'speaker_last_name' => $this->speaker_last_name,
             'speaker_bio' => $this->speaker_bio,

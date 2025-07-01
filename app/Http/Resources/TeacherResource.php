@@ -20,7 +20,7 @@ class TeacherResource extends JsonResource
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'bio' => $this->bio,
-            Teacher::AVATAR_MEDIA => new MediaResource($this->getFirstMedia(Teacher::AVATAR_MEDIA))
+            Teacher::AVATAR_MEDIA => MediaResource::collection($this->getMedia(Teacher::AVATAR_MEDIA))
         ];
     }
 }
