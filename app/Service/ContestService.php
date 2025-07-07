@@ -54,7 +54,7 @@ class ContestService
         $application = ContestApplication::create([
             'applicant_id' => $profileId,
             'contest_id' => $contest->id,
-            'project_id' => $request->get('project_id')
+            ...$request->validated()
         ]);
 
         return [

@@ -23,6 +23,7 @@ class ContestApplication extends Model
         'contest_id',
         'applicant_id',
         'project_id',
+        'description',
         'status'
     ];
 
