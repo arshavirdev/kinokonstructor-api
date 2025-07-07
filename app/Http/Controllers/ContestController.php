@@ -184,18 +184,6 @@ class ContestController extends Controller
         $contest->delete();
     }
 
-    public function apply(Contest $contest, StoreContestApplicationRequest $request) {
-        $result = $this->contestService->apply($contest, $request);
-
-        if (!$result['success']) {
-            return response()->json([
-                'error' => $result['error'],
-            ], 409);
-        }
-
-        return response()->json($result);
-    }
-
     public function action(Contest $contest, string $action, ContestService $contestService)
     {
         if (in_array($action, ['archive', 'unarchive'])) {

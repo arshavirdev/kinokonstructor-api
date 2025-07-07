@@ -24,6 +24,7 @@ use App\Http\Controllers\VideoController;
 use App\Http\Controllers\RegionalBranchController;
 use App\Http\Controllers\BranchMemberController;
 use App\Http\Controllers\BranchNewsController;
+use App\Http\Controllers\ContestApplicationController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\TokenController;
@@ -91,9 +92,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         // CONTEST
         Route::apiResource('contests', ContestController::class)->except(['index', 'show']);
-        Route::post('/contests/{contest}/apply', [ContestController::class, 'apply']);
+        Route::post('/contests/{contest}/apply', [ContestApplicationController::class, 'apply']);
         Route::post('/contests/{contest}/{action}', [ContestController::class, 'action'])
             ->where('action', 'favorite|archive|unarchive');
+
+        // CONTEST APPLICATION
+        Route::get('contests-applications', [ContestApplicationController::class, 'index']);
+        Route::get('contests-applications/{contestApplication}', [ContestApplicationController::class, 'show']);
 
         // PROJECT
         Route::apiResource('projects', ProjectController::class);

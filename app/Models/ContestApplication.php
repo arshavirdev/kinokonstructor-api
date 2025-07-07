@@ -36,4 +36,9 @@ class ContestApplication extends Model
     {
         return $this->belongsTo(Contest::class);
     }
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
+    }
 }
