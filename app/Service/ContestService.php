@@ -2,13 +2,18 @@
 
 namespace App\Service;
 
+use App\DTOs\MediaSyncDataDTO;
 use App\Http\Requests\StoreContestApplicationRequest;
+use App\Http\Resources\ContestApplicationsResource;
 use Auth;
 use App\Models\ContestApplication;
 use App\Models\Contest;
+use App\Service\Media\MediaService;
 
 class ContestService
 {
+    public function __construct(private MediaService $mediaService) {}
+
     public function favorite(Contest $contest)
     {
         $userId = Auth::id();
@@ -40,16 +45,16 @@ class ContestService
         $authUser = auth()->user();
         $profileId = $authUser->profile->id;
 
-        $exists = ContestApplication::where('contest_id', $contest->id)
-            ->where('applicant_id', $profileId)
-            ->first();
+        // $exists = ContestApplication::where('contest_id', $contest->id)
+        //     ->where('applicant_id', $profileId)
+        //     ->first();
 
-        if ($exists) {
-            return [
-                'success' => false,
-                'error' => 'You have already applied to this contest.',
-            ];
-        }
+        // if ($exists) {
+        //     return [
+        //         'success' => false,
+        //         'error' => 'You have already applied to this contest.',
+        //     ];
+        // }
 
         $application = ContestApplication::create([
             'applicant_id' => $profileId,
@@ -57,9 +62,41 @@ class ContestService
             ...$request->validated()
         ]);
 
+        $filesMediaDto = new MediaSyncDataDTO(
+            $request->file('files_section', []),
+            $request->post('files_section', [])
+        );
+
+        $this->handleFileUploads($application, $filesMediaDto);
+
+        $imagesMediaDto = new MediaSyncDataDTO(
+            $request->file('images_files', []),
+            $request->post('images_files', [])
+        );
+
+        $this->mediaService->syncMediaCollection($application, $imagesMediaDto, ContestApplication::CONTEST_APPLICATION_IMAGES);
+
+        $application->load(['media']);
         return [
             'success' => true,
-            'data' => $application
+            'data' => new ContestApplicationsResource($application)
         ];
+    }
+
+    private function handleFileUploads(ContestApplication $application, MediaSyncDataDTO $mediaDto): void
+    {
+        foreach ($mediaDto->files as $groupIndex => $group) {
+
+            $postData = $mediaDto->post[$groupIndex] ?? [];
+            $sectionMediaDto = new MediaSyncDataDTO(
+                $group['files'],
+                $postData
+            );
+            $this->mediaService->syncMediaCollection(
+                $application,
+                $sectionMediaDto,
+                ContestApplication::CONTEST_APPLICATION_FILES
+            );
+        }
     }
 }

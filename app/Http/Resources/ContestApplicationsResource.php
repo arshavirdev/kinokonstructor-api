@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\ContestApplication;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ContestApplicationsResource extends JsonResource
@@ -25,6 +26,8 @@ class ContestApplicationsResource extends JsonResource
             'project_id' => $this->project_id,
             'project_title' => $this->project?->title,
             'created_at' => $this->created_at,
+            'images' => MediaResource::collection($this->getMedia(ContestApplication::CONTEST_APPLICATION_IMAGES)),
+            'files' => MediaResource::collection($this->getMedia(ContestApplication::CONTEST_APPLICATION_FILES))
         ];
     }
 }

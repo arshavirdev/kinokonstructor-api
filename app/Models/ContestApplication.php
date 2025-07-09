@@ -4,10 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class ContestApplication extends Model
+class ContestApplication extends Model implements HasMedia
 {
     use HasFactory;
+    use InteractsWithMedia;
 
     const STATUS_PENDING = 'pending';
     const STATUS_DECLINED = 'declined';
@@ -18,6 +21,9 @@ class ContestApplication extends Model
         self::STATUS_DECLINED,
         self::STATUS_ACCEPTED
     ];
+
+    const CONTEST_APPLICATION_IMAGES = 'contest_application_images';
+    const CONTEST_APPLICATION_FILES = 'contest_application_files';
 
     protected $fillable = [
         'contest_id',

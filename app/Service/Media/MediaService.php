@@ -22,6 +22,8 @@ class MediaService
             ->filter()
             ->toArray();
 
+        $customFileNameExists = isset($dto->post['file_name']);
+
         //  Delete all media files exclude media IDs form req.body
         // TODO: improve if needs
         $model->getMedia($collectionName)
@@ -31,7 +33,13 @@ class MediaService
         foreach ($dto->files as $file) {
             if ($file instanceof UploadedFile) {
                 try {
-                    $model->addMedia($file)->toMediaCollection($collectionName);
+                    $mediaAdder = $model->addMedia($file);
+                    
+                    if ($customFileNameExists) {
+                        $mediaAdder->usingName($dto->post['file_name']);
+                    }
+                        
+                    $mediaAdder->toMediaCollection($collectionName);
                 } catch (\Throwable $e) {
                     Log::error('Media upload failed', [
                         'id' => $model->id,

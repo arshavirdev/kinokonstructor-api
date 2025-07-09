@@ -26,6 +26,14 @@ class StoreContestApplicationRequest extends FormRequest
         return [
             "project_id"=> "required|integer|exists:projects,id",
             "description"=> "nullable|string",
+
+            // Files uploads
+            'files_section' => 'nullable|array',
+            'files_section.*' => 'array',
+            'files_section.*.*.files' => 'sometimes|array',
+
+            // Contest images
+            'images_files' => 'sometimes|array',
         ];
     }
 }
