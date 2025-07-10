@@ -3,7 +3,6 @@ name: Deploy Backend to Server
 on:
   push:
     branches:
-      - stage
       - dev1
       - dev2
 
@@ -35,5 +34,5 @@ jobs:
         username: ${{ env.DEPLOY_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          cd /root/kinokonstructor/
+          cd /root/dev1/
           ./scripts/update-backend.sh
