@@ -52,7 +52,7 @@ class UpdateContestRequest extends FormRequest
 
             // Photo Gallery (Multiple Images)
             'photo_gallery' => 'sometimes|array',
-            'photo_gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            // 'photo_gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
 
             // Partners (Multiple Images)
             'partners' => 'sometimes|array',
