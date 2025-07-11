@@ -28,7 +28,7 @@ class UpdateContestRequest extends FormRequest
             'description' => 'nullable|string',
             
             // Gallery (Multiple Images)
-            'gallery' => 'nullable|array',
+            'gallery' => 'sometimes|array',
             'gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
 
             'conditions' => 'nullable|string',
@@ -42,7 +42,7 @@ class UpdateContestRequest extends FormRequest
             'organizers' => 'nullable|string',
             
             // Documents (Multiple Files)
-            'documents' => 'nullable|array',
+            'documents' => 'sometimes|array',
             'documents.*' => 'nullable',
 
             'online_application' => 'nullable|string|max:255',
@@ -51,11 +51,11 @@ class UpdateContestRequest extends FormRequest
             'video' => 'nullable|string',
 
             // Photo Gallery (Multiple Images)
-            'photo_gallery' => 'nullable|array',
+            'photo_gallery' => 'sometimes|array',
             'photo_gallery.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
 
             // Partners (Multiple Images)
-            'partners' => 'nullable|array',
+            'partners' => 'sometimes|array',
             // 'partners.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
 
             'contacts.website' => 'nullable|string|max:255',
