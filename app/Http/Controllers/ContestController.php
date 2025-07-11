@@ -138,7 +138,6 @@ class ContestController extends Controller
 
         // Handle gallery images
         if ($request->hasFile('gallery')) {
-            $contest->clearMediaCollection(Contest::GALLERY);
             foreach ($request->file('gallery') as $photo) {
                 $contest->addMedia($photo)->toMediaCollection(Contest::GALLERY);
             }
@@ -146,7 +145,6 @@ class ContestController extends Controller
 
         // Handle document uploads
         if ($request->hasFile('documents')) {
-            $contest->clearMediaCollection(Contest::DOCUMENTS);
             foreach ($request->file('documents') as $document) {
                 $contest->addMedia($document)->toMediaCollection(Contest::DOCUMENTS);
             }
@@ -162,7 +160,6 @@ class ContestController extends Controller
 
         // Handle photo gallery images
         if ($request->hasFile('photo_gallery')) {
-            $contest->clearMediaCollection(Contest::PHOTO_GALLERY);
             foreach ($request->file('photo_gallery') as $photo) {
                 $contest->addMedia($photo)->toMediaCollection(Contest::PHOTO_GALLERY);
             }
@@ -170,7 +167,6 @@ class ContestController extends Controller
 
         // Handle partner images
         if ($request->hasFile('partners')) {
-            $contest->clearMediaCollection(Contest::PARTNERS);
             foreach ($request->file('partners') as $partner) {
                 $contest->addMedia($partner)->toMediaCollection(Contest::PARTNERS);
             }
