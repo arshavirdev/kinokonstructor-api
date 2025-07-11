@@ -201,7 +201,7 @@ class ProjectService
             'other' => $contacts['other'] ?? [],
         ];
 
-        $contact = $project->contacts;
+        $contact = $project->contact;
         $contact ? $contact->update($data) : $project->contacts()->create(array_merge(['user_id' => $user->id], $data));
     }
 
