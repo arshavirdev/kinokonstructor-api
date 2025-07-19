@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class UpdateProfileRequest extends FormRequest
@@ -25,20 +24,22 @@ class UpdateProfileRequest extends FormRequest
      */
     public function rules()
     {
+        $authUser = auth()->user();
+
         return [
             'gender' => 'in:m,f',
             'firstname' => 'string',
             'lastname' => 'string',
             'middlename' => 'string|nullable',
             'username' => [
-                Rule::unique('users', 'username')->ignore(Auth::id())
+                Rule::unique('users', 'username')->ignore($authUser->id)
             ],
             'city' => 'string',
             'birthday' => 'date',
             'occupation_id' => 'array|min:1',
             'occupation_ids.*' => "exists:occupations,id",
             'phone' => [
-                Rule::unique('profiles', 'phone')->ignore(Auth::user()->profile->id)
+                Rule::unique('profiles', 'phone')->ignore($authUser->profile?->id)
             ],
             'additional_information' => 'string|nullable',
 

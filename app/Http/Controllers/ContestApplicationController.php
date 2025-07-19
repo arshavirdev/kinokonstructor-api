@@ -32,7 +32,7 @@ class ContestApplicationController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $profileId = $user->profile->id;
+        $profileId = $user->profile?->id;
         $contestApplications = ContestApplication::query()
             ->with(['applicant', 'contest', 'project'])
             ->whereHas('contest', function ($query) use ($profileId) {

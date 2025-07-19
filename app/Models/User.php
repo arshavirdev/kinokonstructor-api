@@ -13,6 +13,11 @@ use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * User model
+ * @property-read int $id
+ * @property Profile $profile
+ */
 class User extends AppModel implements MustVerifyEmail, AuthenticatableContract, AuthorizableContract, CanResetPasswordContract
 {
     use Authenticatable, Authorizable, CanResetPassword, \Illuminate\Auth\MustVerifyEmail;

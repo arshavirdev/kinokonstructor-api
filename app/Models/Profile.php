@@ -14,6 +14,10 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
+/**
+ * Profile model
+ * @property-read int $id
+ */
 class Profile extends AppModel implements HasMedia
 {
     use HasFactory;
