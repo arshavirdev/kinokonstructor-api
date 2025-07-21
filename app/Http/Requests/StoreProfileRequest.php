@@ -42,12 +42,12 @@ class StoreProfileRequest extends FormRequest
             "additional_information" => 'string|nullable',
 
             'org' => 'nullable',
-            'org.reg_id' => 'nullable|numeric',
+            'org.reg_id' => 'nullable|string',
             'org.name' => 'nullable|string',
             'org.position' => 'nullable|string',
 
             'entrepreneur' => 'nullable',
-            'entrepreneur.reg_id' => 'nullable|numeric',
+            'entrepreneur.reg_id' => 'nullable|string',
 
             'privacy_hide' => 'array',
             'privacy_hide.*' => 'string|in:phone,email,website,socials',
