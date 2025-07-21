@@ -85,10 +85,10 @@ class Profile extends AppModel implements HasMedia
                 'socials_tg' => ''
             ],
             set: fn($value) => [
-                'is_org' => !is_null($value),
-                'org_reg_id' => is_null($value) ? null : $value['reg_id'],
-                'org_name' => is_null($value) ? null : $value['name'],
-                'org_position' => is_null($value) ? null : $value['position'],
+                'is_org' => isset($value['reg_id']) && !is_null($value),
+                'org_reg_id' => !isset($value['reg_id']) ? null : $value['reg_id'],
+                'org_name' => !isset($value['reg_id']) ? null : $value['name'],
+                'org_position' => !isset($value['reg_id']) ? null : $value['position'],
             ]
         )->withoutObjectCaching();
     }
@@ -112,8 +112,8 @@ class Profile extends AppModel implements HasMedia
                 'reg_id' => ''
             ],
             set: fn($value) => [
-                'is_entrepreneur' => !is_null($value),
-                'entrepreneur_reg_id' => is_null($value) ? null : $value['reg_id'],
+                'is_entrepreneur' => isset($value['reg_id']),
+                'entrepreneur_reg_id' => !isset($value['reg_id']) ? null : $value['reg_id'],
             ]
         )->withoutObjectCaching();
     }
