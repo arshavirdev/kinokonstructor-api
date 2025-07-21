@@ -14,7 +14,7 @@ class UpdateProfileRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return auth()->check();
     }
 
     /**
@@ -24,24 +24,18 @@ class UpdateProfileRequest extends FormRequest
      */
     public function rules()
     {
-        $authUser = auth()->user();
-
         return [
             'gender' => 'in:m,f',
             'firstname' => 'string',
             'lastname' => 'string',
-            'middlename' => 'string|nullable',
             'username' => [
-                Rule::unique('users', 'username')->ignore($authUser->id)
+                Rule::unique('users', 'username')->ignore(auth()->id())
             ],
-            'city' => 'string',
-            'birthday' => 'date',
+            'city' => 'nullable|string',
+            'birthday' => 'nullable|date',
             'occupation_id' => 'array|min:1',
             'occupation_ids.*' => "exists:occupations,id",
-            'phone' => [
-                Rule::unique('profiles', 'phone')->ignore($authUser->profile?->id)
-            ],
-            'additional_information' => 'string|nullable',
+            "additional_information" => 'string|nullable',
 
             'org' => 'nullable',
             'org.reg_id' => 'numeric|required_unless:org,null',
@@ -51,19 +45,10 @@ class UpdateProfileRequest extends FormRequest
             'entrepreneur' => 'nullable',
             'entrepreneur.reg_id' => 'numeric|required_unless:entrepreneur,null',
 
-            'regions.*' => 'integer',
-
-            'portfolio' => 'string|nullable',
-            'mass_media_mentions' => 'string|nullable',
-
-            'socials_vk' => 'string|nullable',
-            'socials_tg' => 'string|nullable',
-            'socials_ok' => 'string|nullable',
-
             'privacy_hide' => 'array',
             'privacy_hide.*' => 'string|in:phone,email,website,socials',
 
-            'avatar' => 'sometimes|nullable',
+            'avatar' => 'file|nullable',
             'attachments' => 'array|nullable',
             'attachments.*' => 'file|nullable',
 
@@ -72,31 +57,7 @@ class UpdateProfileRequest extends FormRequest
             'contacts.email' => 'array',
             'contacts.website' => 'array',
             'contacts.socials' => 'array',
-            'contacts.other' => 'array',
-
-            'education.*.id' => 'integer|nullable',
-            'education.*.institution' => 'string',
-            'education.*.speciality' => 'string',
-            'education.*.start' => 'integer|between:1900,2100',
-            'education.*.end' => 'integer|between:1900,2100',
-
-            'experience.*.id' => 'integer|nullable',
-            'experience.*.company' => 'string',
-            'experience.*.position' => 'string',
-            'experience.*.start' => 'integer|between:1900,2100',
-            'experience.*.end' => 'integer|between:1900,2100',
-
-            'projects.*.id' => 'integer|nullable',
-            'projects.*.name' => 'string',
-            'projects.*.position' => 'string',
-            'projects.*.start' => 'integer|between:1900,2100',
-            'projects.*.end' => 'integer|between:1900,2100',
-            'projects.*.description' => 'string',
-
-            'preferences' => 'sometimes|nullable|array',
-            'preferences.notify_chat_messages' => 'boolean',
-            'preferences.notify_industry_news' => 'boolean',
-            'preferences.notify_project_responses' => 'boolean'
+            'contacts.other' => 'array'
         ];
     }
 }

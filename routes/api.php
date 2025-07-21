@@ -83,7 +83,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         Route::controller(UserController::class)->prefix('user')->group(function () {
             Route::post('profile', 'createProfile');
+            Route::post('profile-settings', 'createProfileSettings');
+
             Route::patch('profile', 'updateProfile');
+            Route::patch('profile-settings', 'updateProfileSettings');
+
             Route::delete('profile', 'deleteProfile');
         });
 

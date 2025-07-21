@@ -31,14 +31,14 @@ class StoreProfileRequest extends FormRequest
             'gender' => 'in:m,f',
             'firstname' => 'string',
             'lastname' => 'string',
-            'middlename' => 'string|nullable',
-            'city' => 'string',
-            'birthday' => 'date',
+            'username' => [
+                'string',
+                Rule::unique('users', 'username')->ignore(auth()->id())
+            ],
+            'city' => 'nullable|string',
+            'birthday' => 'nullable|date',
             'occupation_id' => 'array|min:1',
             'occupation_ids.*' => "exists:occupations,id",
-            'phone' => [
-                Rule::unique('profiles', 'phone')
-            ],
             "additional_information" => 'string|nullable',
 
             'org' => 'nullable',
@@ -48,15 +48,6 @@ class StoreProfileRequest extends FormRequest
 
             'entrepreneur' => 'nullable',
             'entrepreneur.reg_id' => 'numeric|required_unless:entrepreneur,null',
-
-            'regions.*' => 'integer',
-
-            'portfolio' => 'string|nullable',
-            'mass_media_mentions' => 'string|nullable',
-
-            'socials_vk' => 'string|nullable',
-            'socials_tg' => 'string|nullable',
-            'socials_ok' => 'string|nullable',
 
             'privacy_hide' => 'array',
             'privacy_hide.*' => 'string|in:phone,email,website,socials',
@@ -70,26 +61,7 @@ class StoreProfileRequest extends FormRequest
             'contacts.email' => 'array',
             'contacts.website' => 'array',
             'contacts.socials' => 'array',
-            'contacts.other' => 'array',
-
-            'education.*.id' => 'integer|nullable',
-            'education.*.institution' => 'string',
-            'education.*.speciality' => 'string',
-            'education.*.start' => 'integer|between:1900,2100',
-            'education.*.end' => 'integer|between:1900,2100',
-
-            'experience.*.id' => 'integer|nullable',
-            'experience.*.company' => 'string',
-            'experience.*.position' => 'string',
-            'experience.*.start' => 'integer|between:1900,2100',
-            'experience.*.end' => 'integer|between:1900,2100',
-
-            'projects.*.id' => 'integer|nullable',
-            'projects.*.name' => 'string',
-            'projects.*.position' => 'string',
-            'projects.*.start' => 'integer|between:1900,2100',
-            'projects.*.end' => 'integer|between:1900,2100',
-            'projects.*.description' => 'string',
+            'contacts.other' => 'array'
         ];
     }
 }

@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\DTOs\MediaSyncDataDTO;
 use App\Http\Requests\StoreProfileRequest;
+use App\Http\Requests\StoreProfileSettingsRequest;
 use App\Http\Requests\UpdateProfileRequest;
+use App\Http\Requests\UpdateProfileSettingsRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Models\Profile;
@@ -79,6 +81,11 @@ class UserController extends Controller
         $params = $request->validated();
         $profile = $user->profile()->create($params);
 
+        if (isset($params['username'])) {
+            $user->username = $params['username'];
+            $user->save();
+        }
+
         $this->mediaService->syncMediaCollection($profile, new MediaSyncDataDTO(
             [$request->file(Profile::AVATAR_MEDIA)],
             [$request->post(Profile::AVATAR_MEDIA)]
@@ -110,6 +117,7 @@ class UserController extends Controller
     {
         $user = User::with('profile.contact')->find(Auth::id());
         $profile = $user->profile;
+
         if (!$profile) {
             throw new ModelNotFoundException();
         }
@@ -123,6 +131,11 @@ class UserController extends Controller
 
         $profile->fill($params);
         $profile->save();
+
+        if (isset($params['username'])) {
+            $user->username = $params['username'];
+            $user->save();
+        }
 
         $this->syncRelations($profile, $params);
 
@@ -171,5 +184,52 @@ class UserController extends Controller
         } catch (\Throwable $th) {
             return response()->json(['message' => $th->getMessage()], 500);
         }
+    }
+
+    public function createProfileSettings(StoreProfileSettingsRequest $request)
+    {
+        $user = auth()->user();
+        $profile = $user->profile;
+
+        if (!$profile) {
+            throw new ModelNotFoundException('Profile not found');
+        }
+
+        $params = $request->validated();
+
+        if (isset($params['email'])) {
+            $user->email = $params['email'];
+            $user->save();
+        }
+
+        $profile->fill($params);
+        $profile->save();
+
+        $user->load('profile.contact');
+
+        return new UserResource($user);
+    }
+
+    public function updateProfileSettings(UpdateProfileSettingsRequest $request)
+    {
+        $user = auth()->user();
+        $profile = $user->profile;
+
+        if (!$profile) {
+            throw new ModelNotFoundException('Profile not found');
+        }
+
+        $params = $request->validated();
+        if (isset($params['email'])) {
+            $user->email = $params['email'];
+            $user->save();
+        }
+
+        $profile->fill($params);
+        $profile->save();
+
+        $user->load('profile.contact');
+
+        return new UserResource($user);
     }
 }
