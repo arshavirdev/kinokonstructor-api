@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Notifications\Report;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Request;
 
 class NotificationController extends Controller
 {
@@ -13,11 +14,15 @@ class NotificationController extends Controller
      */
     public function index(): JsonResponse
     {
-        $notificationsCount = Auth::user()->unreadNotifications->count();
-        $notifications = Auth::user()->unreadNotifications;
+        $authUser = auth()->user();
+
+        $notificationsCount = $authUser->unreadNotifications->count();
+        $notifications = $authUser->unreadNotifications;
+        $readNotifications = $authUser->readNotifications;
 
         return response()->json([
-            'notifications' => $notifications,
+            'unread_notifications' => $notifications,
+            'read_notifications' => $readNotifications,
             'count' => $notificationsCount
         ]);
     }
@@ -27,11 +32,18 @@ class NotificationController extends Controller
      * @param string $id Notification ID
      * @return JsonResponse
      */
-    public function markAsRead(string $id): JsonResponse
+    public function markAsRead(Request $request): JsonResponse
     {
-        $notification = Auth::user()->notifications()->findOrFail($id);
-        $notification->markAsRead();
-        return response()->json($notification);
+        $authUser = auth()->user();
+        $ids = $request->get('ids', []);
+
+        if (empty($ids) && $authUser->unreadNotifications->isNotEmpty()) {
+            $authUser->unreadNotifications->markAsRead();
+            return response()->json([]);
+        }
+
+        $authUser->unreadNotifications->whereIn('id', $ids)->markAsRead();
+        return response()->json([]);
     }
 
     function test(): JsonResponse

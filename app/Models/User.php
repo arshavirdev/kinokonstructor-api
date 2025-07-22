@@ -17,6 +17,8 @@ use Laravel\Sanctum\HasApiTokens;
  * User model
  * @property-read int $id
  * @property Profile $profile
+ * @property \Illuminate\Database\Query\Builder $unreadNotifications
+ * @property \Illuminate\Database\Query\Builder $readNotifications
  */
 class User extends AppModel implements MustVerifyEmail, AuthenticatableContract, AuthorizableContract, CanResetPasswordContract
 {

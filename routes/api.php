@@ -148,7 +148,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::prefix('notifications')->group(function () {
         Route::get('', [NotificationController::class, 'index']);
         Route::get('test', [NotificationController::class, 'test']);
-        Route::patch('{id}/read', [NotificationController::class, 'markAsRead']);
+        Route::post('/read', [NotificationController::class, 'markAsRead']);
     });
 
     // CONTACT ORGANIZER

@@ -6,6 +6,7 @@ use App\DTOs\MediaSyncDataDTO;
 use App\Http\Requests\StoreContestApplicationRequest;
 use App\Http\Resources\ContestApplicationsResource;
 use Auth;
+use App\Notifications\NewContestApplicationNotification;
 use App\Models\ContestApplication;
 use App\Models\Contest;
 use App\Service\Media\MediaService;
@@ -77,6 +78,11 @@ class ContestService
         $this->mediaService->syncMediaCollection($application, $imagesMediaDto, ContestApplication::CONTEST_APPLICATION_IMAGES);
 
         $application->load(['media']);
+
+        // Send application notification
+        $notification = new NewContestApplicationNotification($application);
+        $contest->owner->user->notify($notification);
+
         return [
             'success' => true,
             'data' => new ContestApplicationsResource($application)
