@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Notifications\Report;
+use App\Models\ContestApplication;
+use App\Notifications\NewContestApplicationNotification;
+use App\Notifications\TestNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Request;
@@ -46,14 +48,27 @@ class NotificationController extends Controller
         return response()->json([]);
     }
 
-    function test(): JsonResponse
+    function test(Request $request): JsonResponse
     {
         $user = Auth::user();
-        $task = 'This project contains inappropriate content';
 
-        $notification = new Report($task);
+        $type = $request->get('type', 'test');
+        $title = $request->get('title', 'Default Title');
+        $body = $request->get('body', 'Default body');
+
+        $contestApplication = ContestApplication::first();
+
+        $notification = match ($type) {
+            'contest-application' => new NewContestApplicationNotification($contestApplication),
+            default => new TestNotification($title, $body),
+        };
+
         $user->notify($notification);
 
-        return response()->json(['message' => 'Notification Successfully Sent']);
+        return response()->json([
+            'type' => $type,
+            'message' => 'Notification Successfully Sent',
+            'notification' => $notification->id,
+        ]);
     }
 }

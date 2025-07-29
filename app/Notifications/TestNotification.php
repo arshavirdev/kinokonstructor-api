@@ -3,26 +3,22 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 
 use Illuminate\Notifications\Notification;
 
 
 // ShouldQueue
-class Report extends Notification
+class TestNotification extends Notification
 {
     use Queueable;
-    private $task;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($task)
+    public function __construct(private string $title, private string $body)
     {
-        $this->task = $task;
     }
 
     /**
@@ -39,8 +35,8 @@ class Report extends Notification
     public function toArray($notifiable)
     {
         return [
-            'task' => $this->task,
-            'message' => 'Report Notification : ' . $this->task,
+            'title' => $this->title,
+            'body' => $this->body,
         ];
     }
 }
