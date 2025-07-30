@@ -11,28 +11,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
+    
+      - name: Print branch name
+        run: |
+          echo "Current branch: ${GITHUB_REF##*/}"
 
-    - name: Set environment variables based on branch
-      run: |
-        if [[ "${{ github.ref }}" == "refs/heads/dev1" ]]; then
+      - name: Set environment variables based on branch
+        run: |
           echo "DEPLOY_HOST=${{ secrets.REMOTE_HOST_DEV1 }}" >> $GITHUB_ENV
           echo "DEPLOY_USER=${{ secrets.REMOTE_USER_DEV1 }}" >> $GITHUB_ENV
-        elif [[ "${{ github.ref }}" == "refs/heads/dev2" ]]; then
-          echo "DEPLOY_HOST=${{ secrets.REMOTE_HOST_DEV2 }}" >> $GITHUB_ENV
-          echo "DEPLOY_USER=${{ secrets.REMOTE_USER_DEV2 }}" >> $GITHUB_ENV
-        else
-          echo "DEPLOY_HOST=${{ secrets.REMOTE_HOST_STAGE }}" >> $GITHUB_ENV
-          echo "DEPLOY_USER=${{ secrets.REMOTE_USER_STAGE }}" >> $GITHUB_ENV
-        fi
 
-    - name: Set up SSH and deploy
-      uses: appleboy/ssh-action@v1.2.0
-      with:
-        host: ${{ env.DEPLOY_HOST }}
-        username: ${{ env.DEPLOY_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        script: |
-          cd /root/dev1/
-          ./scripts/update-backend.sh
+      - name: Set up SSH and deploy
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ env.DEPLOY_HOST }}
+          username: ${{ env.DEPLOY_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /root/${GITHUB_REF##*/}/
+            ./scripts/update-backend.sh
