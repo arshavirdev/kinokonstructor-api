@@ -16,7 +16,7 @@ jobs:
     
       - name: Print branch name
         run: |
-          echo "Current branch: ${GITHUB_REF##*/}"
+          echo "Current branch: ${{ github.ref_name }}"
 
       - name: Set environment variables based on branch
         run: |
@@ -30,5 +30,5 @@ jobs:
           username: ${{ env.DEPLOY_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /root/${GITHUB_REF##*/}/
+            cd /root/${{ github.ref_name }}/
             ./scripts/update-backend.sh
