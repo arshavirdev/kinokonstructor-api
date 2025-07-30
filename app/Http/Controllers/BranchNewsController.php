@@ -3,12 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\RegionalBranch\BranchNewsRequest;
+use App\Http\Resources\RegionalBranch\BranchNewsResource;
 use App\Models\BranchNews;
 use App\Models\RegionalBranch;
 use Illuminate\Support\Facades\DB;
 
 class BranchNewsController extends Controller
 {
+    public function show(int $id)
+    {
+        $branchNews = BranchNews::findOrFail($id);
+        return new BranchNewsResource($branchNews);
+    }
+
     public function store(RegionalBranch $regionalBranch, BranchNewsRequest $request)
     {
         DB::beginTransaction();
@@ -20,16 +27,16 @@ class BranchNewsController extends Controller
 
                 // Update if ID is present, otherwise create
                 if (!empty($newsData['id'])) {
-                    $member = $regionalBranch->news()->findOrFail($newsData['id']);
-                    $member->update($newsData);
+                    $branchNewsItem = $regionalBranch->news()->findOrFail($newsData['id']);
+                    $branchNewsItem->update($newsData);
                 } else {
-                    $member = $regionalBranch->news()->create($newsData);
+                    $branchNewsItem = $regionalBranch->news()->create($newsData);
                 }
 
                 // If image is provided, replace existing media
                 if ($image) {
-                    $member->clearMediaCollection(BranchNews::IMAGE);
-                    $member
+                    $branchNewsItem->clearMediaCollection(BranchNews::IMAGE);
+                    $branchNewsItem
                         ->addMedia($image)
                         ->toMediaCollection(BranchNews::IMAGE);
                 }
@@ -37,7 +44,7 @@ class BranchNewsController extends Controller
 
             DB::commit();
 
-            return response()->json(['message' => 'News stored or updated successfully.'], 200);
+            return new BranchNewsResource($branchNewsItem);
         } catch (\Exception $e) {
             DB::rollBack();
 

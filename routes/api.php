@@ -55,6 +55,7 @@ Route::get('dictionaries/{dictionary?}', [DictionaryController::class, 'show']);
 Route::apiResource('/videos', VideoController::class)->only(['show', 'index']);
 Route::apiResource('/contests', ContestController::class)->only(['show', 'index']);
 Route::apiResource('/regional-branches', RegionalBranchController::class)->only(['show', 'index']);
+Route::get('/regional-branch-news/{id}', [BranchNewsController::class, 'show']);
 Route::apiResource('/resources', ResourceController::class)->only(['show', 'index']);
 Route::apiResource('/events', EventController::class)->only(['index', 'show']);
 Route::apiResource('/courses', CourseController::class)->only(['index', 'show']);

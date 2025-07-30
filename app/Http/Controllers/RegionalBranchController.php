@@ -38,13 +38,13 @@ class RegionalBranchController extends Controller
     public function store(RegionalBranchRequest $request): RegionalBranchResource
     {
         $regionalBranch = $this->regionalBranchService->store($request);
-        return new RegionalBranchResource($regionalBranch);
+        return new RegionalBranchResource($regionalBranch, true);
     }
 
     public function update(RegionalBranch $regionalBranch, RegionalBranchRequest $request): RegionalBranchResource
     {
         $regionalBranch = $this->regionalBranchService->update($regionalBranch, $request);
-        return new RegionalBranchResource($regionalBranch);
+        return new RegionalBranchResource($regionalBranch, true);
     }
 
     public function destroy(RegionalBranch $regionalBranch): \Illuminate\Http\JsonResponse
