@@ -88,7 +88,7 @@ class UserController extends Controller
 
         $this->mediaService->syncMediaCollection($profile, new MediaSyncDataDTO(
             $request->file(Profile::AVATAR_MEDIA, []),
-            $request->post(Profile::AVATAR_MEDIA, [])
+            $request->post(Profile::AVATAR_MEDIA, null) ? [$request->post(Profile::AVATAR_MEDIA)] : []
         ), Profile::AVATAR_MEDIA);
 
         $this->syncRelations($profile, $params);
@@ -126,7 +126,7 @@ class UserController extends Controller
 
         $this->mediaService->syncMediaCollection($profile, new MediaSyncDataDTO(
             $request->file(Profile::AVATAR_MEDIA, []),
-            $request->post(Profile::AVATAR_MEDIA, [])
+            $request->post(Profile::AVATAR_MEDIA, null) ? [$request->post(Profile::AVATAR_MEDIA)] : []
         ), Profile::AVATAR_MEDIA);
 
         $profile->fill($params);
