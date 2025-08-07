@@ -1,16 +1,32 @@
 <?php
 namespace App\Service;
 
+use Route;
 use Illuminate\Support\Facades\Http;
 
 class TelegramService
 {
     public static function formatException(\Throwable $e): string
     {
-        $message = "*❗❗❗Exception Alert❗❗❗*\n";
+        $appName = config('app.name');
+        $message = "*❗❗❗Exception Alert: $appName ❗❗❗*\n";
         $message .= "`" . get_class($e) . "`\n";
         $message .= $e->getMessage() . "\n";
-        $message .= "File: " . $e->getFile() . ":" . $e->getLine();
+        $message .= "File: " . $e->getFile() . ":" . $e->getLine() . "\n";
+
+        if (app()->runningInConsole() === false) {
+            try {
+                $request = request();
+                $route = Route::current();
+
+                $message .= "\n*Request Info:*\n";
+                $message .= "Route: `" . $route->uri() . "`\n";
+                $message .= "Method: `" . $route->getActionMethod() . "`\n";
+                $message .= "Request Body: ```json\n" . json_encode($request->all(), JSON_PRETTY_PRINT) . "\n```\n";
+            } catch (\Throwable $ex) {
+                $message .= "\n⚠️ Failed to get request data: " . $ex->getMessage();
+            }
+        }
 
         return $message;
     }

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
             $table->integer('year')->nullable();
-            $table->foreignId('owner_id')->nullable()->constrained('users')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('owner_id')->nullable()->constrained('profiles')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('region_id')->constrained()->onDelete('cascade');
             $table->string('city')->nullable();
             $table->jsonb('manager')->default(DB::raw("'{}'::jsonb"));
