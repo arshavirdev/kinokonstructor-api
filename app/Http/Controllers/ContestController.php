@@ -28,7 +28,7 @@ class ContestController extends Controller
         $user = Auth::user();
         $query = Contest::query()
             ->with('owner')
-            ->where('is_archived', '=', false)
+            ->visibleTo($user)
             ->orderBy('id', 'desc')
             ->withCount([
                 'favorites as is_favorite' => function ($query) use ($user) {
@@ -40,11 +40,12 @@ class ContestController extends Controller
 
         if ($request->has('type') && $request->input('type') === 'my') {
             $profileId = $user->profile?->id;
-            if (!$profileId) abort(421);
+            if (!$profileId)
+                abort(421);
             $query = $query->where('owner_id', $profileId);
         }
 
-        if ($request->has('favorite') && $request->input('favorite') === 'true' ) {
+        if ($request->has('favorite') && $request->input('favorite') === 'true') {
             $query->whereHas('favorites', function ($q) use ($user) {
                 $q->where('user_id', $user->id);
             });
@@ -64,6 +65,12 @@ class ContestController extends Controller
 
     public function show(Contest $contest)
     {
+        $user = auth()->user();
+        $contest = Contest::visibleTo($user)
+            ->whereKey($contest->getKey())
+            ->with(['contacts', 'media'])
+            ->firstOrFail();
+
         $contest = $contest->load(['contacts', 'media']);
         return new ContestResource($contest);
     }
@@ -116,7 +123,7 @@ class ContestController extends Controller
                 $contest->addMedia($partner)->toMediaCollection(Contest::PARTNERS);
             }
         }
-    
+
         return new ContestResource($contest);
     }
 
@@ -151,7 +158,7 @@ class ContestController extends Controller
         }
 
         // Handle logo upload (Replace old logo)
-       if ($request->hasFile('logo')) {
+        if ($request->hasFile('logo')) {
             $contest->clearMediaCollection(Contest::LOGO);
             foreach ($request->file('logo') as $document) {
                 $contest->addMedia($document)->toMediaCollection(Contest::LOGO);

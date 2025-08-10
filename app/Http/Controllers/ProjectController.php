@@ -28,7 +28,9 @@ class ProjectController extends Controller
     {
         $user = Auth::user();
         $profile = $user->profile;
-        $query = Project::query()->with(['media'])
+        $query = Project::query()
+            ->visibleTo($user)
+            ->with(['media'])
             ->withCount([
                 'favorites as is_favorite' => function ($query) use ($user) {
                     $query->where('user_id', $user->id);
@@ -103,9 +105,11 @@ class ProjectController extends Controller
 
     public function forApplication()
     {
-        $profileId = auth()->user()?->profile?->id;
+        $authUser = auth()->user();
+        $profileId = $authUser?->profile?->id;
 
         $projects = Project::select(['id', 'title'])
+            ->visibleTo($authUser)
             ->where('owner_id', $profileId)
             ->get();
 
@@ -144,6 +148,7 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
+        $project = Project::visibleTo(auth()->user())->findOrFail($project->id);
         $project->load(['media', 'memberInvites', 'memberInvites.profile', 'locations', 'owner', 'contact']);
 
         return new ProjectResource($project);

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Archivable;
 use App\Traits\Favoritable;
 use App\Traits\Moderation\Moderatable;
 use App\Traits\Contactable;
@@ -24,6 +25,7 @@ class Project extends AppModel implements HasMedia
     use Favoritable;
     use Contactable;
     use Requestable;
+    use Archivable;
 
     public const EXTENDED_SYNOPSIS_MEDIA = 'extended_synopsis';
     public const ATTACHMENTS_MEDIA = 'attachments';

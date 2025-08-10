@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Archivable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Spatie\Image\Manipulations;
@@ -13,10 +14,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Contest extends AppModel implements HasMedia
 {
-    use HasFactory;
-    use InteractsWithMedia;
-    use Moderatable;
-    use Favoritable;
+    use HasFactory, InteractsWithMedia, Favoritable, Moderatable, Archivable;
 
     public const GALLERY = 'gallery';
     public const DOCUMENTS = 'documents';
