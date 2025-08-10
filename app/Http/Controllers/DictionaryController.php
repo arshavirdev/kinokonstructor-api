@@ -14,7 +14,7 @@ class DictionaryController extends Controller
             'occupations' => Occupation::all(),
             'departments' => Department::all(),
             'applicant_occupations' => Occupation::whereIn('id', [56, 92, 103, 109, 175, 176, 177])->get(),
-            'regions' => Region::all(),
+            'regions' => Region::orderBy('sort_order', 'ASC')->get(),
         ];
     }
 
@@ -24,7 +24,7 @@ class DictionaryController extends Controller
             'occupations' => Occupation::all(),
             'departments' => Department::all(),
             'applicant_occupations' => Occupation::whereIn('id', [56, 92, 103, 109, 175, 176, 177])->get(),
-            'regions' => Region::all(),
+            'regions' => Region::orderBy('sort_order', 'ASC')->get(),
             default => $this->list()
         };
     }
