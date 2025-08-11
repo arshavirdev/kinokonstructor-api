@@ -24,8 +24,9 @@ class StoreContestApplicationRequest extends FormRequest
     public function rules()
     {
         return [
-            "project_id"=> "required|integer|exists:projects,id",
-            "description"=> "nullable|string",
+            "project_id" => "required|integer|exists:projects,id",
+            "description" => "nullable|string",
+            "optional" => "nullable",
 
             // Files uploads
             'files_section' => 'nullable|array',

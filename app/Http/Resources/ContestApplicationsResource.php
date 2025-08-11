@@ -25,6 +25,7 @@ class ContestApplicationsResource extends JsonResource
             'applicant_full_name' => $this->applicant->fullname,
             'project_id' => $this->project_id,
             'project_title' => $this->project?->title,
+            'optional' => $this->optional,
             'created_at' => $this->created_at,
             'images' => MediaResource::collection($this->getMedia(ContestApplication::CONTEST_APPLICATION_IMAGES)),
             'files' => MediaResource::collection($this->getMedia(ContestApplication::CONTEST_APPLICATION_FILES))

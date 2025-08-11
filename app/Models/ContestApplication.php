@@ -30,9 +30,13 @@ class ContestApplication extends Model implements HasMedia
         'applicant_id',
         'project_id',
         'description',
-        'status'
+        'status',
+        'optional'
     ];
 
+    protected $casts = [
+        'optional'=> 'array'
+    ];
 
     public function applicant()
     {
