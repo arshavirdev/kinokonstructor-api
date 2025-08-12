@@ -11,13 +11,13 @@ trait Archivable
             $q->where('is_archived', false);
 
             // TODO: check
-            // Owners see their own archived contests
-            // if ($user && $user->profile?->id) {
-            //     $q->orWhere(function ($q2) use ($user) {
-            //         $q2->where('is_archived', true)
-            //             ->where('owner_id', $user->profile->id);
-            //     });
-            // }
+            // Owners see their own archived content
+            if ($user && $user->profile?->id) {
+                $q->orWhere(function ($q2) use ($user) {
+                    $q2->where('is_archived', true)
+                        ->where('owner_id', $user->profile->id);
+                });
+            }
         });
     }
 }
