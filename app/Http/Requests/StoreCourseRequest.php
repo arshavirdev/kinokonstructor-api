@@ -34,7 +34,7 @@ class StoreCourseRequest extends FormRequest
             'duration' => 'required|integer|min:1',
             'price' => 'nullable|numeric|min:0',
             'study_format' => 'required|string|in:' . implode(',', Course::STUDY_FORMATS),
-            'region_id' => 'required|exists:regions,id',
+            'region_ids' => 'required|array',
             'start_date' => 'required|date',
             'application_start_date' => 'required|date',
             'application_end_date' => 'required|date',

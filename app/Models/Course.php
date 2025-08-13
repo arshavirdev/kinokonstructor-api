@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property \DateTimeInterface|null $application_end_date
  * @property \DateTimeInterface|null $start_date
  * @property string|null $study_format
- * @property int|null $region_id
+ * @property array $region_ids
  * @property int|null $owner_id
  * @property bool $is_archived
  */
@@ -39,10 +39,13 @@ class Course extends Model implements HasMedia
     const PART_TIME = 'part_time';
     const ONLINE = 'online';
 
+    const MIXED = 'mixed';
+
     const STUDY_FORMATS = [
         self::FULL_TIME,
         self::PART_TIME,
-        self::ONLINE
+        self::ONLINE,
+        self::MIXED
     ];
 
     protected $fillable = [
@@ -54,7 +57,7 @@ class Course extends Model implements HasMedia
         'application_end_date',
         'start_date',
         'study_format',
-        'region_id',
+        'region_ids',
         'owner_id',
         'is_archived'
     ];
@@ -62,6 +65,7 @@ class Course extends Model implements HasMedia
     protected $casts = [
         'price' => 'float',
         'duration' => 'integer',
+        'region_ids' => 'array',
         'is_archived' => 'bool'
     ];
 

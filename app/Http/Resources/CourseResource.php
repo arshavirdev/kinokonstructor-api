@@ -26,7 +26,7 @@ class CourseResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'study_format' => $this->study_format,
-            'region_id' => $this->region_id,
+            'region_ids' => $this->region_ids,
             'duration' => $this->duration,
             'price' => $this->price,
             'start_date' => $this->start_date,
