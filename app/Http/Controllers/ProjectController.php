@@ -70,10 +70,7 @@ class ProjectController extends Controller
 
             if ($request->has('filter.location')) {
                 $regionId = $request->input('filter.location');
-                $query = $query->where('region_id', $regionId);
-//                $query = $query->whereHas('locations', function ($q) use ($locationFilter) {
-//                    $q->whereIn('locations.id', (array) $locationFilter);
-//                });
+                $query = $query->whereIn('region_id', $regionId);
             }
 
             if ($request->has('filter.requests')) {
