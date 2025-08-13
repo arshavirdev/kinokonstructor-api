@@ -30,7 +30,7 @@ class RegionalBranchResource extends JsonResource
      */
     public function toArray($request)
     {
-        $authUserProfileId = auth()->user()?->profile->id;
+        $authUserProfileId = auth()->user()?->profile?->id;
 
         $data = [
             'id' => $this->id,
