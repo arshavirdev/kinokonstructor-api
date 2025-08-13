@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\DTOs\MediaSyncDataDTO;
 use App\Http\Requests\StoreContestApplicationRequest;
 use App\Http\Requests\StoreContestRequest;
 use App\Http\Requests\UpdateContestRequest;
 use App\Http\Resources\ContestResource;
+use App\Service\Media\MediaService;
 use Illuminate\Http\Request;
 use App\Models\Contest;
 use App\Models\ContestContact;
@@ -15,8 +17,10 @@ use Illuminate\Support\Facades\Auth;
 class ContestController extends Controller
 {
 
-    public function __construct(private ContestService $contestService)
-    {
+    public function __construct(
+        private ContestService $contestService,
+        private MediaService $mediaService
+    ) {
 
     }
     /**
@@ -89,40 +93,35 @@ class ContestController extends Controller
             ContestContact::create($contactsData);
         }
 
-        // Handle gallery images
-        if ($request->hasFile('gallery')) {
-            foreach ($request->file('gallery') as $photo) {
-                $contest->addMedia($photo)->toMediaCollection(Contest::GALLERY);
-            }
-        }
+        $galleryMediaDto = new MediaSyncDataDTO(
+            $request->file('gallery', []),
+            $request->post('gallery', [])
+        );
+        $this->mediaService->syncMediaCollection($contest, $galleryMediaDto, Contest::GALLERY);
 
-        // Handle document uploads
-        if ($request->hasFile('documents')) {
-            foreach ($request->file('documents') as $document) {
-                $contest->addMedia($document)->toMediaCollection(Contest::DOCUMENTS);
-            }
-        }
+        $documentsMediaDto = new MediaSyncDataDTO(
+            $request->file('documents', []),
+            $request->post('documents', [])
+        );
+        $this->mediaService->syncMediaCollection($contest, $documentsMediaDto, Contest::DOCUMENTS);
 
-        // Handle logo upload (single file)
-        if ($request->hasFile('logo')) {
-            foreach ($request->file('logo') as $document) {
-                $contest->addMedia($document)->toMediaCollection(Contest::LOGO);
-            }
-        }
+        $logoMediaDto = new MediaSyncDataDTO(
+            $request->file('logo', []),
+            $request->post('logo', [])
+        );
+        $this->mediaService->syncMediaCollection($contest, $logoMediaDto, Contest::LOGO);
 
-        // Handle photo gallery images
-        if ($request->hasFile('photo_gallery')) {
-            foreach ($request->file('photo_gallery') as $photo) {
-                $contest->addMedia($photo)->toMediaCollection(Contest::PHOTO_GALLERY);
-            }
-        }
+        $photoGalleryMediaDto = new MediaSyncDataDTO(
+            $request->file('photo_gallery', []),
+            $request->post('photo_gallery', [])
+        );
+        $this->mediaService->syncMediaCollection($contest, $photoGalleryMediaDto, Contest::PHOTO_GALLERY);
 
-        // Handle partner images
-        if ($request->hasFile('partners')) {
-            foreach ($request->file('partners') as $partner) {
-                $contest->addMedia($partner)->toMediaCollection(Contest::PARTNERS);
-            }
-        }
+        $partnerMediaDto = new MediaSyncDataDTO(
+            $request->file('partners', []),
+            $request->post('partners', [])
+        );
+        $this->mediaService->syncMediaCollection($contest, $partnerMediaDto, Contest::PARTNERS);
 
         return new ContestResource($contest);
     }
@@ -143,41 +142,35 @@ class ContestController extends Controller
             );
         }
 
-        // Handle gallery images
-        if ($request->hasFile('gallery')) {
-            foreach ($request->file('gallery') as $photo) {
-                $contest->addMedia($photo)->toMediaCollection(Contest::GALLERY);
-            }
-        }
+        $galleryMediaDto = new MediaSyncDataDTO(
+            $request->file('gallery', []),
+            $request->post('gallery', [])
+        );
+        $this->mediaService->syncMediaCollection($contest, $galleryMediaDto, Contest::GALLERY);
 
-        // Handle document uploads
-        if ($request->hasFile('documents')) {
-            foreach ($request->file('documents') as $document) {
-                $contest->addMedia($document)->toMediaCollection(Contest::DOCUMENTS);
-            }
-        }
+        $documentsMediaDto = new MediaSyncDataDTO(
+            $request->file('documents', []),
+            $request->post('documents', [])
+        );
+        $this->mediaService->syncMediaCollection($contest, $documentsMediaDto, Contest::DOCUMENTS);
 
-        // Handle logo upload (Replace old logo)
-        if ($request->hasFile('logo')) {
-            $contest->clearMediaCollection(Contest::LOGO);
-            foreach ($request->file('logo') as $document) {
-                $contest->addMedia($document)->toMediaCollection(Contest::LOGO);
-            }
-        }
+        $logoMediaDto = new MediaSyncDataDTO(
+            $request->file('logo', []),
+            $request->post('logo', [])
+        );
+        $this->mediaService->syncMediaCollection($contest, $logoMediaDto, Contest::LOGO);
 
-        // Handle photo gallery images
-        if ($request->hasFile('photo_gallery')) {
-            foreach ($request->file('photo_gallery') as $photo) {
-                $contest->addMedia($photo)->toMediaCollection(Contest::PHOTO_GALLERY);
-            }
-        }
+        $photoGalleryMediaDto = new MediaSyncDataDTO(
+            $request->file('photo_gallery', []),
+            $request->post('photo_gallery', [])
+        );
+        $this->mediaService->syncMediaCollection($contest, $photoGalleryMediaDto, Contest::PHOTO_GALLERY);
 
-        // Handle partner images
-        if ($request->hasFile('partners')) {
-            foreach ($request->file('partners') as $partner) {
-                $contest->addMedia($partner)->toMediaCollection(Contest::PARTNERS);
-            }
-        }
+        $partnerMediaDto = new MediaSyncDataDTO(
+            $request->file('partners', []),
+            $request->post('partners', [])
+        );
+        $this->mediaService->syncMediaCollection($contest, $partnerMediaDto, Contest::PARTNERS);
 
         return new ContestResource($contest);
     }
