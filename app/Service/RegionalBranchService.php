@@ -8,6 +8,7 @@ use App\Models\RegionalBranch;
 use App\Service\Media\MediaService;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class RegionalBranchService
 {
@@ -21,6 +22,8 @@ class RegionalBranchService
         $authUser = auth()->user();
         $insertData = $request->validated();
         $insertData['owner_id'] = $authUser->profile->id;
+
+        $this->checkRegionExisting($insertData['region_id']);
 
         $branch = RegionalBranch::create($insertData);
 
@@ -66,8 +69,6 @@ class RegionalBranchService
 
         return $branch;
     }
-
-
     private function handleContacts(RegionalBranch $branch, $contacts, $user): void
     {
         $data = [
@@ -84,5 +85,19 @@ class RegionalBranchService
         }
 
         $branch->contacts()->create(array_merge(['user_id' => $user->id], $data));
+    }
+
+    /**
+     * Check if regional branch already exist by region ID
+     * @param int $regionId
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
+     * @return void
+     */
+    private function checkRegionExisting(int $regionId)
+    {
+        $isExist = RegionalBranch::where('region_id', $regionId)->exists();
+        if ($isExist) {
+            throw new HttpException(409, 'Regional branch already exists');
+        }
     }
 }
