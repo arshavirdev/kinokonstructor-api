@@ -146,6 +146,8 @@ class ProjectService
                 $project->requests()
                     ->whereNotIn('id', $keepRequestIds)
                     ->where('type', $requestType)
+                    ->get()
+                    ->each
                     ->delete();
 
                 foreach ($requests as $index => $entry) {

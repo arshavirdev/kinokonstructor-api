@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Request;
+use App\Observers\RequestObserver;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\ServiceProvider;
 
@@ -28,5 +30,7 @@ class AppServiceProvider extends ServiceProvider
         if (!app()->environment('local')) {
             \URL::forceScheme('https');
         }
+
+        Request::observe(RequestObserver::class);
     }
 }

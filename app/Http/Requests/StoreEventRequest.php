@@ -37,6 +37,7 @@ class StoreEventRequest extends FormRequest
             'format' => 'required|string',
             'parameters' => 'nullable|array',
             'company' => 'nullable|array',
+            'is_recorded' => 'nullable|boolean',
             Event::IMAGES_FILES => 'nullable|array',
             Event::FILES => 'nullable|array',
             ...$this->contactRules()

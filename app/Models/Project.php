@@ -41,11 +41,16 @@ class Project extends AppModel implements HasMedia
     public const IMAGES = 'images';
 
     public const MEDIA_TYPES = [
-        self::EXTENDED_SYNOPSIS_MEDIA, self::ATTACHMENTS_MEDIA,
-        self::COSTUMES_MEDIA, self::MAKEUP_MEDIA,
-        self::CAST_MEDIA, self::DECORATIONS_MEDIA,
-        self::LOCATIONS_MEDIA, self::FINANCIAL_PLAN_MEDIA,
-        self::FINANCIAL_PROOF_MEDIA, self::PARTNERSHIP_PROOF_MEDIA
+        self::EXTENDED_SYNOPSIS_MEDIA,
+        self::ATTACHMENTS_MEDIA,
+        self::COSTUMES_MEDIA,
+        self::MAKEUP_MEDIA,
+        self::CAST_MEDIA,
+        self::DECORATIONS_MEDIA,
+        self::LOCATIONS_MEDIA,
+        self::FINANCIAL_PLAN_MEDIA,
+        self::FINANCIAL_PROOF_MEDIA,
+        self::PARTNERSHIP_PROOF_MEDIA
     ];
     public const SYNOPSYS = 'synopsys';
     public const SCENARIO = 'scenario';

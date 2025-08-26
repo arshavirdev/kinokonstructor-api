@@ -36,6 +36,7 @@ class EventResource extends JsonResource
             'is_owner' => $is_owner,
             'is_favorite' => (bool) $this->is_favorite,
             'is_archived' => $this->is_archived,
+            'is_recorded' => $this->is_recorded,
             'created_at' => $this->created_at,
             'date' => $this->date,
             'contacts' => new ContactsResource($this->contacts[0] ?? []),

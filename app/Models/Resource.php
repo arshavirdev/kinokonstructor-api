@@ -40,7 +40,8 @@ class Resource extends Model implements HasMedia
         "owner_id",
         "parameters",
         "company",
-        "is_archived"
+        "is_archived",
+        "request_id"
     ];
 
     protected $casts = [
@@ -59,5 +60,10 @@ class Resource extends Model implements HasMedia
     public function owner()
     {
         return $this->belongsTo(Profile::class, 'owner_id');
+    }
+
+    public function request()
+    {
+        return $this->belongsTo(Request::class);
     }
 }

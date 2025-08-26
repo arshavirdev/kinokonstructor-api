@@ -32,6 +32,7 @@ class ResourceResource extends JsonResource
             'parameters' => $this->parameters,
             'category' => $this->category,
             'region_id' => $this->region_id,
+            'request_id' => $this->request_id,
             'created_at' => $this->created_at,
             'is_owner' => $is_owner,
             'is_favorite' => (bool) $this->is_favorite,

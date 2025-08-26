@@ -25,7 +25,7 @@ class ResourceController extends Controller
         $userId = $user?->id;
         $profileId = $user?->profile?->id;
 
-        $query = Resource::query()->with(['owner'])
+        $query = Resource::query()->with(['owner', 'request'])
             ->withCount([
                 'favorites as is_favorite' => fn($q) => $q->where('user_id', $userId),
             ]);
@@ -41,6 +41,13 @@ class ResourceController extends Controller
         $query->when(filter_var($request->input('favorite'), FILTER_VALIDATE_BOOLEAN), function ($q) use ($profileId) {
             $q->whereHas('favorites', fn($subQ) => $subQ->where('owner_id', $profileId));
         });
+
+        if ($request->has('filter.requests')) {
+            $filterRequests = $request->input('filter.requests');
+            $query = $query->whereHas('request', function ($q) use ($filterRequests) {
+                $q->whereIn('requests.type', $filterRequests);
+            });
+        }
 
         $resources = $query->orderBy('created_at', 'DESC')
             ->paginate($request->input('pageSize', 10));

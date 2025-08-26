@@ -50,6 +50,7 @@ class Event extends Model implements HasMedia
         'date',
         'company',
         'is_archived',
+        'is_recorded'
     ];
 
     protected $casts = [
@@ -58,6 +59,7 @@ class Event extends Model implements HasMedia
         'parameters' => 'array',
         'company' => 'array',
         'is_archived' => 'boolean',
+        'is_recorded' => 'boolean',
     ];
 
     public function registerMediaCollections(): void

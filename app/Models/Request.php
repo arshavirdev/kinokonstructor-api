@@ -47,6 +47,11 @@ class Request extends Model implements HasMedia
         'category' => 'array'
     ];
 
+    public function resource()
+    {
+        return $this->hasOne(Resource::class);
+    }
+
     public function requestable()
     {
         return $this->morphTo();
