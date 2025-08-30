@@ -23,11 +23,15 @@ jobs:
           if [[ "${GITHUB_REF}" == "refs/heads/production" ]]; then
             echo "DEPLOY_HOST=${{ secrets.REMOTE_HOST_PROD }}" >> $GITHUB_ENV
             echo "DEPLOY_USER=${{ secrets.REMOTE_USER_PROD }}" >> $GITHUB_ENV
-            echo "SSH_PRIVATE_KEY=${{ secrets.SSH_PRIVATE_KEY_PROD }}" >> $GITHUB_ENV
+            echo "SSH_PRIVATE_KEY<<EOF" >> $GITHUB_ENV
+            echo "${{ secrets.SSH_PRIVATE_KEY }}" >> $GITHUB_ENV
+            echo "EOF" >> $GITHUB_ENV
           else
             echo "DEPLOY_HOST=${{ secrets.REMOTE_HOST_DEV1 }}" >> $GITHUB_ENV
             echo "DEPLOY_USER=${{ secrets.REMOTE_USER_DEV1 }}" >> $GITHUB_ENV
-            echo "SSH_PRIVATE_KEY=${{ secrets.SSH_PRIVATE_KEY }}" >> $GITHUB_ENV
+            echo "SSH_PRIVATE_KEY<<EOF" >> $GITHUB_ENV
+            echo "${{ secrets.SSH_PRIVATE_KEY_PROD }}" >> $GITHUB_ENV
+            echo "EOF" >> $GITHUB_ENV
           fi
 
       - name: Set up SSH and deploy
