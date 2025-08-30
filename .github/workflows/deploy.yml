@@ -23,6 +23,18 @@ jobs:
           echo "DEPLOY_HOST=${{ secrets.REMOTE_HOST_DEV1 }}" >> $GITHUB_ENV
           echo "DEPLOY_USER=${{ secrets.REMOTE_USER_DEV1 }}" >> $GITHUB_ENV
 
+      - name: Set environment variables based on branch
+        run: |
+          if [[ "${GITHUB_REF}" == "refs/heads/production" ]]; then
+            echo "DEPLOY_HOST=${{ secrets.REMOTE_HOST_PROD }}" >> $GITHUB_ENV
+            echo "DEPLOY_USER=${{ secrets.REMOTE_USER_PROD }}" >> $GITHUB_ENV
+            echo "SSH_PRIVATE_KEY=${{ secrets.SSH_PRIVATE_KEY_PROD }}" >> $GITHUB_ENV
+          else
+            echo "DEPLOY_HOST=${{ secrets.REMOTE_HOST_DEV1 }}" >> $GITHUB_ENV
+            echo "DEPLOY_USER=${{ secrets.REMOTE_USER_DEV1 }}" >> $GITHUB_ENV
+            echo "SSH_PRIVATE_KEY=${{ secrets.SSH_PRIVATE_KEY }}" >> $GITHUB_ENV
+          fi
+
       - name: Set up SSH and deploy
         uses: appleboy/ssh-action@v1.2.0
         with:
