@@ -20,11 +20,6 @@ jobs:
 
       - name: Set environment variables based on branch
         run: |
-          echo "DEPLOY_HOST=${{ secrets.REMOTE_HOST_DEV1 }}" >> $GITHUB_ENV
-          echo "DEPLOY_USER=${{ secrets.REMOTE_USER_DEV1 }}" >> $GITHUB_ENV
-
-      - name: Set environment variables based on branch
-        run: |
           if [[ "${GITHUB_REF}" == "refs/heads/production" ]]; then
             echo "DEPLOY_HOST=${{ secrets.REMOTE_HOST_PROD }}" >> $GITHUB_ENV
             echo "DEPLOY_USER=${{ secrets.REMOTE_USER_PROD }}" >> $GITHUB_ENV
