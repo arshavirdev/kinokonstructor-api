@@ -32,8 +32,8 @@ return [
     ],
 
     'strapi' => [
-        'url' => env('STRAPI_API_URL'),
-        'token' => env('STRAPI_API_TOKEN'),
+        'url' => env('STRAPI_API_URL', ''),
+        'token' => env('STRAPI_API_TOKEN', ''),
     ],
 
     'telegram' => [
