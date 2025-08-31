@@ -5,6 +5,7 @@ on:
     branches:
       - dev1
       - dev2
+      - production
 
 jobs:
   deploy:
