@@ -19,6 +19,11 @@ class VideoController extends Controller
     public function index(Request $request)
     {
         $query = Video::query()->with('owner');
+
+        if ($request->has('category')) {
+            $query = $query->where('category','like','%'. $request->get('category') .'%');
+        }
+
         $videos = $query->orderBy('created_at', 'desc')->paginate($request->input('pageSize', 10));
         return VideoResource::collection($videos);
     }
