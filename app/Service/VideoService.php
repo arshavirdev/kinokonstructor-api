@@ -39,7 +39,7 @@ class VideoService
             $videoFile = $request->file('video_file');
             $video->clearMediaCollection(Video::VIDEO_FILE);
             $video->addMedia($videoFile)->toMediaCollection(Video::VIDEO_FILE);
-        } elseif (!$request->has('video_file')) {
+        } elseif (!$request->has('video_file') && count($request->video_file)) {
             if ($video->getFirstMedia(Video::VIDEO_FILE)) {
                 $video->clearMediaCollection(Video::VIDEO_FILE);
             }
@@ -49,7 +49,7 @@ class VideoService
             $videoFile = $request->file('image_file');
             $video->clearMediaCollection(Video::IMAGE_FILE);
             $video->addMedia($videoFile)->toMediaCollection(Video::IMAGE_FILE);
-        } elseif (!$request->has('image_file')) {
+        } elseif (!$request->has('image_file') && count($request->image_file)) {
             if ($video->getFirstMedia(Video::IMAGE_FILE)) {
                 $video->clearMediaCollection(Video::IMAGE_FILE);
             }
