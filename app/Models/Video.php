@@ -21,6 +21,7 @@ class Video extends AppModel implements HasMedia
         'category',
         'details',
         'video_link',
+        'external_link',
         'owner_id',
     ];
 

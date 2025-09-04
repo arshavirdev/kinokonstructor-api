@@ -32,6 +32,7 @@ class VideoResource extends JsonResource
             'description' => $this->description,
             'category' => $this->category,
             'video_link' => $this->video_link,
+            'external_link' => $this->external_link,
             'comments' => $this->when($this->withDetails,
                 CommentResource::collection($this->comments)
             ),
