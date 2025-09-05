@@ -15,6 +15,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property string      $title
  * @property string      $description
  * @property string|null $video_link
+ * @property string|null $external_link
  * @property string|null $address
  * @property string|null $speaker_first_name
  * @property string|null $speaker_last_name
@@ -34,6 +35,7 @@ class Lesson extends Model implements HasMedia
         'title',
         'description',
         'video_link',
+        'external_link',
         'address',
         'speaker_first_name',
         'speaker_last_name',
