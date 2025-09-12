@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Service\Media\MediaService;
 use Illuminate\Console\Command;
 use App\Service\Resources\CinemapScraper;
 
@@ -45,7 +46,8 @@ class ScrapeResources extends Command
     public function processSource($scraper)
     {
         try {
-            $scraper->process();
+            $mediaService = new MediaService();
+            $scraper->process($mediaService);
         } catch (\Throwable $e) {
             $this->error("Failed to process " . $e->getMessage());
             return;
