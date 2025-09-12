@@ -13,4 +13,9 @@ class Region extends Model
         'label',
         'sort_order'
     ];
+
+    public function regionalBranches()
+    {
+        return $this->hasMany(RegionalBranch::class);
+    }
 }
