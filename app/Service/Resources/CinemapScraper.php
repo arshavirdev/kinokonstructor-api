@@ -35,7 +35,7 @@ class CinemapScraper
             'title' => $resourceTitle,
             'short_description' => 'test',
             'description' => $resourceDescription,
-            'category' => [],
+            'category' => ["Трюковые Съемки"],
             'owner_id' => 1,
             'region_id' => 1,
             'parameters' => [],
