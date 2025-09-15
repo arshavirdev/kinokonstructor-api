@@ -10,17 +10,20 @@ use Illuminate\Http\UploadedFile;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use App\Models\User;
 
 class CinemapScraper
 {
     const BASE_URL = 'https://cinemap.ru/';
+
+    const DEVICES_LIMIT = 3;
 
     public function process(MediaService $mediaService)
     {
         $client = HttpClient::create();
 
         try {
-            $response = $client->request('GET', self::BASE_URL . 'devices/skejter-professionalnyj');
+            $response = $client->request('GET', self::BASE_URL . 'devices/rent/');
             $html = $response->getContent();
         } catch (TransportExceptionInterface $e) {
             throw new \RuntimeException("Failed to fetch news articles: " . $e->getMessage());
@@ -28,48 +31,71 @@ class CinemapScraper
 
         $crawler = new Crawler($html);
 
-        $resourceTitle = $crawler->filter('h1.entry-title')->text();
-        $resourceDescription = $crawler->filter('div._expandable-inner')->text();
+        $user = User::where('role', '=', 'admin')->oldest()->first();
 
-        $data = [
-            'title' => $resourceTitle,
-            'short_description' => 'test',
-            'description' => $resourceDescription,
-            'category' => ["Трюковые Съемки"],
-            'owner_id' => 1,
-            'region_id' => 1,
-            'parameters' => [],
-            'company' => [],
-            'is_archived' => false
-        ];
-        
-        $resource = Resource::create($data);
-        
-        $imageUrls = $crawler->filter('.gallery .swiper-slide a')->each(fn (Crawler $node) => $node->attr('href'));
+        $devices = $crawler->filter('ul.devices li.device')->slice(0, self::DEVICES_LIMIT);
 
-        $uploadedFiles = [];
+        foreach ($devices as $deviceNode) {
+            $deviceCrawler = new Crawler($deviceNode);
 
-        foreach ($imageUrls as $url) {
-            $absoluteUrl = $this->makeAbsoluteUrl($url);
-            $imageContent = $client->request('GET', $absoluteUrl)->getContent();
+            $title = $deviceCrawler->filter('h1.title a')->text();
+            $detailUrl = $deviceCrawler->filter('h1.title a')->attr('href');
 
-            $filename = basename(parse_url($absoluteUrl, PHP_URL_PATH));
-            $tmpPath = Storage::disk('local')->path("tmp/{$filename}");
-            Storage::disk('local')->put("tmp/{$filename}", $imageContent);
+            $detailHtml = $client->request('GET', $detailUrl)->getContent();
+            $detailCrawler = new Crawler($detailHtml);
 
-            $uploadedFiles[] = new UploadedFile(
-                $tmpPath,
-                $filename,
-                mime_content_type($tmpPath),
-                null,
-                true
-            );
+            $description = $detailCrawler->filter('div._expandable-inner')->count()
+                ? $detailCrawler->filter('div._expandable-inner')->text()
+                : '';
+
+
+            $data = [
+                'title' => $title,
+                'short_description' => 'scraped',
+                'description' => $description,
+                'category' => ["Трюковые Съемки"],
+                'owner_id' => $user->profile->id,
+                'region_id' => 1,
+                'parameters' => [],
+                'company' => [],
+                'is_archived' => false,
+            ];
+
+            $resource = Resource::create($data);
+
+            $imageUrls = $detailCrawler->filter('.gallery .slide_one')->count() > 0 ?
+                $detailCrawler->filter('.gallery .slide_one a')
+                    ->each(fn (Crawler $node) => $node->attr('href')) :
+                $detailCrawler->filter('.gallery .swiper-slide a')
+                    ->each(fn (Crawler $node) => $node->attr('href'));
+
+
+            $uploadedFiles = [];
+
+            foreach ($imageUrls as $url) {
+                $absoluteUrl = $this->makeAbsoluteUrl($url);
+                $imageContent = $client->request('GET', $absoluteUrl)->getContent();
+
+                $filename = basename(parse_url($absoluteUrl, PHP_URL_PATH));
+                $tmpPath = Storage::disk('local')->path("tmp/{$filename}");
+                Storage::disk('local')->put("tmp/{$filename}", $imageContent);
+
+                $uploadedFiles[] = new UploadedFile(
+                    $tmpPath,
+                    $filename,
+                    mime_content_type($tmpPath),
+                    null,
+                    true
+                );
+            }
+
+            if ($uploadedFiles) {
+                $imagesMediaDto = new MediaSyncDataDTO($uploadedFiles, []);
+                $mediaService->syncMediaCollection($resource, $imagesMediaDto, Resource::IMAGES_FILES);
+            }
         }
 
-        $imagesMediaDto = new MediaSyncDataDTO($uploadedFiles, []);
-        $mediaService->syncMediaCollection($resource, $imagesMediaDto, Resource::IMAGES_FILES);
-
-        return "Resource created with " . count($imageUrls) . " images.";
+        return "Scraped " . count($devices) . " resources with images.";
 
     }
 
