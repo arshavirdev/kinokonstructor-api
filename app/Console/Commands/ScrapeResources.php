@@ -40,7 +40,7 @@ class ScrapeResources extends Command
 
         $this->processSource($this->cinemapScraper);
 
-        return Command::SUCCESS;
+        $this->info('Resources scraping finished.');
     }
 
     public function processSource($scraper)
