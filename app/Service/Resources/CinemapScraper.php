@@ -50,7 +50,7 @@ class CinemapScraper
 
             $data = [
                 'title' => $title,
-                'short_description' => 'scraped',
+                'short_description' => '',
                 'description' => $description,
                 'category' => ["Трюковые Съемки"],
                 'owner_id' => $user->profile->id,
@@ -67,7 +67,6 @@ class CinemapScraper
                     ->each(fn (Crawler $node) => $node->attr('href')) :
                 $detailCrawler->filter('.gallery .swiper-slide a')
                     ->each(fn (Crawler $node) => $node->attr('href'));
-
 
             $uploadedFiles = [];
 
