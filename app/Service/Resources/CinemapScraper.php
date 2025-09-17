@@ -59,6 +59,7 @@ class CinemapScraper
                 'parameters' => [],
                 'company' => [],
                 'is_archived' => false,
+                'external_link' => $detailUrl
             ];
 
             $resource = Resource::create($data);
