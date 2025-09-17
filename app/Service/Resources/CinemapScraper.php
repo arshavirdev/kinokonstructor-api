@@ -68,7 +68,6 @@ class CinemapScraper
                 $detailCrawler->filter('.gallery .swiper-slide a')
                     ->each(fn (Crawler $node) => $node->attr('href'));
 
-
             $uploadedFiles = [];
 
             foreach ($imageUrls as $url) {
