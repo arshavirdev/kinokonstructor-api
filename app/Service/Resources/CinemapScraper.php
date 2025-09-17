@@ -48,7 +48,6 @@ class CinemapScraper
                 ? $detailCrawler->filter('div._expandable-inner')->text()
                 : '';
 
-
             $data = [
                 'title' => $title,
                 'short_description' => 'scraped',
