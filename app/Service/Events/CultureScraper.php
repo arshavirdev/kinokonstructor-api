@@ -12,6 +12,7 @@ use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use App\Models\User;
+use Carbon\Carbon;
 
 class CultureScraper
 {
@@ -67,6 +68,12 @@ class CultureScraper
             $detailHtml = $client->request('GET', $link)->getContent();
             $detailCrawler = new Crawler($detailHtml);
 
+
+            $metaData = $detailCrawler->filter('script[type="application/ld+json"]')->count() > 1
+                ? $detailCrawler->filter('script[type="application/ld+json"]')->last()->text()
+                : '';
+            $metaData = json_decode($metaData ?? "", true);
+
             $detailTitle = $detailCrawler->filter('h1.styles_ArticlePoster__Title__mhEwE')->count()
                 ? trim($detailCrawler->filter('h1.styles_ArticlePoster__Title__mhEwE')->text())
                 : $title;
@@ -89,7 +96,7 @@ class CultureScraper
                 'parameters' => [],
                 'location' => $location,
                 'owner_id' => $user->profile->id,
-                'date' => '2025-09-17',
+                'date' => $metaData['startDate'] ?? Carbon::now(),
                 'company' => [],
             ];
 
