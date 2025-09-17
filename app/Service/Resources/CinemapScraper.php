@@ -48,7 +48,6 @@ class CinemapScraper
                 ? $detailCrawler->filter('div._expandable-inner')->text()
                 : '';
 
-
             $data = [
                 'title' => $title,
                 'short_description' => '',
@@ -69,7 +68,6 @@ class CinemapScraper
                     ->each(fn (Crawler $node) => $node->attr('href')) :
                 $detailCrawler->filter('.gallery .swiper-slide a')
                     ->each(fn (Crawler $node) => $node->attr('href'));
-
 
             $uploadedFiles = [];
 

@@ -62,12 +62,13 @@ class ScrapeNews extends Command
 
         $this->info("Found " . count($news) . " items for $vendor.");
 
-        try {
-            $this->strapiService->deleteNewsByVendor($vendor);
-        } catch (\Throwable $e) {
-            $this->error("Failed to delete existing news for $vendor: " . $e->getMessage());
-            return;
-        }
+        // TODO: check
+        // try {
+        //     $this->strapiService->deleteNewsByVendor($vendor);
+        // } catch (\Throwable $e) {
+        //     $this->error("Failed to delete existing news for $vendor: " . $e->getMessage());
+        //     return;
+        // }
 
         foreach ($news as $newsData) {
             try {
