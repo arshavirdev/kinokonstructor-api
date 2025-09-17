@@ -19,6 +19,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property array $parameters
  * @property array $company
  * @property bool $is_archived
+ * @property string|null $external_link
  * @property-read \Date $created_at
  * @property-read \Date $updated_at
  */
@@ -41,7 +42,8 @@ class Resource extends Model implements HasMedia
         "parameters",
         "company",
         "is_archived",
-        "request_id"
+        "request_id",
+        'external_link'
     ];
 
     protected $casts = [
