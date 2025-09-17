@@ -51,7 +51,7 @@ class CinemapScraper
 
             $data = [
                 'title' => $title,
-                'short_description' => 'scraped',
+                'short_description' => '',
                 'description' => $description,
                 'category' => ["Трюковые Съемки"],
                 'owner_id' => $user->profile->id,
