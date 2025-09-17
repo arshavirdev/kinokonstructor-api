@@ -34,6 +34,7 @@ class ResourceResource extends JsonResource
             'region_id' => $this->region_id,
             'request_id' => $this->request_id,
             'created_at' => $this->created_at,
+            'external_link' => $this->external_link,
             'is_owner' => $is_owner,
             'is_favorite' => (bool) $this->is_favorite,
             'is_archived' => $this->is_archived,
