@@ -66,35 +66,38 @@ class CinemapScraper
                 $data
             );
 
-            $imageUrls = $detailCrawler->filter('.gallery .slide_one')->count() > 0 ?
-                $detailCrawler->filter('.gallery .slide_one a')
-                    ->each(fn (Crawler $node) => $node->attr('href')) :
-                $detailCrawler->filter('.gallery .swiper-slide a')
-                    ->each(fn (Crawler $node) => $node->attr('href'));
-
-            $uploadedFiles = [];
-
-            foreach ($imageUrls as $url) {
-                $absoluteUrl = $this->makeAbsoluteUrl($url);
-                $imageContent = $client->request('GET', $absoluteUrl)->getContent();
-
-                $filename = basename(parse_url($absoluteUrl, PHP_URL_PATH));
-                $tmpPath = Storage::disk('local')->path("tmp/{$filename}");
-                Storage::disk('local')->put("tmp/{$filename}", $imageContent);
-
-                $uploadedFiles[] = new UploadedFile(
-                    $tmpPath,
-                    $filename,
-                    mime_content_type($tmpPath),
-                    null,
-                    true
-                );
+            if ($resource->wasRecentlyCreated) {
+                $imageUrls = $detailCrawler->filter('.gallery .slide_one')->count() > 0 ?
+                    $detailCrawler->filter('.gallery .slide_one a')
+                        ->each(fn (Crawler $node) => $node->attr('href')) :
+                    $detailCrawler->filter('.gallery .swiper-slide a')
+                        ->each(fn (Crawler $node) => $node->attr('href'));
+    
+                $uploadedFiles = [];
+    
+                foreach ($imageUrls as $url) {
+                    $absoluteUrl = $this->makeAbsoluteUrl($url);
+                    $imageContent = $client->request('GET', $absoluteUrl)->getContent();
+    
+                    $filename = basename(parse_url($absoluteUrl, PHP_URL_PATH));
+                    $tmpPath = Storage::disk('local')->path("tmp/{$filename}");
+                    Storage::disk('local')->put("tmp/{$filename}", $imageContent);
+    
+                    $uploadedFiles[] = new UploadedFile(
+                        $tmpPath,
+                        $filename,
+                        mime_content_type($tmpPath),
+                        null,
+                        true
+                    );
+                }
+    
+                if ($uploadedFiles) {
+                    $imagesMediaDto = new MediaSyncDataDTO($uploadedFiles, []);
+                    $mediaService->syncMediaCollection($resource, $imagesMediaDto, Resource::IMAGES_FILES);
+                }
             }
 
-            if ($uploadedFiles) {
-                $imagesMediaDto = new MediaSyncDataDTO($uploadedFiles, []);
-                $mediaService->syncMediaCollection($resource, $imagesMediaDto, Resource::IMAGES_FILES);
-            }
         }
 
         return "Scraped " . count($devices) . " resources with images.";
