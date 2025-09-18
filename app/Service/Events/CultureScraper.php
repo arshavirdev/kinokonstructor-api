@@ -48,10 +48,6 @@ class CultureScraper
                 ? trim($node->filter('.styles_BaseCard__Title__NkcLR')->text())
                 : null;
 
-            $location = $node->filter('.styles_BaseCard__Location__N5Zpj')->count()
-                ? trim($node->filter('.styles_BaseCard__Location__N5Zpj')->text())
-                : null;
-
             $date = $node->filter('.styles_BaseCard__DateText__KKhXl')->count()
                 ? trim($node->filter('.styles_BaseCard__DateText__KKhXl')->text())
                 : (
@@ -94,7 +90,7 @@ class CultureScraper
                 'category' => ["Культура"],
                 'format' => '',
                 'parameters' => [],
-                'location' => $location,
+                'location' => 'Москва',
                 'owner_id' => $user->profile->id,
                 'date' => $metaData['startDate'] ?? Carbon::now(),
                 'company' => [],
