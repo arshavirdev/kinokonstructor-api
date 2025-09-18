@@ -104,7 +104,8 @@ class ResourceController extends Controller
         $this->authorize('delete', $resource);
 
         $this->resourceService->delete($resource);
-        return response()->json(['success' => true]);
+        
+        return response()->noContent();
     }
 
     public function action(Resource $resource, string $action)
