@@ -80,7 +80,7 @@ class CultureScraper
                 'company' => [],
             ];
 
-            $resource = Event::firstOrCreate(
+            $event = Event::firstOrCreate(
                 ['title' => $detailTitle],
                 $data
             );
@@ -111,7 +111,7 @@ class CultureScraper
 
             if ($uploadedFiles) {
                 $imagesMediaDto = new MediaSyncDataDTO($uploadedFiles, []);
-                $mediaService->syncMediaCollection($resource, $imagesMediaDto, Resource::IMAGES_FILES);
+                $mediaService->syncMediaCollection($event, $imagesMediaDto, Resource::IMAGES_FILES);
             }
         }
 
