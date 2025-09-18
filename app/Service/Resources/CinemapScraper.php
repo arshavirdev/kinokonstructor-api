@@ -61,7 +61,10 @@ class CinemapScraper
                 'external_link' => $detailUrl
             ];
 
-            $resource = Resource::create($data);
+            $resource = Resource::firstOrCreate(
+                ['title' => $title],
+                $data
+            );
 
             $imageUrls = $detailCrawler->filter('.gallery .slide_one')->count() > 0 ?
                 $detailCrawler->filter('.gallery .slide_one a')
