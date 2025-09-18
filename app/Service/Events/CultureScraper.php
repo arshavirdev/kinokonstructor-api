@@ -48,18 +48,6 @@ class CultureScraper
                 ? trim($node->filter('.styles_BaseCard__Title__NkcLR')->text())
                 : null;
 
-            $date = $node->filter('.styles_BaseCard__DateText__KKhXl')->count()
-                ? trim($node->filter('.styles_BaseCard__DateText__KKhXl')->text())
-                : (
-                    $node->filter('.styles_BaseCard__TextLabel__eWmWr')->count()
-                        ? trim($node->filter('.styles_BaseCard__TextLabel__eWmWr')->text())
-                        : null
-                );
-
-            $price = $node->filter('.styles_BaseCard__Price__OQHI5')->count()
-                ? trim($node->filter('.styles_BaseCard__Price__OQHI5')->text())
-                : null;
-
             // Scrape detail page
             $detailHtml = $client->request('GET', $link)->getContent();
             $detailCrawler = new Crawler($detailHtml);
@@ -78,10 +66,6 @@ class CultureScraper
                 ? trim($detailCrawler->filter('.styles_DescriptionImage_Text__wY0LK')->text())
                 : '';
 
-            $detailDate = $detailCrawler->filter('div.styles_list__wSs_g .styles_item___gfFA')->count()
-                ? trim($detailCrawler->filter('div.styles_list__wSs_g .styles_item___gfFA')->first()->text())
-                : $date;
-
             // Create resource
             $data = [
                 'title' => $detailTitle,
@@ -96,7 +80,10 @@ class CultureScraper
                 'company' => [],
             ];
 
-            $resource = Event::create($data);
+            $resource = Event::firstOrCreate(
+                ['title' => $detailTitle],
+                $data
+            );
 
             // Get images (main poster from detail page)
             $imageUrls = $detailCrawler->filter('span[data-cy="thumbnail"] img')->count()
