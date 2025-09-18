@@ -112,7 +112,7 @@ class CultureScraper
     
                 if ($uploadedFiles) {
                     $imagesMediaDto = new MediaSyncDataDTO($uploadedFiles, []);
-                    $mediaService->syncMediaCollection($event, $imagesMediaDto, Resource::IMAGES_FILES);
+                    $mediaService->syncMediaCollection($event, $imagesMediaDto, Event::IMAGES_FILES);
                 }
             }
 
