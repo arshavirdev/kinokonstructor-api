@@ -177,7 +177,10 @@ class ContestController extends Controller
 
     public function destroy(Contest $contest)
     {
+        $this->authorize('delete', $contest);
         $contest->delete();
+
+        return response()->noContent();
     }
 
     public function action(Contest $contest, string $action, ContestService $contestService)

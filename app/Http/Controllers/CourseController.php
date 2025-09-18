@@ -109,7 +109,7 @@ class CourseController extends Controller
     public function destroy(Course $course)
     {
         $this->courseService->delete($course);
-        return response()->json(['success' => true]);
+        return response()->noContent();
     }
 
     public function getLesson(Lesson $lesson)
