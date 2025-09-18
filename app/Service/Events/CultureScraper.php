@@ -85,33 +85,35 @@ class CultureScraper
                 $data
             );
 
-            // Get images (main poster from detail page)
-            $imageUrls = $detailCrawler->filter('span[data-cy="thumbnail"] img')->count()
-                ? [$detailCrawler->filter('span[data-cy="thumbnail"] img')->attr('src')]
-                : [];
-
-            $uploadedFiles = [];
-
-            foreach ($imageUrls as $url) {
-                $absoluteUrl = $this->makeAbsoluteUrl($url);
-                $imageContent = $client->request('GET', $absoluteUrl)->getContent();
-
-                $filename = basename(parse_url($absoluteUrl, PHP_URL_PATH));
-                $tmpPath = Storage::disk('local')->path("tmp/{$filename}");
-                Storage::disk('local')->put("tmp/{$filename}", $imageContent);
-
-                $uploadedFiles[] = new UploadedFile(
-                    $tmpPath,
-                    $filename,
-                    mime_content_type($tmpPath),
-                    null,
-                    true
-                );
-            }
-
-            if ($uploadedFiles) {
-                $imagesMediaDto = new MediaSyncDataDTO($uploadedFiles, []);
-                $mediaService->syncMediaCollection($event, $imagesMediaDto, Event::IMAGES_FILES);
+            if ($event->wasRecentlyCreated) {
+                // Get images (main poster from detail page)
+                $imageUrls = $detailCrawler->filter('span[data-cy="thumbnail"] img')->count()
+                    ? [$detailCrawler->filter('span[data-cy="thumbnail"] img')->attr('src')]
+                    : [];
+    
+                $uploadedFiles = [];
+    
+                foreach ($imageUrls as $url) {
+                    $absoluteUrl = $this->makeAbsoluteUrl($url);
+                    $imageContent = $client->request('GET', $absoluteUrl)->getContent();
+    
+                    $filename = basename(parse_url($absoluteUrl, PHP_URL_PATH));
+                    $tmpPath = Storage::disk('local')->path("tmp/{$filename}");
+                    Storage::disk('local')->put("tmp/{$filename}", $imageContent);
+    
+                    $uploadedFiles[] = new UploadedFile(
+                        $tmpPath,
+                        $filename,
+                        mime_content_type($tmpPath),
+                        null,
+                        true
+                    );
+                }
+    
+                if ($uploadedFiles) {
+                    $imagesMediaDto = new MediaSyncDataDTO($uploadedFiles, []);
+                    $mediaService->syncMediaCollection($event, $imagesMediaDto, Event::IMAGES_FILES);
+                }
             }
         }
 
