@@ -39,6 +39,7 @@ class EventResource extends JsonResource
             'is_recorded' => $this->is_recorded,
             'created_at' => $this->created_at,
             'date' => $this->date,
+            'region_ids' => $this->region_ids,
             'contacts' => new ContactsResource($this->contacts[0] ?? []),
             Event::IMAGES_FILES => MediaResource::collection($this->getMedia(Event::IMAGES_FILES)),
             Event::FILES => MediaResource::collection($this->getMedia(Event::FILES))
