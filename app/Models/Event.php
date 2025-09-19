@@ -26,6 +26,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property bool $is_archived
  * @property-read \Illuminate\Support\Carbon $created_at
  * @property-read \Illuminate\Support\Carbon $updated_at
+ * @property array $region_ids
  */
 class Event extends Model implements HasMedia
 {
@@ -50,7 +51,8 @@ class Event extends Model implements HasMedia
         'date',
         'company',
         'is_archived',
-        'is_recorded'
+        'is_recorded',
+        'region_ids'
     ];
 
     protected $casts = [
@@ -60,6 +62,7 @@ class Event extends Model implements HasMedia
         'company' => 'array',
         'is_archived' => 'boolean',
         'is_recorded' => 'boolean',
+        'region_ids' => 'array'
     ];
 
     public function registerMediaCollections(): void

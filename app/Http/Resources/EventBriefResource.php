@@ -37,6 +37,7 @@ class EventBriefResource extends JsonResource
             'is_recorded' => (bool) $this->is_recorded,
             'created_at' => $this->created_at,
             'date' => $this->date,
+            'region_ids' => $this->region_ids,
             Event::IMAGES_FILES => MediaResource::collection($this->getMedia(Event::IMAGES_FILES))
         ];
     }
