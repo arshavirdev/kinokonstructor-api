@@ -62,8 +62,8 @@ class CultureScraper
                 ? trim($detailCrawler->filter('h1.styles_ArticlePoster__Title__mhEwE')->text())
                 : $title;
 
-            $description = $detailCrawler->filter('.styles_DescriptionImage_Text__wY0LK')->count()
-                ? trim($detailCrawler->filter('.styles_DescriptionImage_Text__wY0LK')->text())
+            $description = $detailCrawler->filter('.styles_body__WEo9w')->count()
+                ? trim($detailCrawler->filter('.styles_body__WEo9w')->text())
                 : '';
 
             // Create resource
