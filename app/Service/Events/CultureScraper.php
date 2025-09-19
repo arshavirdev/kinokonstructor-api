@@ -24,7 +24,7 @@ class CultureScraper
         $client = HttpClient::create();
 
         try {
-            $response = $client->request('GET', self::BASE_URL . 'afisha/russia');
+            $response = $client->request('GET', self::BASE_URL . 'afisha/russia/kino');
             $html = $response->getContent();
         } catch (TransportExceptionInterface $e) {
             throw new \RuntimeException("Failed to fetch culture.ru events: " . $e->getMessage());
