@@ -56,6 +56,12 @@ class EventController extends Controller
                 ->whereMonth('date', $month);
         });
 
+        if ($request->has('filter')) {
+            if ($request->has('filter.location')) {
+                $query = $query->where('region_ids', 'like', '%'.$request->input('filter.location').'%');
+            }
+        }
+
         $resources = $query->orderBy('created_at', 'DESC')
             ->paginate($request->input('pageSize', 10));
         return EventBriefResource::collection($resources);
