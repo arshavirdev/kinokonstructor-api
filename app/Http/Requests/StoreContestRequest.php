@@ -27,8 +27,8 @@ class StoreContestRequest extends FormRequest
             'title' => 'required|string|min:2|max:255',
             'type' => 'nullable|string|max:255',
             'years_held' => 'nullable|numeric',
-            'country' => 'nullable|string|max:255',
-            'region' => 'nullable|string|max:255',
+            'region_ids' => 'required|array',
+            'region_ids.*' => 'integer|exists:regions,id',
             'city' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             
