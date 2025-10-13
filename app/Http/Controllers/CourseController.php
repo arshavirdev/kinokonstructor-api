@@ -44,10 +44,11 @@ class CourseController extends Controller
         $query->when(filter_var($request->input('favorite'), FILTER_VALIDATE_BOOLEAN), function ($q) use ($profileId) {
             $q->whereHas('favorites', fn($subQ) => $subQ->where('owner_id', $profileId));
         });
-
-        $query->when($request->filled('region_id'), function ($q) use ($request) {
-            $q->where('region_id', $request->input('region_id'));
-        });
+// TODO: check
+        if ($request->has('filter.locations')) {
+            $regionId = $request->input('filter.locations');
+            $query = $query->whereJsonOverlaps('region_ids', $regionId);
+        }
 
         $query->when($request->filled('study_format'), function ($q) use ($request) {
             $q->where('study_format', $request->input('study_format'));

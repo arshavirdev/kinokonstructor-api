@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Region;
+
 use App\Traits\Archivable;
 use App\Traits\Favoritable;
 use App\Traits\Moderation\Moderatable;
@@ -115,7 +117,8 @@ class Project extends AppModel implements HasMedia
             "start_date" => "date",
             "end_date" => "date",
             "years_rating" => "string",
-            "region_id" => "integer",
+            "region_ids" => "array",
+            "region_ids.*" => "integer",
             "city" => "string",
             "profile_contacts" => "array",
             "requests" => "array",
@@ -130,7 +133,7 @@ class Project extends AppModel implements HasMedia
         "start_date",
         "end_date",
         "years_rating",
-        "region_id",
+        "region_ids",
         "city",
         "applicant_id",
         "format",
@@ -151,6 +154,7 @@ class Project extends AppModel implements HasMedia
     ];
 
     protected $casts = [
+        'region_ids' => 'array',
         'genres' => 'array',
         'members' => 'array',
         'custom_members' => 'array',
@@ -175,9 +179,9 @@ class Project extends AppModel implements HasMedia
         return $this->belongsTo(Profile::class, 'owner_id');
     }
 
-    public function region()
+    public function regions()
     {
-        return $this->belongsTo(Region::class, 'region_id');
+        return Region::whereIn('id', $this->region_ids ?? [])->get();
     }
 
     public function reports()

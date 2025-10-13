@@ -26,7 +26,7 @@ class ProjectBriefResource extends JsonResource
             'series_count' => $this->series_count,
             'genres' => $this->genres,
             'logline' => $this->logline,
-            "region_id" => $this->region_id,
+            "region_ids" => $this->region_ids,
             "city" => $this->city,
             'locations' => ProjectLocationResource::collection($this->locations),
             'start_date' => $this->start_date,

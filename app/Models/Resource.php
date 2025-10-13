@@ -13,7 +13,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @property string $title
  * @property string $short_description
  * @property string $description
- * @property int $region_id
+ * @property array $region_ids
  * @property int $owner_id
  * @property array $category
  * @property array $parameters
@@ -37,7 +37,7 @@ class Resource extends Model implements HasMedia
         "description",
         "short_description",
         "category",
-        "region_id",
+        "region_ids",
         "owner_id",
         "parameters",
         "company",
@@ -50,6 +50,7 @@ class Resource extends Model implements HasMedia
         "parameters" => "array",
         "company" => "array",
         "category" => "array",
+        "region_ids" => "array",
         'is_archived' => 'bool',
     ];
 

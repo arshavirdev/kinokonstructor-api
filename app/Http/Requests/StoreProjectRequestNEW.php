@@ -25,7 +25,8 @@ class StoreProjectRequestNEW extends FormRequest
             'genres' => 'required|array',
             'genres.*' => 'required|integer',
             'years_rating' => 'required|string|max:10',
-            'region_id' => 'required|integer|exists:regions,id',
+            'region_ids' => 'required|array',
+            'region_ids.*' => 'integer|exists:regions,id',
             'city' => 'sometimes|string|max:255',
             'series_count' => 'nullable|integer|min:1',
 

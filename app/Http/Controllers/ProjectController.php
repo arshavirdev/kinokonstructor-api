@@ -67,10 +67,10 @@ class ProjectController extends Controller
             if ($request->has('filter.format')) {
                 $query = $query->where('format', $request->input('filter.format'));
             }
-
-            if ($request->has('filter.location')) {
-                $regionId = $request->input('filter.location');
-                $query = $query->whereIn('region_id', $regionId);
+// TODP: check
+            if ($request->has('filter.locations')) {
+                $regionIds = $request->input('filter.locations');
+                $query = $query->whereJsonOverlaps('region_ids', $regionIds);
             }
 
             if ($request->has('filter.requests')) {
