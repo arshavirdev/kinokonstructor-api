@@ -27,7 +27,6 @@ class Contest extends AppModel implements HasMedia
         'title',
         'type',
         'years_held',
-        'country',
         'region_ids',
         'city',
         'description',
