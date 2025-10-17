@@ -97,7 +97,6 @@ class CinemapScraper
                     $mediaService->syncMediaCollection($resource, $imagesMediaDto, Resource::IMAGES_FILES);
                 }
             }
-
         }
 
         return "Scraped " . count($devices) . " resources with images.";

@@ -49,6 +49,19 @@ class ResourceController extends Controller
             });
         }
 
+        if ($request->has('filter.region_ids')) {
+            $regionIds = collect(request('filter.region_ids'))->flatten()
+            ->filter()
+            ->map(fn($id) => (int)$id)
+            ->toArray();
+
+            $query->where(function ($query) use ($regionIds) {
+                collect($regionIds)->map(fn($locationId) =>
+                    $query->orWhereJsonContains('region_ids', $locationId)
+                );
+             });
+        }
+
         $resources = $query->orderBy('created_at', 'DESC')
             ->paginate($request->input('pageSize', 10));
         return ResourceResource::collection($resources);

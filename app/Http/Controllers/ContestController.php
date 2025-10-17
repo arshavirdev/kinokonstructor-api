@@ -55,9 +55,17 @@ class ContestController extends Controller
             });
         }
 
-        if ($request->has('filter.location')) {
-            $regionId = $request->input('filter.location');
-            $query = $query->where('region', $regionId);
+        if ($request->has('filter.region_ids')) {
+            $regionIds = collect(request('filter.region_ids'))->flatten()
+            ->filter()
+            ->map(fn($id) => (int)$id)
+            ->toArray();
+
+            $query->where(function ($query) use ($regionIds) {
+                collect($regionIds)->map(fn($locationId) =>
+                    $query->orWhereJsonContains('region_ids', $locationId)
+                );
+             });
         }
 
         if ($request->has('title'))

@@ -115,7 +115,6 @@ class CultureScraper
                     $mediaService->syncMediaCollection($event, $imagesMediaDto, Event::IMAGES_FILES);
                 }
             }
-
         }
 
         return "Scraped " . count($eventNodes) . " culture.ru events with images.";

@@ -28,7 +28,7 @@ class Contest extends AppModel implements HasMedia
         'type',
         'years_held',
         'country',
-        'region',
+        'region_ids',
         'city',
         'description',
         'conditions',
@@ -42,6 +42,7 @@ class Contest extends AppModel implements HasMedia
     ];
 
     protected $casts = [
+        'region_ids' => 'array',
         'deadlines' => 'array',
         'is_archived' => 'boolean'
     ];

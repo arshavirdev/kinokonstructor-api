@@ -55,7 +55,7 @@ class ProjectResource extends JsonResource
             "end_date" => $this->end_date,
             'days_left' => $end_data->greaterThan($now) ? $end_data->diffInDays(Carbon::now()) : 0,
             "years_rating" => $this->years_rating,
-            "region_id" => $this->region_id,
+            "region_ids" => $this->region_ids,
             "city" => $this->city,
             "applicant_id" => $this->applicant_id,
             'applicant_full_name' => isset($this->applicant) ? $this->applicant->fullName : '',
