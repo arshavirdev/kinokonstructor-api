@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Request as ModelsRequest;
 use App\Models\Profile;
 use App\Models\Project;
+use GuzzleHttp\Psr7\Request;
 
 class ProjectService
 {
@@ -155,7 +156,7 @@ class ProjectService
                         ['id' => $entry['id'] ?? null],
                         [
                             'user_id' => $user->id,
-                            'name' => $entry['name'] ?? '',
+                            'name' => $entry['name'] ?? [],
                             'location' => $entry['location'] ?? '',
                             'season' => $entry['season'] ?? [],
                             'category' => $entry['category'] ?? [],
