@@ -12,6 +12,7 @@ use App\Models\Request as ModelsRequest;
 use App\Models\Profile;
 use App\Models\Project;
 use GuzzleHttp\Psr7\Request;
+use Psy\Util\Json;
 
 class ProjectService
 {
@@ -51,6 +52,7 @@ class ProjectService
 
     public function store(StoreProjectRequestNEW $request): ?Project
     {
+
         $user = Auth::user();
         $projectData = $request->except(['files_section', 'id']);
         $projectData['owner_id'] = $user->profile->id;
@@ -71,9 +73,10 @@ class ProjectService
             $request->file('files_section', []),
             $request->post('files_section', [])
         );
+        
 
         $this->handleRequests($project, $requestsMediaDto, $user);
-
+       
         if (isset($projectData['project_contacts'])) {
             $this->handleProjectContacts($project, $projectData['project_contacts'], $user);
         }
@@ -139,6 +142,7 @@ class ProjectService
 
     private function handleRequests(Project $project, MediaSyncDataDTO $mediaDto, $user): void
     {
+        
         foreach (ModelsRequest::REQUEST_TYPES as $requestType) {
             if (isset($mediaDto->post[$requestType])) {
                 $requests = $mediaDto->post[$requestType];
@@ -152,18 +156,25 @@ class ProjectService
                     ->delete();
 
                 foreach ($requests as $index => $entry) {
-                    $request = $project->requests()->updateOrCreate(
-                        ['id' => $entry['id'] ?? null],
-                        [
-                            'user_id' => $user->id,
-                            'name' => $entry['name'] ?? [],
-                            'location' => $entry['location'] ?? '',
-                            'season' => $entry['season'] ?? [],
-                            'category' => $entry['category'] ?? [],
-                            'info' => $entry['info'] ?? '',
-                            'type' => $requestType,
-                        ]
-                    );
+
+                    try {
+
+                        $request = $project->requests()->updateOrCreate(
+                            ['id' => $entry['id'] ?? null],
+                            [
+                                'user_id' => $user->id,
+                                'location' => $entry['location'] ?? '',
+                                'season' => $entry['season'] ?? [],
+                                'category' => $entry['category'] ?? [],
+                                'info' => $entry['info'] ?? '',
+                                'type' => $requestType,
+                                'names' => $entry['name']?? []
+                            ]
+                        );
+
+                    } catch (\Exception $exception) {
+                        dd($exception);
+                    }
 
                     $mediaFilesDto = new MediaSyncDataDTO(
                         $mediaDto->files[$requestType][$index][ModelsRequest::DOCS_FILES] ?? [],
@@ -176,6 +187,7 @@ class ProjectService
                         $mediaDto->files[$requestType][$index][ModelsRequest::IMAGES_FILES] ?? [],
                         $entry[ModelsRequest::IMAGES_FILES] ?? [],
                     );
+
                     $this->mediaService->syncMediaCollection($request, $mediaImagesDto, ModelsRequest::IMAGES_FILES);
                 }
             }

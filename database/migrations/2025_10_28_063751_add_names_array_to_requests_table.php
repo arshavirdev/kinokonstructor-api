@@ -2,7 +2,6 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -14,8 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        DB::statement('ALTER TABLE requests ALTER COLUMN name TYPE json USING json_build_array(name)');
-
+        Schema::table('requests', function (Blueprint $table) {
+            $table->jsonb('names_array')->default('[]');
+        });
     }
 
     /**
@@ -25,7 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        DB::statement('ALTER TABLE requests ALTER COLUMN name TYPE varchar(255) USING name->>0');
-
+        Schema::table('requests', function (Blueprint $table) {
+            $table->dropColumn('names_array');
+        });
     }
 };

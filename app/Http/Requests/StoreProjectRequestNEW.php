@@ -39,7 +39,7 @@ class StoreProjectRequestNEW extends FormRequest
             // Requests section
             'requests' => 'nullable|array',
             'requests.*' => 'array',
-            'requests.*.*.name' => 'nullable|array',
+            'requests.*.*.names_array' => 'nullable|array',
             'requests.*.*.location' => 'nullable|string|max:255',
             'requests.*.*.season' => 'sometimes|array',
             'requests.*.*.category' => 'sometimes|array',

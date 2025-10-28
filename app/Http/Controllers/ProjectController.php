@@ -26,6 +26,7 @@ class ProjectController extends Controller
      */
     public function index(Request $request)
     {
+
         $user = Auth::user();
         $profile = $user->profile;
         $query = Project::query()
@@ -134,6 +135,7 @@ class ProjectController extends Controller
             $project = DB::transaction(function () use ($request, $projectService) {
                 return $projectService->store($request);
             });
+        
 
             $project->load(['media', 'contact', 'memberInvites']);
 
@@ -168,6 +170,7 @@ class ProjectController extends Controller
      */
     public function update(Project $project, UpdateProjectRequestNEW $request, ProjectService $projectService): ProjectResource|JsonResponse
     {
+    
         $this->authorize('update', $project);
         try {
             $project = DB::transaction(function () use ($request, $projectService, $project) {

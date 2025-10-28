@@ -34,18 +34,18 @@ class Request extends Model implements HasMedia
         'user_id',
         'requestable_id',
         'requestable_type',
-        'name',
         'location',
         'season',
         'category',
         'info',
-        'type'
+        'type',
+        'names'
     ];
 
     protected $casts = [
         'season' => 'array',
         'category' => 'array',
-        'name' => 'array'
+        'names'=> 'array',
     ];
 
     public function resource()

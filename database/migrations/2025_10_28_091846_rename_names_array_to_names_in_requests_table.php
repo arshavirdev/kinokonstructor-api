@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('requests', function (Blueprint $table) {
-            $table->json('name')->change();
+            $table->renameColumn('names_array', 'names');
         });
     }
 
@@ -26,7 +26,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('requests', function (Blueprint $table) {
-            $table->string('name')->change();
+            $table->renameColumn('names', 'names_array');
         });
     }
 };

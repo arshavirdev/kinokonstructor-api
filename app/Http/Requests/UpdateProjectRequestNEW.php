@@ -39,7 +39,7 @@ class UpdateProjectRequestNEW extends FormRequest
             // Requests section
             'requests' => 'nullable|array',
             'requests.*' => 'array',
-            'requests.*.*.name' => 'nullable|string|max:255',
+            'requests.*.*.names' => 'nullable|string|max:255',
             'requests.*.*.location' => 'nullable|string|max:255',
             'requests.*.*.season' => 'sometimes|array',
             'requests.*.*.category' => 'sometimes|array',
