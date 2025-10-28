@@ -78,6 +78,7 @@ class CultureScraper
                 'owner_id' => $user->profile->id,
                 'date' => $metaData['startDate'] ?? Carbon::now(),
                 'company' => [],
+                'external_link' => $link
             ];
 
             $event = Event::firstOrCreate(

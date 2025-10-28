@@ -50,7 +50,8 @@ class Event extends Model implements HasMedia
         'date',
         'company',
         'is_archived',
-        'is_recorded'
+        'is_recorded',
+        'external_link'
     ];
 
     protected $casts = [

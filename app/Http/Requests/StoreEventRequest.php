@@ -32,6 +32,7 @@ class StoreEventRequest extends FormRequest
             'short_description' => 'required|string',
             'description' => 'required|string',
             'location' => 'nullable|string',
+            'external_link' => 'nullable|string',
             'date' => 'nullable|date',
             'category' => 'required|array',
             'format' => 'required|string',

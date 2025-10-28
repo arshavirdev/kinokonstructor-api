@@ -40,6 +40,7 @@ class EventResource extends JsonResource
             'created_at' => $this->created_at,
             'date' => $this->date,
             'contacts' => new ContactsResource($this->contacts[0] ?? []),
+            'external_link' => $this->external_link,
             Event::IMAGES_FILES => MediaResource::collection($this->getMedia(Event::IMAGES_FILES)),
             Event::FILES => MediaResource::collection($this->getMedia(Event::FILES))
         ];
