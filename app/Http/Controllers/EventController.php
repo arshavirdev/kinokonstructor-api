@@ -40,9 +40,11 @@ class EventController extends Controller
             $q->where('title', 'like', '%' . $request->get('search') . '%');
         });
 
-        $query->when(filter_var($request->input('favorite'), FILTER_VALIDATE_BOOLEAN), function ($q) use ($profileId) {
-            $q->whereHas('favorites', fn($subQ) => $subQ->where('owner_id', $profileId));
-        });
+        if ($request->has('favorite') && $request->input('favorite') === 'true' ) {
+            $query->whereHas('favorites', function ($q) use ($profileId) {
+                $q->where('user_id', $profileId);
+            });
+        }
 
         $query->when($request->filled('format'), function ($q) use ($request) {
             $q->where('format', $request->input('format'));
@@ -55,6 +57,12 @@ class EventController extends Controller
             $q->whereYear('date', $year)
                 ->whereMonth('date', $month);
         });
+
+        if ($request->has('filter')) {
+            if ($request->has('filter.location')) {
+                $query = $query->where('region_ids', 'like', '%'.$request->input('filter.location').'%');
+            }
+        }
 
         $resources = $query->orderBy('created_at', 'DESC')
             ->paginate($request->input('pageSize', 10));

@@ -72,7 +72,7 @@ class CultureScraper
                 'short_description' => '',
                 'description' => $description,
                 'category' => ["Кинопоказ"],
-                'format' => 'Офлайн',
+                'format' => "Offline",
                 'parameters' => [],
                 'location' => 'Москва',
                 'owner_id' => $user->profile->id,
