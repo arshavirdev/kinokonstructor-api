@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('requests', function (Blueprint $table) {
-            $table->renameColumn('names_array', 'names');
+            $table->jsonb('names')->default(value: '[]');
         });
     }
 
@@ -26,7 +26,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('requests', function (Blueprint $table) {
-            $table->renameColumn('names', 'names_array');
+            $table->dropColumn('names');
         });
     }
 };
