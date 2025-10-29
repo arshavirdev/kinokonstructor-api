@@ -14,6 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('requests', function (Blueprint $table) {
+            $table->dropColumn('name');
             $table->jsonb('names')->default(value: '[]');
         });
     }
