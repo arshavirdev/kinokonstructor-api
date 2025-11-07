@@ -26,7 +26,6 @@ class StoreFeedbackRequest extends FormRequest
         return [
             'entity_type' => 'required|string',
             'entity_id' => 'required|integer',
-            'owner_id' => 'numeric|required',
             'name' => 'required|string',
             'email' => 'required|email',
             'message' => 'required|string',

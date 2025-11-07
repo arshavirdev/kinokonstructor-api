@@ -56,6 +56,6 @@ class FeedbackController extends Controller
             'message' => $request->message,
         ]);
 
-        return response()->json($feedback);
+        return new FeedbackResource($feedback);
     }
 }
