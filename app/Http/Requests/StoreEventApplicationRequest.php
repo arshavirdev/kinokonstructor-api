@@ -24,7 +24,7 @@ class StoreEventApplicationRequest extends FormRequest
     public function rules()
     {
         return [
-            "details" => "nullable"
+            'details' => 'nullable'
         ];
     }
 }
