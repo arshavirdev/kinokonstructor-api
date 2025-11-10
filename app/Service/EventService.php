@@ -3,9 +3,12 @@
 namespace App\Service;
 
 use App\DTOs\MediaSyncDataDTO;
-use App\Http\Requests\UpdateEventRequest;
 use App\Models\Event;
+use App\Models\EventApplication;
 use App\Http\Requests\StoreEventRequest;
+use App\Http\Requests\StoreEventApplicationRequest;
+use App\Http\Requests\UpdateEventRequest;
+use App\Http\Resources\EventApplicationResource;
 use App\Service\Media\MediaService;
 use App\Service\Shared\ContactHandlerService;
 use Illuminate\Support\Facades\Auth;
@@ -142,5 +145,22 @@ class EventService
         }
 
         return ['is_archived' => true];
+    }
+
+    public function apply(Event $event, StoreEventApplicationRequest $request)
+    {
+        $authUser = auth()->user();
+        $profileId = $authUser->profile->id;
+
+        $application = EventApplication::create([
+            'applicant_id' => $profileId,
+            'event_id' => $event->id,
+            ...$request->validated()
+        ]);
+
+        return [
+            'success' => true,
+            'data' => new EventApplicationResource($application)
+        ];
     }
 }

@@ -4,6 +4,7 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DictionaryController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\EventApplicationController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\NotificationController;
@@ -58,7 +59,15 @@ Route::apiResource('/contests', ContestController::class)->only(['show', 'index'
 Route::apiResource('/regional-branches', RegionalBranchController::class)->only(['show', 'index']);
 Route::get('/regional-branch-news/{id}', [BranchNewsController::class, 'show']);
 Route::apiResource('/resources', ResourceController::class)->only(['show', 'index']);
+
+// EVENT
 Route::apiResource('/events', EventController::class)->only(['index', 'show']);
+
+// EVENT APPLICATION
+Route::post('/events/{event}/apply', [EventApplicationController::class, 'apply']);
+Route::get('events-applications', [EventApplicationController::class, 'index']);
+Route::get('events-applications/{eventApplication}', [EventApplicationController::class, 'show']);
+
 Route::apiResource('/courses', CourseController::class)->only(['index', 'show']);
 Route::apiResource('/lessons', LessonController::class)->only('show');
 
