@@ -76,4 +76,9 @@ class Event extends Model implements HasMedia
     {
         return $this->belongsTo(Profile::class, 'owner_id');
     }
+
+    public function feedbacks()
+    {
+        return $this->morphMany(Feedback::class, 'feedbackable');
+    }
 }

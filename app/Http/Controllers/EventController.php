@@ -36,8 +36,8 @@ class EventController extends Controller
             $q->where('owner_id', $profileId);
         });
 
-        $query->when($request->filled('search'), function ($q) use ($request) {
-            $q->where('title', 'like', '%' . $request->get('search') . '%');
+        $query->when($request->filled('title'), function ($q) use ($request) {
+            $q->where('title', 'like', '%' . $request->get('title') . '%');
         });
 
         if ($request->has('favorite') && $request->input('favorite') === 'true' ) {

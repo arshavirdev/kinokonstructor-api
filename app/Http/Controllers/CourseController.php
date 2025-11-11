@@ -45,18 +45,25 @@ class CourseController extends Controller
             $q->whereHas('favorites', fn($subQ) => $subQ->where('owner_id', $profileId));
         });
 
-        if ($request->has('filter.region_ids')) {
-        $regionIds = collect(request('filter.region_ids'))->flatten()
-            ->filter()
-            ->map(fn($id) => (int)$id)
-            ->toArray();
+        if ($request->has('filter')) {
+            if ($request->has('filter.study_format')) {
+                $query->where('study_format', $request->input('filter.study_format'));
+            }
 
-            $query->where(function ($query) use ($regionIds) {
-                collect($regionIds)->map(fn($locationId) =>
-                    $query->orWhereJsonContains('region_ids', $locationId)
-                );
-            });
+            if ($request->has('filter.region_ids')) {
+                $regionIds = collect(request('filter.region_ids'))->flatten()
+                    ->filter()
+                    ->map(fn($id) => (int)$id)
+                    ->toArray();
+    
+                $query->where(function ($query) use ($regionIds) {
+                    collect($regionIds)->map(fn($locationId) =>
+                        $query->orWhereJsonContains('region_ids', $locationId)
+                    );
+                });
+            }
         }
+
         $query->when($request->filled('study_format'), function ($q) use ($request) {
             $q->where('study_format', $request->input('study_format'));
         });
