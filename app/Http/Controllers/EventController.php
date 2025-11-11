@@ -37,7 +37,8 @@ class EventController extends Controller
         });
 
         $query->when($request->filled('search'), function ($q) use ($request) {
-            $q->where('title', 'like', '%' . $request->get('search') . '%');
+            $search = strtolower($request->get('search'));
+            $q->whereRaw('LOWER(title) LIKE ?', ['%' . $search . '%']);
         });
 
         if ($request->has('favorite') && $request->input('favorite') === 'true' ) {
