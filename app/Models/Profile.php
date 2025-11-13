@@ -165,8 +165,11 @@ class Profile extends AppModel implements HasMedia
 
     public function scopeWhereFullname(Builder $query, string $search)
     {
-        $pattern = trim($search);
-        return $query->whereRaw("(COALESCE(lastname, '') || ' ' || COALESCE(firstname, '') || ' ' || COALESCE(middlename, '')) % ?", $pattern);
+        $pattern = '%' . trim($search) . '%';
+        return $query->where(function ($q) use ($pattern) {
+            $q->where('firstname','ILIKE', $pattern)
+                ->orWhere('lastname','ILIKE', $pattern);
+        }); 
     }
 
     public function scopeWhereLastName(Builder $query, string $search)
