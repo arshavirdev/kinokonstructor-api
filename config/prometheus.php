@@ -8,10 +8,10 @@ return [
         'default' => [
             'namespace' => env('PROMETHEUS_NAMESPACE', 'app'),
             'route' => 'metrics',
-            'basic_auth' => [
-                'login' => env('PROMETHEUS_AUTH_LOGIN'),
-                'password' => env('PROMETHEUS_AUTH_PASSWORD'),
-            ],
+            // 'basic_auth' => [
+            //     'login' => env('PROMETHEUS_AUTH_LOGIN'),
+            //     'password' => env('PROMETHEUS_AUTH_PASSWORD'),
+            // ],
             // setup your storage
            'connection' => [
                'connection' => 'default',
