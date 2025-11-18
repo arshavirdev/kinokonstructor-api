@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\VerifyEmailController;
+use Ensi\LaravelPrometheus\Controllers\MetricsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,3 +19,5 @@ Route::get( '/', fn () => 'Kinokonstructor API');
 Route::get('/login', action: fn () => 'Login')->name('login');
 
 Route::get('/hash/{pass}', fn(string $pass) => Hash::make($pass));
+
+Route::get('/metrics', [MetricsController::class, 'handle'])->withoutMiddleware(['auth', 'auth:sanctum']);
