@@ -53,7 +53,8 @@ class Event extends Model implements HasMedia
         'is_archived',
         'is_recorded',
         'external_link',
-        'region_ids'
+        'region_ids',
+        'privacy_hide'
     ];
 
     protected $casts = [
@@ -80,5 +81,10 @@ class Event extends Model implements HasMedia
     public function feedbacks()
     {
         return $this->morphMany(Feedback::class, 'feedbackable');
+    }
+
+    public function contact()
+    {
+        return $this->morphOne(Contact::class, 'contactable');
     }
 }
