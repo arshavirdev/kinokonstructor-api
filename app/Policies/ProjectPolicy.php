@@ -53,7 +53,7 @@ class ProjectPolicy
      */
     public function update(User $user, Project $project)
     {
-        return $user->id === $project->owner->user->id;
+        //
     }
 
     /**
@@ -65,7 +65,7 @@ class ProjectPolicy
      */
     public function delete(User $user, Project $project)
     {
-        return $user->id === $project->owner->user->id;
+        //
     }
 
     /**
@@ -101,7 +101,7 @@ class ProjectPolicy
      */
     public function archive(User $user, Project $project)
     {
-        return $user->id === $project->owner->user->id;
+        //
     }
 
      /**
@@ -113,6 +113,6 @@ class ProjectPolicy
      */
     public function unarchive(User $user, Project $project)
     {
-        return $user->id === $project->owner->user->id;
+        //
     }
 }
