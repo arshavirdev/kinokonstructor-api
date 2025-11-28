@@ -24,6 +24,11 @@ class VideoController extends Controller
             $query = $query->where('category','like','%'. $request->get('category') .'%');
         }
 
+        $query->when($request->filled('search'), function ($q) use ($request) {
+            $search = strtolower($request->get('search'));
+            $q->whereRaw('LOWER(title) LIKE ?', ['%' . $search . '%']);
+        }); 
+
         $videos = $query->orderBy('created_at', 'desc')->paginate($request->input('pageSize', 10));
         return VideoResource::collection($videos);
     }
