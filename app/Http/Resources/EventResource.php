@@ -41,6 +41,17 @@ class EventResource extends JsonResource
             'date' => $this->date,
             'region_ids' => $this->region_ids,
             'contacts' => new ContactsResource($this->contacts[0] ?? []),
+            'event_contacts' => isset($this->contact) ?
+                [
+                    'phone' => $this->contact->phone ?? [],
+                    'email' => $this->contact->email ?? [],
+                    'website' => $this->contact->website ?? [],
+                    'socials' => $this->contact->socials ?? [],
+                    'other' => $this->contact->other ?? [],
+                    'telVisible' => !isset($this->privacy_hide) || !in_array('phone', $this->privacy_hide),
+                    'emailVisible' => !isset($this->privacy_hide) || !in_array('email', $this->privacy_hide),
+                ]
+                : [],
             'external_link' => $this->external_link,
             Event::IMAGES_FILES => MediaResource::collection($this->getMedia(Event::IMAGES_FILES)),
             Event::FILES => MediaResource::collection($this->getMedia(Event::FILES))
