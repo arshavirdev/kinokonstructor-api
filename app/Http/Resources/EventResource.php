@@ -22,9 +22,7 @@ class EventResource extends JsonResource
     {
         $user = auth()->user();
         $is_owner = (string) $this->owner_id === (string) $user?->profile?->id;
-        $privacy = is_array($this->privacy_hide)
-            ? $this->privacy_hide
-            : explode(',', (string) $this->privacy_hide);
+        $privacy = $this->privacy_hide ?? [];
 
         return [
             'id' => $this->id,
@@ -44,9 +42,9 @@ class EventResource extends JsonResource
             'date' => $this->date,
             'region_ids' => $this->region_ids,
             'contacts' => new ContactsResource($this->contacts[0] ?? []),
-            'privacy_hide' => $this->privacy_hide ?? [],
-            'telVisible' => !isset($this->privacy_hide) || !in_array('phone', $privacy),
-            'emailVisible' => !isset($this->privacy_hide) || !in_array('email', $privacy),
+            'privacy_hide' => $privacy,
+            'telVisible' => !in_array('phone', $privacy),
+            'emailVisible' => !in_array('email', $privacy),
             'external_link' => $this->external_link,
             Event::IMAGES_FILES => MediaResource::collection($this->getMedia(Event::IMAGES_FILES)),
             Event::FILES => MediaResource::collection($this->getMedia(Event::FILES))
