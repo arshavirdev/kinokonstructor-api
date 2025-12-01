@@ -64,7 +64,8 @@ class Event extends Model implements HasMedia
         'company' => 'array',
         'is_archived' => 'boolean',
         'is_recorded' => 'boolean',
-        'region_ids' => 'array'
+        'region_ids' => 'array',
+        'privacy_hide' => 'array'
     ];
 
     public function registerMediaCollections(): void
