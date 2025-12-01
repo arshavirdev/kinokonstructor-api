@@ -40,16 +40,7 @@ class UpdateEventRequest extends FormRequest
             'region_ids' => 'nullable|array',
             Event::IMAGES_FILES => 'nullable|array',
             Event::FILES => 'nullable|array',
-            ...$this->contactRules(),
-            // Event contacts
-            'event_contacts' => 'sometimes|array',
-            'event_contacts.phone' => 'nullable|array',
-            'event_contacts.email' => 'nullable|array',
-            'event_contacts.website' => 'nullable|array',
-            'event_contacts.socials' => 'nullable|array',
-            'event_contacts.other' => 'nullable|array',
-            'event_contacts.telVisible' => 'sometimes|boolean',
-            'event_contacts.emailVisible' => 'sometimes|boolean',
+            ...$this->contactRules()
         ];
     }
 }
