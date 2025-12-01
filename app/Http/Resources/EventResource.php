@@ -22,6 +22,9 @@ class EventResource extends JsonResource
     {
         $user = auth()->user();
         $is_owner = (string) $this->owner_id === (string) $user?->profile?->id;
+        $privacy = is_array($this->privacy_hide)
+            ? $this->privacy_hide
+            : explode(',', (string) $this->privacy_hide);
 
         return [
             'id' => $this->id,
@@ -48,8 +51,8 @@ class EventResource extends JsonResource
                     'website' => $this->contact->website ?? [],
                     'socials' => $this->contact->socials ?? [],
                     'other' => $this->contact->other ?? [],
-                    'telVisible' => !isset($this->privacy_hide) || !in_array('phone', $this->privacy_hide),
-                    'emailVisible' => !isset($this->privacy_hide) || !in_array('email', $this->privacy_hide),
+                    'telVisible' => !isset($this->privacy_hide) || !in_array('phone', $privacy),
+                    'emailVisible' => !isset($this->privacy_hide) || !in_array('email', $privacy),
                 ]
                 : [],
             'external_link' => $this->external_link,
