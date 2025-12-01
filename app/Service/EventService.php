@@ -27,6 +27,10 @@ class EventService
         $data = $request->validated();
         $data['owner_id'] = $authUser->profile->id;
 
+        if (isset($data['contacts'])) {
+            $data['privacy_hide'] = $this->buildPrivacyHide($data['contacts']);
+        }
+        
         $event = Event::create($data);
 
         if ($request->has('contacts') && isset($data['contacts'])) {
@@ -63,6 +67,11 @@ class EventService
     {
         $data = $request->validated();
         $authUser = auth()->user();
+
+        if (isset($data['contacts'])) {
+            $data['privacy_hide'] = $this->buildPrivacyHide($data['contacts']);
+        }
+
         $event->update($data);
 
         if ($request->has('contacts') && isset($data['contacts'])) {
@@ -93,6 +102,22 @@ class EventService
 
         $event->load(['media', 'contacts']);
         return $event;
+    }
+
+    private function buildPrivacyHide(array $contacts): array
+    {
+        $privacy = [];
+
+        // frontend sends true/false, convert to backend structure
+        if (isset($contacts['telVisible']) && $contacts['telVisible'] === false) {
+            $privacy[] = 'phone';
+        }
+
+        if (isset($contacts['emailVisible']) && $contacts['emailVisible'] === false) {
+            $privacy[] = 'email';
+        }
+
+        return $privacy;
     }
 
     public function delete(Event $event): bool
