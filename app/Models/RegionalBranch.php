@@ -19,7 +19,7 @@ class RegionalBranch extends Model implements HasMedia
         'owner_id',
         'description',
         'year',
-        'region_id',
+        'region_ids',
         'city',
         'manager',
         'address',
@@ -27,6 +27,7 @@ class RegionalBranch extends Model implements HasMedia
 
     protected $casts = [
         'manager' => 'array',
+        'region_ids' => 'array'
     ];
 
     protected static function booted()

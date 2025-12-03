@@ -23,7 +23,7 @@ class RegionalBranchService
         $insertData = $request->validated();
         $insertData['owner_id'] = $authUser->profile->id;
 
-        $this->checkRegionExisting($insertData['region_id']);
+        // $this->checkRegionExisting($insertData['region_id']);
 
         $branch = RegionalBranch::create($insertData);
 
