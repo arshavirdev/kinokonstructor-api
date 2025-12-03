@@ -47,7 +47,7 @@ class RegionalBranchResource extends JsonResource
 
         return array_merge($data, [
                 'year' => $this->year,
-                'region_id' => $this->region_id,
+                'region_ids' => $this->region_ids,
                 'description' => $this->description,
                 'manager' => $this->manager,
                 'members' => BranchMemberResource::collection($this->members),
