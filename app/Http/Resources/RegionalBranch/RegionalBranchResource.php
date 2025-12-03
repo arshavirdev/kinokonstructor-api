@@ -63,7 +63,8 @@ class RegionalBranchResource extends JsonResource
                 'owner' => isset($this->owner) ? [
                     'fullname' => $this->owner->fullname,
                     'avatar' => new AvatarResource($this->owner->getFirstMedia(Profile::AVATAR_MEDIA)),
-                ] : []
+                ] : [],
+                'privacy_hide' => $this->privacy_hide
             ]
         );
 

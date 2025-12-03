@@ -55,7 +55,13 @@ class RegionalBranchService
     public function update(RegionalBranch $branch, RegionalBranchRequest $request): ?RegionalBranch
     {
         $authUser = auth()->user();
-        $branch->update($request->validated());
+        $insertData = $request->validated();
+        
+        if (isset($insertData['contacts'])) {
+            $insertData['privacy_hide'] = $this->buildPrivacyHide($insertData['contacts']);
+        }
+
+        $branch->update($insertData);
 
         $mediaDataDto = new MediaSyncDataDTO(
             $request->file(RegionalBranch::DOCS_FILES, []),
