@@ -32,10 +32,16 @@ class RegionalBranchResource extends JsonResource
     {
         $authUserProfileId = auth()->user()?->profile?->id;
 
+        $privacy = $this->privacy_hide ?? [];
+        $contactsArray = new ContactsResource($this->contacts[0] ?? []);
+        $contactsData = $contactsArray->toArray($request);
+        $contactsData['telVisible'] = !in_array('phone', $privacy);
+        $contactsData['emailVisible'] = !in_array('email', $privacy);
+
         $data = [
             'id' => $this->id,
             'title' => $this->title,
-            'contacts' => new ContactsResource($this->contacts->first() ?? new Contact()),
+            'contacts' => $contactsData,
             'address' => $this->address,
             'city' => $this->city,
         ];
