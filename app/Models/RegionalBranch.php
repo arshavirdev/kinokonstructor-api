@@ -23,11 +23,13 @@ class RegionalBranch extends Model implements HasMedia
         'city',
         'manager',
         'address',
+        'privacy_hide'
     ];
 
     protected $casts = [
         'manager' => 'array',
-        'region_ids' => 'array'
+        'region_ids' => 'array',
+        'privacy_hide' => 'array'
     ];
 
     protected static function booted()

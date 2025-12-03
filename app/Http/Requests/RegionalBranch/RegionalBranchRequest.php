@@ -2,10 +2,12 @@
 
 namespace App\Http\Requests\RegionalBranch;
 
+use App\Http\Requests\Traits\HasContactRules;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RegionalBranchRequest extends FormRequest
 {
+    use HasContactRules;
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -32,12 +34,7 @@ class RegionalBranchRequest extends FormRequest
             'city' => 'sometimes|nullable|string',
             'manager' => 'sometimes|nullable|array',
             'address' => 'sometimes|nullable|string',
-            'contacts' => 'sometimes|nullable|array',
-            'contacts.phone' => 'nullable|array',
-            'contacts.email' => 'nullable|array',
-            'contacts.website' => 'nullable|array',
-            'contacts.socials' => 'nullable|array',
-            'contacts.other' => 'nullable|array',
+            ...$this->contactRules()
         ];
     }
 }

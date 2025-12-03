@@ -25,6 +25,10 @@ class RegionalBranchService
 
         // $this->checkRegionExisting($insertData['region_id']);
 
+        if (isset($insertData['contacts'])) {
+            $insertData['privacy_hide'] = $this->buildPrivacyHide($insertData['contacts']);
+        }
+
         $branch = RegionalBranch::create($insertData);
 
         $mediaDataDto = new MediaSyncDataDTO(
@@ -51,7 +55,13 @@ class RegionalBranchService
     public function update(RegionalBranch $branch, RegionalBranchRequest $request): ?RegionalBranch
     {
         $authUser = auth()->user();
-        $branch->update($request->validated());
+        $insertData = $request->validated();
+        
+        if (isset($insertData['contacts'])) {
+            $insertData['privacy_hide'] = $this->buildPrivacyHide($insertData['contacts']);
+        }
+
+        $branch->update($insertData);
 
         $mediaDataDto = new MediaSyncDataDTO(
             $request->file(RegionalBranch::DOCS_FILES, []),
@@ -99,5 +109,20 @@ class RegionalBranchService
         if ($isExist) {
             throw new HttpException(409, 'Regional branch already exists');
         }
+    }
+
+    private function buildPrivacyHide(array $contacts): array
+    {
+        $privacy = [];
+
+        if (isset($contacts['telVisible']) && $contacts['telVisible'] === false) {
+            $privacy[] = 'phone';
+        }
+
+        if (isset($contacts['emailVisible']) && $contacts['emailVisible'] === false) {
+            $privacy[] = 'email';
+        }
+
+        return $privacy;
     }
 }
