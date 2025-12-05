@@ -36,6 +36,7 @@ class User extends AppModel implements MustVerifyEmail, AuthenticatableContract,
         'email',
         'allow_newsletter',
         'password',
+        'roles'
     ];
 
     /**
@@ -54,6 +55,7 @@ class User extends AppModel implements MustVerifyEmail, AuthenticatableContract,
      * @var array<string, string>
      */
     protected $casts = [
+        'roles' => 'array',
         'email_verified_at' => 'datetime',
     ];
 
@@ -76,5 +78,21 @@ class User extends AppModel implements MustVerifyEmail, AuthenticatableContract,
     public function isSpecialist()
     {
         return $this->role === 'specialist';
+    }
+
+    public function getRoleAttribute()
+    {
+        $roles = $this->roles ?? [];
+
+        if (empty($roles)) {
+            return null;
+        }
+
+        return $roles;
+    }
+
+    public function setRoleAttribute($value)
+    {
+        $this->attributes['roles'] = json_encode([$value]);
     }
 }

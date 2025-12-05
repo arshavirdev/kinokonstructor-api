@@ -34,8 +34,13 @@ class UserAdminController extends Controller
 
     public function setRole(User $user, Request $request)
     {
-        $user->role = $request->input('role');
+        if ($request->has('roles') && is_array($request->input('roles'))) {
+            $user->roles = $request->input('roles');
+        }
+
         $user->save();
+
+        return response()->json(['message' => 'success'], 200);
     }
 
     public function approveProfile(Profile $profile)
