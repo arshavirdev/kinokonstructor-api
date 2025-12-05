@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->jsonb('roles')->default("['guest']")->nullable();
+            $table->jsonb('roles')->default(json_encode(['guest']))->nullable();
         });
     }
 
