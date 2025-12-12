@@ -41,7 +41,7 @@ class VideoResource extends JsonResource
             'image_file' => new MediaResource($this->getFirstMedia(Video::IMAGE_FILE)),
             'is_owner' => $this->owner_id === $userId,
             'owner' => isset($this->owner->profile) ? [
-                'role' => $this->owner->role,
+                'roles' => $this->owner->roles,
                 'fullname' => $this->owner->profile->fullname,
                 'avatar' => new AvatarResource($this->owner->profile->getFirstMedia(Profile::AVATAR_MEDIA)),
             ] : [],

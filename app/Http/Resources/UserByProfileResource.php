@@ -25,7 +25,7 @@ class UserByProfileResource extends JsonResource
             'username' => $isAnonymousMember ? $this->member_id : $user->username,
             'email' => $user->email,
             'emailVerified' => $isAnonymousMember ? true : (bool)$user->email_verified_at,
-            'role' => $isAnonymousMember ? 'specialist' : $user->role,
+            'roles' => $isAnonymousMember ? ['specialist'] : $user->roles,
             'profile' => new ProfileBriefResource($this),
             'email_verified_at' => $isAnonymousMember ? $this->created_at : $user->email_verified_at,
             'updated_at' => $this->updated_at,

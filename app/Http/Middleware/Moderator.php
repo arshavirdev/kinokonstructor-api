@@ -20,8 +20,15 @@ class Moderator
      */
     public function handle(Request $request, Closure $next)
     {
-        if (!in_array(Auth::user()->roles, self::$allowedRoles))
-            // abort(403, 'Role "moderator" required');
+        $user = Auth::user();
+
+        // Check if any of the user's roles is in allowedRoles
+        $hasAllowedRole = !empty(array_intersect($user->roles ?? [], self::$allowedRoles));
+
+        if (!$hasAllowedRole) {
+            abort(403, 'Role "moderator" required');
+        }
+
         return $next($request);
     }
 }
