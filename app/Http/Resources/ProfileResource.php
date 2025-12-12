@@ -19,8 +19,8 @@ class ProfileResource extends JsonResource
     {
         $user = Auth::user();
         $isSameUser = $user->id === $this->user_id;
-        $isPrivileged = in_array($user->role, ['admin', 'moderator']);
-        $isNotGuest = $user->role !== 'guest';
+        $isPrivileged = count(array_intersect($user->roles ?? [], ['admin', 'moderator'])) > 0;
+        $isNotGuest = !in_array('guest', $user->roles ?? []);
         $showDetails = $isSameUser || $isPrivileged;
         $showPhone = $isSameUser || $isPrivileged || ($isNotGuest && !in_array('phone', $this->privacy_hide));
         $showEmail = $isSameUser || $isPrivileged || ($isNotGuest && !in_array('email', $this->privacy_hide));

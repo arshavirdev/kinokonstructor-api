@@ -67,7 +67,7 @@ class User extends AppModel implements MustVerifyEmail, AuthenticatableContract,
 
     public function hasRole($role)
     {
-        return $this->role === $role;
+        return in_array($role, $this->roles ?? []);
     }
 
     public function isAdmin()
@@ -77,7 +77,7 @@ class User extends AppModel implements MustVerifyEmail, AuthenticatableContract,
 
     public function isSpecialist()
     {
-        return $this->role === 'specialist';
+        return $this->hasRole('specialist');
     }
 
     public function getRoleAttribute()

@@ -47,8 +47,8 @@ class UserAdminController extends Controller
     {
         $profile->markAccepted();
         $user = $profile->user;
-        if ($user->role === 'guest') {
-            $user->role = 'specialist';
+        if (in_array('guest', $user->roles ?? [])) {
+            $user->roles = ['specialist'];
             $user->save();
         }
     }
