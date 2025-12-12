@@ -50,7 +50,7 @@ class CreateNewUser implements CreatesNewUsers
         abort_unless($profile, 404, 'Member not found');
 
         $user = new User($data);
-        $user->role = 'specialist';
+        $user->roles = ['specialist'];
         $user->markEmailAsVerified();
         $user->save();
 
