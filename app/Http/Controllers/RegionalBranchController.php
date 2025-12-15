@@ -21,7 +21,9 @@ class RegionalBranchController extends Controller
         $query = RegionalBranch::query()->with('media');
 
         if ($request->has('region_id')) {
-            $query = $query->where('region_ids', 'ILIKE', '%' . $request->input('region_id') . '%');
+            $regionId = $request->input('region_id');
+
+            $query->whereJsonContains('region_ids', (int)$regionId);
         }
 
         $regionalBranches = $query->orderBy('created_at', 'desc')->paginate($request->input('pageSize', 10));
