@@ -53,7 +53,6 @@ class Profile extends AppModel implements HasMedia
         "birthday",
         "phone",
         "regions",
-        "regions",
         "portfolio",
         "mass_media_mentions",
         "socials_vk",
