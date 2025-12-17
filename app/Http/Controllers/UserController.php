@@ -14,6 +14,8 @@ use App\Service\Media\MediaService;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\ContactOrganizerRequest;
+use App\Models\Region;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -231,5 +233,30 @@ class UserController extends Controller
         $user->load('profile.contact');
 
         return new UserResource($user);
+    }
+
+    public function showRegions()
+    {
+        $regions = Region::all();
+        return $regions;
+    }
+
+    public function profileRegions()
+    {
+        $user = Auth::user();
+        $profile = $user->profile;
+
+        return response()->json(['regions' => $profile->regions]);
+    }
+
+    public function addProfileRegions(Request $request)
+    {
+        $user = Auth::user();
+        $profile = $user->profile;
+
+        $profile->regions = $request->input('region_ids');
+        $profile->save();
+
+        return response()->json(['message' => 'regions updated successfully'], 200);
     }
 }

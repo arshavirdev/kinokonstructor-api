@@ -56,6 +56,7 @@ Route::post('/auth/checkId', [MemberController::class, 'checkId']);
 Route::get('dictionaries/{dictionary?}', [DictionaryController::class, 'show']);
 Route::apiResource('/videos', VideoController::class)->only(['show', 'index']);
 Route::apiResource('/contests', ContestController::class)->only(['show', 'index']);
+Route::get('/regions', [UserController::class, 'showRegions']);
 Route::apiResource('/regional-branches', RegionalBranchController::class)->only(['show', 'index']);
 Route::get('/regional-branch-news/{id}', [BranchNewsController::class, 'show']);
 Route::apiResource('/resources', ResourceController::class)->only(['show', 'index']);
@@ -75,6 +76,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('auth/user/password', [PasswordController::class, 'update']);
     Route::controller(UserController::class)->prefix('user')->group(function () {
         Route::get('', 'showCurrentUser');
+        Route::get('/profile/regions', 'profileRegions');
+        Route::put('/profile/regions', 'addProfileRegions');
     });
 
     Route::controller(TokenController::class)->prefix('auth')->group(function () {
