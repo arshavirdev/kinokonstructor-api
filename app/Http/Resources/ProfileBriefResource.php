@@ -15,8 +15,12 @@ class ProfileBriefResource extends JsonResource
      */
     public function toArray($request)
     {
+        $isPrivileged = count(array_intersect($user->roles ?? [], ['admin', 'moderator'])) > 0;
+        $showMemberId = $isPrivileged;
+
         return [
             'id' => $this->id,
+            'member_id' => $this->when($showMemberId, $this->member_id),
             'avatar' => new AvatarResource($this->getFirstMedia(Profile::AVATAR_MEDIA)),
             'is_verified' => $this->is_verified,
             'status' => $this->status,
