@@ -61,6 +61,7 @@ class Profile extends AppModel implements HasMedia
         'privacy_hide',
         'org',
         'entrepreneur',
+        'member_id',
         'additional_information',
         'preferences'
     ];
