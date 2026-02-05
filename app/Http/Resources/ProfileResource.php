@@ -25,11 +25,10 @@ class ProfileResource extends JsonResource
         $showPhone = $isSameUser || $isPrivileged || ($isNotGuest && !in_array('phone', $this->privacy_hide));
         $showEmail = $isSameUser || $isPrivileged || ($isNotGuest && !in_array('email', $this->privacy_hide));
         $showSocials = $isSameUser || $isPrivileged || ($isNotGuest && !in_array('socials', $this->privacy_hide));
-        $showMemberId = $isPrivileged;
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
-            'member_id' => $this->when($showMemberId, $this->member_id),
+            'member_id' => $this->member_id,
             'status' => $this->status,
             'is_verified' => $this->is_verified,
             'avatar' => new AvatarResource($this->getFirstMedia(Profile::AVATAR_MEDIA)),
