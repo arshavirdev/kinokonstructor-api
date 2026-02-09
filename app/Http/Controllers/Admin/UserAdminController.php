@@ -85,6 +85,15 @@ class UserAdminController extends Controller
         if ($request->has('email')) {
             $users = $users->where('email', 'ILIKE', '%' . trim($request->input('email')) . '%');
         }
+        if ($request->has('member_id')) {
+            $users = $users->whereHas('profile', function (Builder $query) use ($request) {
+                $query->where(
+                    'member_id',
+                    'ILIKE',
+                    '%' . trim($request->input('member_id')) . '%'
+                );
+            });
+        }
         return UserBriefResource::collection($users->paginate());
     }
 
@@ -99,6 +108,13 @@ class UserAdminController extends Controller
             $profiles = $profiles->whereHas('user', function (Builder $query) use ($request) {
                 $query->where('email', 'ILIKE', '%' . trim($request->input('email')) . '%');
             });
+        }
+        if ($request->has('member_id')) {
+            $profiles->where(
+                'member_id',
+                'ILIKE',
+                '%' . trim($request->input('member_id')) . '%'
+            );
         }
         return UserByProfileResource::collection($profiles->paginate(50));
     }
