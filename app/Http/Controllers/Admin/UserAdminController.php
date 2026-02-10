@@ -94,6 +94,12 @@ class UserAdminController extends Controller
                 );
             });
         }
+
+        if ($request->boolean('verified') === true) {
+            $users->whereHas('profile', function (Builder $query) {
+                $query->whereNotNull('member_id');
+            });
+        }
         return UserBriefResource::collection($users->paginate());
     }
 
@@ -115,6 +121,9 @@ class UserAdminController extends Controller
                 'ILIKE',
                 '%' . trim($request->input('member_id')) . '%'
             );
+        }
+        if ($request->boolean('verified') === true) {
+            $profiles->whereNotNull('member_id');
         }
         return UserByProfileResource::collection($profiles->paginate(50));
     }
