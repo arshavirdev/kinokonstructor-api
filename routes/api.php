@@ -77,7 +77,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::controller(UserController::class)->prefix('user')->group(function () {
         Route::get('', 'showCurrentUser');
         Route::get('/profile/regions', 'profileRegions');
-        Route::put('/profile/regions', 'addProfileRegions');
     });
 
     Route::controller(TokenController::class)->prefix('auth')->group(function () {
@@ -101,6 +100,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
             Route::patch('profile', 'updateProfile');
             Route::patch('profile-settings', 'updateProfileSettings');
+            Route::patch('profile/regions', 'addProfileRegions');
 
             Route::delete('profile', 'deleteProfile');
         });

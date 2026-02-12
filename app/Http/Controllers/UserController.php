@@ -254,6 +254,12 @@ class UserController extends Controller
         $user = Auth::user();
         $profile = $user->profile;
 
+        if (!$profile) {
+            return response()->json([
+                'message' => 'Profile does not exist. Please create profile first.'
+            ], 404);
+        }
+
         $profile->regions = $request->input('region_ids');
         $profile->save();
 
