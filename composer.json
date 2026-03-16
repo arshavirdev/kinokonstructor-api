@@ -10,6 +10,9 @@
     "require": {
         "php": "^8.3",
         "ext-zip": "*",
+        "ext-gd": "*",
+        "ext-pgsql": "*",
+        "ext-mbstring": "*",
         "doctrine/dbal": "^3.3",
         "ensi/laravel-prometheus": "^1.0",
         "guzzlehttp/guzzle": "^7.2",

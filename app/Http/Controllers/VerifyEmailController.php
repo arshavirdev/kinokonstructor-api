@@ -11,6 +11,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\UnauthorizedException;
 use Laravel\Fortify\Contracts\VerifyEmailResponse;
 use Laravel\Fortify\Http\Requests\VerifyEmailRequest;
@@ -26,24 +27,45 @@ class VerifyEmailController extends Controller
                 : redirect()->intended(config('front.base_url'));
         }
 
+        Log::info('VerifyEmailController@request', [
+            'message' => 'About to send email verification notification'
+        ]);
+
         $request->user()->sendEmailVerificationNotification();
+
+        Log::info('VerifyEmailController@request', [
+            'message' => 'Sent email verification notification'
+        ]);
 
         return $request->wantsJson()
             ? new JsonResponse('', 202)
             : redirect()->intended(config('front.base_url'));
     }
 
-    public function verify(VerifyEmailRequest $request)
+    public function verify(Request $request)
     {
-        if (!$this->checkSignedUrl($request->integer('expires'), $request->input('signature')))
-            throw new InvalidSignatureException();
+        $user = User::find($request->get('id'));
 
-        if ($request->user()->hasVerifiedEmail()) {
+        if (!$this->checkSignedUrl($user, $request->integer('expires'), $request->input('signature'))) {
+            throw new InvalidSignatureException();
+        }
+
+        if ($user->hasVerifiedEmail()) {
+            Log::info('VerifyEmailController@verify', [
+                'message' => 'User has verified email',
+                'user' => $user
+            ]);
+
             return ['success' => true];
         }
 
-        if ($request->user()->markEmailAsVerified()) {
-            event(new Verified($request->user()));
+        if ($user->markEmailAsVerified()) {
+            event(new Verified($user));
+
+            Log::info('VerifyEmailController@verify', [
+                'message' => 'Email verified',
+                'user' => $user
+            ]);
         }
 
         return ['success' => true];
@@ -64,11 +86,12 @@ class VerifyEmailController extends Controller
             ]);
     }
 
-    public function checkSignedUrl($expires, $signature)
+    public function checkSignedUrl($user, $expires, $signature)
     {
-        if (Carbon::now()->greaterThan(new Carbon($expires)))
+        if (Carbon::now()->greaterThan(new Carbon($expires))) {
             return false;
-        
-        return Hash::check(self::getSignaturePayload(Auth::user(), $expires), $signature);
+        }
+
+        return Hash::check(self::getSignaturePayload($user, $expires), $signature);
     }
 }

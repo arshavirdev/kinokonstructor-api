@@ -16,6 +16,7 @@ use App\Mail\ResetPassword as CustomResetPassword;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
 
 class AuthServiceProvider extends ServiceProvider
@@ -40,12 +41,18 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        ResetPassword::toMailUsing(fn(User $user, string $token) => (new CustomResetPassword($user, config('front.base_url') . '/auth/reset-password?token=' . $token)));
+        ResetPassword::toMailUsing(fn (User $user, string $token) => (new CustomResetPassword($user, config('front.base_url') . '/auth/reset-password?token=' . $token)));
 
-        VerifyEmail::toMailUsing(fn(User $user, string $verificationUrl) => (new CustomVerifyEmail($user, $verificationUrl)));
+        VerifyEmail::toMailUsing(fn (User $user, string $verificationUrl) => (new CustomVerifyEmail($user, $verificationUrl)));
         VerifyEmail::createUrlUsing(function (User $notifiable) {
             $expires = Carbon::now()->addMinutes(Config::get('auth.verification.expire', 120))->timestamp;
-            return VerifyEmailController::getSignedUrl($notifiable, $expires);
+
+            $url = VerifyEmailController::getSignedUrl($notifiable, $expires);
+            Log::debug('AuthServiceProvider', [
+                'signedUrl' => $url,
+            ]);
+
+            return $url;
         });
     }
 }

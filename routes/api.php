@@ -71,6 +71,7 @@ Route::get('events-applications/{eventApplication}', [EventApplicationController
 
 Route::apiResource('/courses', CourseController::class)->only(['index', 'show']);
 Route::apiResource('/lessons', LessonController::class)->only('show');
+Route::post('/auth/email/verify/{id}/{hash}', [VerifyEmailController::class, 'verify']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('auth/user/password', [PasswordController::class, 'update']);
@@ -87,7 +88,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::controller(VerifyEmailController::class)
         ->prefix('auth/email')
         ->group(function () {
-            Route::post('/verify/{id}/{hash}', 'verify');
             Route::post('/request-verify', 'request')->middleware(['throttle:verify-email']);
         });
 
@@ -202,7 +202,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('/resumes', ResumeController::class);
     Route::post('/resumes/{resume}/{action}', [ResumeController::class, 'action'])
         ->where('action', 'favorite|archive|unarchive');
-    
+
     // EVENT
     Route::apiResource('/events', EventController::class)->except(['index', 'show']);
     Route::post('/events/{event}/{action}', [EventController::class, 'action'])
