@@ -49,7 +49,7 @@ class UpdateProfileRequest extends FormRequest
             'privacy_hide' => 'array',
             'privacy_hide.*' => 'string|in:phone,email,website,socials',
 
-            // 'avatar' => 'array|nullable',
+            'avatar.0' => ['nullable', 'image', 'max:5120'],
 
             'contacts' => 'array',
             'contacts.phone' => 'array',
