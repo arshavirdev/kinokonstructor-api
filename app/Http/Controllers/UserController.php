@@ -30,26 +30,12 @@ class UserController extends Controller
         return new UserResource($user);
     }
 
-    private function syncMedia(Profile $profile, $params)
+    private function syncMedia(Profile $profile, Request $request)
     {
-        if (array_key_exists('avatar', $params)) {
-            $profile->clearMediaCollection(Profile::AVATAR_MEDIA);
-            if (is_null($params['avatar'])) {
-                $profile->clearMediaCollection(Profile::AVATAR_MEDIA);
-            } else {
-                $profile->addMedia($params['avatar'])->toMediaCollection(Profile::AVATAR_MEDIA);
-            }
-        }
-
-        if (array_key_exists('attachments', $params)) {
-            $requestAttachments = collect($params['attachments']);
-            $toSaveAttachments = $requestAttachments->filter(fn($item) => is_object($item));
-            $toKeepAttachments = $requestAttachments->filter(fn($item) => !is_object($item))->map(fn($id) => ['id' => (int) $id]);
-            $profile->clearMediaCollectionExcept(Profile::ATTACHMENT_MEDIA, $toKeepAttachments);
-            foreach ($toSaveAttachments as $attachment) {
-                $profile->addMedia($attachment)->toMediaCollection(Profile::ATTACHMENT_MEDIA);
-            }
-        }
+        $this->mediaService->syncMediaCollection($profile, new MediaSyncDataDTO(
+            $request->file(Profile::AVATAR_MEDIA, []),
+            $request->post(Profile::AVATAR_MEDIA, null) ? [$request->post(Profile::AVATAR_MEDIA)] : []
+        ), Profile::AVATAR_MEDIA);
     }
 
     private function syncRelations(Profile $profile, $params)
@@ -88,11 +74,7 @@ class UserController extends Controller
             $user->save();
         }
 
-        $this->mediaService->syncMediaCollection($profile, new MediaSyncDataDTO(
-            $request->file(Profile::AVATAR_MEDIA, []),
-            $request->post(Profile::AVATAR_MEDIA, null) ? [$request->post(Profile::AVATAR_MEDIA)] : []
-        ), Profile::AVATAR_MEDIA);
-
+        $this->syncMedia($profile, $request);
         $this->syncRelations($profile, $params);
 
         // Handle contacts creation
@@ -126,10 +108,7 @@ class UserController extends Controller
 
         $params = $request->validated();
 
-        $this->mediaService->syncMediaCollection($profile, new MediaSyncDataDTO(
-            $request->file(Profile::AVATAR_MEDIA, []),
-            $request->post(Profile::AVATAR_MEDIA, null) ? [$request->post(Profile::AVATAR_MEDIA)] : []
-        ), Profile::AVATAR_MEDIA);
+        $this->syncMedia($profile, $request);
 
         $profile->fill($params);
         $profile->save();

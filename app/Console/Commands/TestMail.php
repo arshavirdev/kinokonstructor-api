@@ -2,10 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Service\News\MovieStartScraper;
-use App\Service\StrapiService;
 use Illuminate\Console\Command;
-use App\Service\News\KinoNewsScraper;
 use Mail;
 
 class TestMail extends Command
@@ -21,7 +18,7 @@ class TestMail extends Command
     public function handle(): void
     {
         Mail::raw('Hello world', function ($message) {
-            $message->to(config('mail.from.address'));
+            $message->to('arshavir.dev@gmail.com');
         });
         $this->info('Mail successfully sent.');
     }
