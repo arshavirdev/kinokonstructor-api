@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Spatie\Image\Manipulations;
+use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -33,13 +33,13 @@ class BranchNews extends Model implements HasMedia
                 $this
                     ->addMediaConversion('thumb')
                     ->performOnCollections([self::IMAGE])
-                    ->fit(Manipulations::FIT_MAX, 100, 100)
+                    ->fit(Fit::Max, 100, 100)
                     ->quality(75)
                     ->optimize();
                 $this
                     ->addMediaConversion('large')
                     ->performOnCollections([self::IMAGE])
-                    ->fit(Manipulations::FIT_MAX, 1024, 400)
+                    ->fit(Fit::Max, 1024, 400)
                     ->quality(75)
                     ->optimize();
             });

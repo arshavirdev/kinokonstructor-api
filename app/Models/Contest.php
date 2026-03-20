@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Traits\Archivable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Spatie\Image\Manipulations;
+use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use App\Traits\Favoritable;
@@ -61,15 +61,15 @@ class Contest extends AppModel implements HasMedia
         $this->addMediaCollection(self::GALLERY)
         ->registerMediaConversions(function (Media $media) {
             $this->addMediaConversion('large')
-                ->fit(Manipulations::FIT_MAX, 1024, 1024)
+                ->fit(Fit::Max, 1024, 1024)
                 ->quality(75)
                 ->optimize();
             $this->addMediaConversion('thumb')
-                ->fit(Manipulations::FIT_MAX, 150, 150)
+                ->fit(Fit::Max, 150, 150)
                 ->quality(70)
                 ->optimize();
             $this->addMediaConversion('preview')
-                ->fit(Manipulations::FIT_MAX, 350, 350)
+                ->fit(Fit::Max, 350, 350)
                 ->quality(75)
                 ->optimize();
         });
@@ -81,11 +81,11 @@ class Contest extends AppModel implements HasMedia
         $this->addMediaCollection(self::LOGO)
             ->registerMediaConversions(function (Media $media) {
                 $this->addMediaConversion('thumb')
-                    ->fit(Manipulations::FIT_MAX, 100, 100)
+                    ->fit(Fit::Max, 100, 100)
                     ->quality(75)
                     ->optimize();
                 $this->addMediaConversion('medium')
-                    ->fit(Manipulations::FIT_MAX, 400, 400)
+                    ->fit(Fit::Max, 400, 400)
                     ->quality(75)
                     ->optimize();
             });
@@ -94,11 +94,11 @@ class Contest extends AppModel implements HasMedia
         $this->addMediaCollection(self::PHOTO_GALLERY)
             ->registerMediaConversions(function (Media $media) {
                 $this->addMediaConversion('large')
-                    ->fit(Manipulations::FIT_MAX, 1024, 1024)
+                    ->fit(Fit::Max, 1024, 1024)
                     ->quality(75)
                     ->optimize();
                 $this->addMediaConversion('thumb')
-                    ->fit(Manipulations::FIT_MAX, 150, 150)
+                    ->fit(Fit::Max, 150, 150)
                     ->quality(70)
                     ->optimize();
             });

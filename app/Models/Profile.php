@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Builder;
 
-use Spatie\Image\Manipulations;
+use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -218,13 +218,13 @@ class Profile extends AppModel implements HasMedia
                 $this
                     ->addMediaConversion('thumb')
                     ->performOnCollections([self::AVATAR_MEDIA])
-                    ->fit(Manipulations::FIT_MAX, 100, 100)
+                    ->fit(Fit::Max, 100, 100)
                     ->quality(75)
                     ->optimize();
                 $this
                     ->addMediaConversion('medium')
                     ->performOnCollections([self::AVATAR_MEDIA])
-                    ->fit(Manipulations::FIT_MAX, 400, 400)
+                    ->fit(Fit::Max, 400, 400)
                     ->quality(75)
                     ->optimize();
             });

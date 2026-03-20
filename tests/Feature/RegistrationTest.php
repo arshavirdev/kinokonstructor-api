@@ -4,8 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Auth\Notifications\VerifyEmail;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
@@ -26,14 +24,16 @@ class RegistrationTest extends TestCase
 
         $this->assertFalse($user->hasVerifiedEmail());
 
-        $getUserResponse = $this->getJson('/api/user');
+        $getUserResponse = $this->getJson('/api/dashboard');
         $getUserResponse->assertForbidden()->assertJsonPath('message', 'Your email address is not verified.');
 
         Notification::assertSentTo($user, VerifyEmail::class, function ($notification) use ($user) {
             $mail = $notification->toMail($user);
-            $uri = $mail->actionUrl;
+            parse_str(parse_url($mail->actionUrl, PHP_URL_QUERY), $params);
 
-            $this->actingAs($user)->get($uri);
+            $this->actingAs($user)->postJson(
+                "/api/auth/email/verify/{$params['id']}/{$params['hash']}?" . http_build_query($params)
+            );
             // User should have verified their email
             $this->assertTrue(User::find($user->id)->hasVerifiedEmail());
             return true;
