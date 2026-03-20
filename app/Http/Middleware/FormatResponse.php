@@ -28,7 +28,7 @@ class FormatResponse
         try {
             $data = $response->getData(true);
 
-            if ($request->session()->has('impersonate'))
+            if ($request->user()?->currentAccessToken()?->name === 'impersonate')
                 $response->header('X-Impersonating', 'true');
 
             if (isset($data['links']) && isset($data['meta'])) {

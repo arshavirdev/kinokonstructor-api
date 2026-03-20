@@ -74,12 +74,9 @@ Route::apiResource('/lessons', LessonController::class)->only('show');
 Route::post('/auth/email/verify/{id}/{hash}', [VerifyEmailController::class, 'verify']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
+    // AUTH
+    Route::post('/auth/logout', [TokenController::class, 'logout']);
     Route::put('auth/user/password', [PasswordController::class, 'update']);
-    Route::controller(UserController::class)->prefix('user')->group(function () {
-        Route::get('', 'showCurrentUser');
-        Route::get('/profile/regions', 'profileRegions');
-    });
-
     Route::controller(TokenController::class)->prefix('auth')->group(function () {
         Route::post('impersonate', 'impersonate');
         Route::post('unimpersonate', 'unimpersonate');
@@ -90,6 +87,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
         ->group(function () {
             Route::post('/request-verify', 'request')->middleware(['throttle:verify-email']);
         });
+    
+    Route::controller(UserController::class)->prefix('user')->group(function () {
+        Route::get('', 'showCurrentUser');
+        Route::get('/profile/regions', 'profileRegions');
+    });
 
     Route::middleware(['verified'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index']);

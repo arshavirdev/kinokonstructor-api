@@ -21,7 +21,6 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Append custom middleware to the api group (after the Sanctum/throttle defaults)
         $middleware->api(append: [
-            \Illuminate\Session\Middleware\StartSession::class,
             \App\Http\Middleware\ImpersonateSanctum::class,
             \App\Http\Middleware\FormatResponse::class,
         ]);
@@ -39,6 +38,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'throttle'         => \Illuminate\Routing\Middleware\ThrottleRequests::class,
             'verified'         => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
             'moderator'        => \App\Http\Middleware\Moderator::class,
+            'session'          => \Illuminate\Session\Middleware\StartSession::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
