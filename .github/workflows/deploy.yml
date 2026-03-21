@@ -30,9 +30,9 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/kinokonstruktor-api:${{ github.ref_name }}
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/kinokonstruktor-api:cache-${{ github.ref_name }}
-          cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/kinokonstruktor-api:cache-${{ github.ref_name }},mode=max
+          tags: ghcr.io/${{ github.repository_owner }}/kinokonstructor-api:${{ github.ref_name }}
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/kinokonstructor-api:cache-${{ github.ref_name }}
+          cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/kinokonstructor-api:cache-${{ github.ref_name }},mode=max
 
   deploy:
     needs: build-push
@@ -71,7 +71,7 @@ jobs:
         run: |
           ssh -i ~/.ssh/deploy_key "$SSH_USER@$SSH_HOST" \
             "set -euo pipefail
-             docker pull ghcr.io/${ORG}/kinokonstruktor-api:${BRANCH}
-             docker tag ghcr.io/${ORG}/kinokonstruktor-api:${BRANCH} kinokonstruktor-api:${BRANCH}
+             docker pull ghcr.io/${ORG}/kinokonstructor-api:${BRANCH}
+             docker tag ghcr.io/${ORG}/kinokonstructor-api:${BRANCH} kinokonstructor-api:${BRANCH}
              cd /root/${BRANCH}
              docker-compose up -d --no-deps api"
