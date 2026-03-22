@@ -65,9 +65,11 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           ORG: ${{ github.repository_owner }}
           BRANCH: ${{ github.ref_name }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ssh -i ~/.ssh/deploy_key "$SSH_USER@$SSH_HOST" \
             "set -euo pipefail
+             echo '${GHCR_TOKEN}' | docker login ghcr.io -u ${ORG} --password-stdin
              docker pull ghcr.io/${ORG}/kinokonstructor-api:${BRANCH}
              docker tag ghcr.io/${ORG}/kinokonstructor-api:${BRANCH} kinokonstructor-api:${BRANCH}
              cd /root/${BRANCH}
