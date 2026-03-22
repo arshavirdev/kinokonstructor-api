@@ -54,12 +54,9 @@ jobs:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
           ENV_FILE: ${{ secrets.ENV_FILE }}
-          API_ENV_FILE: ${{ secrets.API_ENV_FILE }}
           BRANCH: ${{ github.ref_name }}
         run: |
           printf '%s\n' "$ENV_FILE" | ssh -i ~/.ssh/deploy_key "$SSH_USER@$SSH_HOST" \
-            "cat > /root/$BRANCH/.env"
-          printf '%s\n' "$API_ENV_FILE" | ssh -i ~/.ssh/deploy_key "$SSH_USER@$SSH_HOST" \
             "cat > /root/$BRANCH/api.env"
 
       - name: Pull, ReTag and Restart
