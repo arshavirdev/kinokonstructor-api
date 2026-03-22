@@ -94,6 +94,7 @@ return [
 
     'middleware' => [
         'web',
+        // NEW UPDATE
         // Authorize::class,
     ],
 
