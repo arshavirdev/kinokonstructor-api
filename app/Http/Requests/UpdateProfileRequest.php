@@ -33,7 +33,7 @@ class UpdateProfileRequest extends FormRequest
             ],
             'city' => 'nullable|string',
             'birthday' => 'nullable|date',
-            'occupation_id' => 'array|min:1',
+            'occupation_ids' => 'array',
             'occupation_ids.*' => "exists:occupations,id",
             'member_id' => 'nullable|string',
             "additional_information" => 'string|nullable',
