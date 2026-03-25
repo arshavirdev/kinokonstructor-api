@@ -32,14 +32,31 @@ class TokenController extends Controller
     }
 
 
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json(['message' => 'Logged out']);
+    }
+
     public function impersonate(Request $request)
     {
-        $userId = $request->input('userId');
-        $request->session()->put('impersonate', $userId);
+        $request->validate(['userId' => 'required|exists:users,id']);
+
+        $user = User::findOrFail($request->input('userId'));
+
+        // Clean up any previous impersonation tokens for this user
+        $user->tokens()->where('name', 'impersonate')->delete();
+
+        $token = $user->createToken('impersonate')->plainTextToken;
+
+        return response()->json(['token' => $token]);
     }
 
     public function unimpersonate(Request $request)
     {
-        $request->session()->remove('impersonate');
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json(['message' => 'Unimpersonated']);
     }
 }

@@ -1,46 +1,76 @@
-name: Deploy Backend to Server
+name: Deploy API
 
 on:
   push:
-    branches:
-      - dev1
-      - dev2
-      - production
+    branches: [dev1, production, stage]
 
 jobs:
-  deploy:
+  build-push:
     runs-on: ubuntu-latest
-
+    environment: ${{ github.ref_name }}
+    permissions:
+      contents: read
+      packages: write
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-    
-      - name: Print branch name
-        run: |
-          echo "Current branch: ${{ github.ref_name }}"
+      - uses: actions/checkout@v4
 
-      - name: Set environment variables based on branch
-        run: |
-          if [[ "${GITHUB_REF}" == "refs/heads/production" ]]; then
-            echo "DEPLOY_HOST=${{ secrets.REMOTE_HOST_PROD }}" >> $GITHUB_ENV
-            echo "DEPLOY_USER=${{ secrets.REMOTE_USER_PROD }}" >> $GITHUB_ENV
-            echo "SSH_PRIVATE_KEY<<EOF" >> $GITHUB_ENV
-            echo "${{ secrets.SSH_PRIVATE_KEY_PROD }}" >> $GITHUB_ENV
-            echo "EOF" >> $GITHUB_ENV
-          else
-            echo "DEPLOY_HOST=${{ secrets.REMOTE_HOST_DEV1 }}" >> $GITHUB_ENV
-            echo "DEPLOY_USER=${{ secrets.REMOTE_USER_DEV1 }}" >> $GITHUB_ENV
-            echo "SSH_PRIVATE_KEY<<EOF" >> $GITHUB_ENV
-            echo "${{ secrets.SSH_PRIVATE_KEY }}" >> $GITHUB_ENV
-            echo "EOF" >> $GITHUB_ENV
-          fi
-
-      - name: Set up SSH and deploy
-        uses: appleboy/ssh-action@v1.2.0
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
         with:
-          host: ${{ env.DEPLOY_HOST }}
-          username: ${{ env.DEPLOY_USER }}
-          key: ${{ env.SSH_PRIVATE_KEY }}
-          script: |
-            cd /root/${{ github.ref_name }}/
-            ./scripts/update-backend.sh
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # For use docker cache
+      - name: Set up Docker BuildX
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/kinokonstructor-api:${{ github.ref_name }}
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/kinokonstructor-api:cache-${{ github.ref_name }}
+          cache-to: type=registry,ref=ghcr.io/${{ github.repository_owner }}/kinokonstructor-api:cache-${{ github.ref_name }},mode=max
+
+  deploy:
+    needs: build-push
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name }}
+    steps:
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Write env files on server
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          ENV_FILE: ${{ secrets.ENV_FILE }}
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          printf '%s\n' "$ENV_FILE" | ssh -i ~/.ssh/deploy_key "$SSH_USER@$SSH_HOST" \
+            "cat > /root/$BRANCH/api.env"
+
+      - name: Pull, ReTag and Restart
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          ORG: ${{ github.repository_owner }}
+          BRANCH: ${{ github.ref_name }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ssh -i ~/.ssh/deploy_key "$SSH_USER@$SSH_HOST" \
+            "set -euo pipefail
+             echo '${GHCR_TOKEN}' | docker login ghcr.io -u ${ORG} --password-stdin
+             docker pull ghcr.io/${ORG}/kinokonstructor-api:${BRANCH}
+             docker tag ghcr.io/${ORG}/kinokonstructor-api:${BRANCH} kinokonstructor-api:${BRANCH}
+             cd /root/${BRANCH}
+             docker-compose up -d --no-deps api"

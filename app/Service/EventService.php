@@ -30,7 +30,7 @@ class EventService
         if (isset($data['contacts'])) {
             $data['privacy_hide'] = $this->buildPrivacyHide($data['contacts']);
         }
-
+        
         $event = Event::create($data);
 
         if ($request->has('contacts') && isset($data['contacts'])) {
@@ -108,6 +108,7 @@ class EventService
     {
         $privacy = [];
 
+        // frontend sends true/false, convert to backend structure
         if (isset($contacts['telVisible']) && $contacts['telVisible'] === false) {
             $privacy[] = 'phone';
         }

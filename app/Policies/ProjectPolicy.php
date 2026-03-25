@@ -101,7 +101,7 @@ class ProjectPolicy
      */
     public function archive(User $user, Project $project)
     {
-        //
+        //  
     }
 
      /**
