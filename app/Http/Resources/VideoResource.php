@@ -39,7 +39,7 @@ class VideoResource extends JsonResource
             'is_favorite' => (bool) $this->is_favorite,
             'video_file' => new MediaResource($this->getFirstMedia(Video::VIDEO_FILE)),
             'image_file' => new MediaResource($this->getFirstMedia(Video::IMAGE_FILE)),
-            'is_owner' => $this->owner_id == $userId,
+            'is_owner' => $this->owner_id === $userId,
             'owner' => isset($this->owner->profile) ? [
                 'roles' => $this->owner->roles,
                 'fullname' => $this->owner->profile->fullname,
