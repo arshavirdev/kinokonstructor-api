@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use App\Models\Profile;
 use App\Models\Video;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class VideoResource extends JsonResource
 {
@@ -24,8 +25,8 @@ class VideoResource extends JsonResource
      */
     public function toArray($request)
     {
-        $userId = auth()->id();
-
+        $userId = Auth::id();
+        
         return [
             'id' => $this->id,
             'title' => $this->title,
@@ -39,7 +40,7 @@ class VideoResource extends JsonResource
             'is_favorite' => (bool) $this->is_favorite,
             'video_file' => new MediaResource($this->getFirstMedia(Video::VIDEO_FILE)),
             'image_file' => new MediaResource($this->getFirstMedia(Video::IMAGE_FILE)),
-            'is_owner' => $this->owner_id === $userId,
+            'is_owner' => $userId !== null && (int)$this->owner_id === (int)$userId,
             'owner' => isset($this->owner->profile) ? [
                 'roles' => $this->owner->roles,
                 'fullname' => $this->owner->profile->fullname,
