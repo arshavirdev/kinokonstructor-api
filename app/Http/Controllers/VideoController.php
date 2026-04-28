@@ -35,6 +35,7 @@ class VideoController extends Controller
 
     public function show(Video $video)
     {
+        $video->load('owner');
         return new VideoResource($video, true);
     }
 
