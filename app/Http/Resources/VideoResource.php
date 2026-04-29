@@ -25,8 +25,8 @@ class VideoResource extends JsonResource
      */
     public function toArray($request)
     {
-        $userId = Auth::id();
-        
+        $userId = Auth::guard('sanctum')->id();
+
         return [
             'id' => $this->id,
             'title' => $this->title,
@@ -34,7 +34,8 @@ class VideoResource extends JsonResource
             'category' => $this->category,
             'video_link' => $this->video_link,
             'external_link' => $this->external_link,
-            'comments' => $this->when($this->withDetails,
+            'comments' => $this->when(
+                $this->withDetails,
                 CommentResource::collection($this->comments)
             ),
             'is_favorite' => (bool) $this->is_favorite,
