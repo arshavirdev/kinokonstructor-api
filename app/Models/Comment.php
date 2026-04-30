@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Comment extends Model
 {
-    protected $fillable = ['body', 'user_id'];
+    protected $fillable = ['body', 'user_id', 'is_hidden'];
 
     public function commentable()
     {

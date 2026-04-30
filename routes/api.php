@@ -22,6 +22,7 @@ use App\Http\Controllers\VacancyController;
 use App\Http\Controllers\VerifyEmailController;
 use App\Http\Controllers\InviteController;
 use App\Http\Controllers\PasswordController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\RegionalBranchController;
 use App\Http\Controllers\BranchMemberController;
@@ -177,6 +178,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // VIDEO
     Route::apiResource('/videos', VideoController::class)->except(['show', 'index']);
     Route::post('/videos/{video}/comments', [VideoController::class, 'storeComment']);
+    // COMMENTS
+    Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
+    Route::post('/comments/{comment}/hide', [CommentController::class, 'hide']);
+
     Route::post('/videos/{video}/{action}', [VideoController::class, 'action'])
         ->where('action', 'favorite');
 
