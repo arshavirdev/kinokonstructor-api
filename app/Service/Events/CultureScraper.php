@@ -2,7 +2,6 @@
 
 namespace App\Service\Events;
 
-use App\Models\Resource;
 use App\Service\Media\MediaService;
 use App\DTOs\MediaSyncDataDTO;
 use App\Models\Event;
@@ -10,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Contracts\HttpClient\Exception\TimeoutExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use App\Models\User;
 use Carbon\Carbon;
@@ -18,14 +18,17 @@ class CultureScraper
 {
     const BASE_URL = 'https://www.culture.ru/';
     const EVENTS_LIMIT = 5;
+    const REQUEST_TIMEOUT = 10;
 
     public function process(MediaService $mediaService)
     {
-        $client = HttpClient::create();
+        $client = HttpClient::create(['timeout' => self::REQUEST_TIMEOUT]);
 
         try {
             $response = $client->request('GET', self::BASE_URL . 'afisha/russia/kino');
             $html = $response->getContent();
+        } catch (TimeoutExceptionInterface $e) {
+            throw new \RuntimeException("Timed out fetching culture.ru events after " . self::REQUEST_TIMEOUT . "s: " . $e->getMessage());
         } catch (TransportExceptionInterface $e) {
             throw new \RuntimeException("Failed to fetch culture.ru events: " . $e->getMessage());
         }

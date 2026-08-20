@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Service\Media\MediaService;
+use App\Service\TelegramService;
 use Illuminate\Console\Command;
 use App\Service\Events\CultureScraper;
 
@@ -50,7 +51,14 @@ class ScrapeEvents extends Command
             $scraper->process($mediaService);
         } catch (\Throwable $e) {
             $this->error("Failed to process " . $e->getMessage());
+            $this->notifyError("Failed to process events:scrape " . \get_class($scraper), $e);
             return;
         }
+    }
+
+    private function notifyError(string $context, \Throwable $e): void
+    {
+        $message = TelegramService::formatException($e) . "\nContext: `$context`";
+        TelegramService::sendMessage($message);
     }
 }
