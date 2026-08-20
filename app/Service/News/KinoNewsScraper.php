@@ -4,6 +4,7 @@ namespace App\Service\News;
 use Illuminate\Support\Str;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Contracts\HttpClient\Exception\TimeoutExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class KinoNewsScraper
@@ -11,15 +12,18 @@ class KinoNewsScraper
     const VENDOR = 'kinonews';
     const BASE_URL = 'https://www.kinonews.ru';
     const NEWS_LIMIT = 5;
+    const REQUEST_TIMEOUT = 10;
 
     public function process()
     {
         $news = [];
 
-        $client = HttpClient::create();
+        $client = HttpClient::create(['timeout' => self::REQUEST_TIMEOUT]);
         try {
             $response = $client->request('GET', self::BASE_URL . '/news');
             $html = $response->getContent();
+        } catch (TimeoutExceptionInterface $e) {
+            throw new \RuntimeException("Timed out fetching news articles after " . self::REQUEST_TIMEOUT . "s: " . $e->getMessage());
         } catch (TransportExceptionInterface $e) {
             throw new \RuntimeException("Failed to fetch news articles: " . $e->getMessage());
         }
@@ -46,11 +50,13 @@ class KinoNewsScraper
 
     private function scrapeSingleNews(string $link)
     {
-        $client = HttpClient::create();
+        $client = HttpClient::create(['timeout' => self::REQUEST_TIMEOUT]);
 
         try {
             $response = $client->request('GET', self::BASE_URL . $link);
             $html = $response->getContent();
+        } catch (TimeoutExceptionInterface $e) {
+            throw new \RuntimeException("Timed out fetching single news article after " . self::REQUEST_TIMEOUT . "s: " . $e->getMessage());
         } catch (TransportExceptionInterface $e) {
             throw new \RuntimeException("Failed to fetch single news article: " . $e->getMessage());
         }
