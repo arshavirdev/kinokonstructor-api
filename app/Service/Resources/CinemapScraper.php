@@ -31,7 +31,7 @@ class CinemapScraper
 
         $crawler = new Crawler($html);
 
-        $user = User::where('role', '=', 'admin')->oldest()->first();
+        $user = User::where('email', 'admin@киноконструктор.рф')->orWhere('id', 1)->first();
 
         $devices = $crawler->filter('ul.devices li.device')->slice(0, self::DEVICES_LIMIT);
 

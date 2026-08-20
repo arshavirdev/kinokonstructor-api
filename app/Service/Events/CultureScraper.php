@@ -34,7 +34,7 @@ class CultureScraper
         }
 
         $crawler = new Crawler($html);
-        $user = User::where('role', '=', 'admin')->oldest()->first();
+        $user = User::where('email', 'admin@киноконструктор.рф')->orWhere('id', 1)->first();
 
         // Select event cards
         $eventNodes = $crawler->filter('.main_col__f5Jmt a.styles_BaseCard__HuNmK')->slice(0, self::EVENTS_LIMIT);
