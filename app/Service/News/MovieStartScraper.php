@@ -79,11 +79,20 @@ class MovieStartScraper
         $parsedLink = explode('/', $link);
 
         $date = $crawler->filter('meta[property="article:published_time"]')->attr('content', '');
-        $imgUrl = $crawler->filter('meta[property="og:image"]')->attr('content', '');
+        $galleryLink = $crawler->filter('div.images .image-wrap a');
+        $galleryImg = $crawler->filter('div.images .image-wrap img');
+        if ($galleryLink->count()) {
+            $imgUrl = self::BASE_URL . $galleryLink->first()->attr('href');
+        } elseif ($galleryImg->count()) {
+            $imgSrc = $galleryImg->first()->attr('data-src') ?: $galleryImg->first()->attr('src');
+            $imgUrl = self::BASE_URL . $imgSrc;
+        } else {
+            $imgUrl = $crawler->filter('meta[property="og:image"]')->attr('content', '');
+        }
         $brief = $crawler->filter('meta[name="description"]')->attr('content', '');
 
         $title = $crawler->filter('h1.title')->text('');
-        $content = $crawler->filter('div.layout__content')->count() ? $crawler->filter('div.layout__content')->html() : '';
+        $content = $crawler->filter('div.container div.wysiwyg')->count() ? $crawler->filter('div.container div.wysiwyg')->html() : '';
 
         $brief = mb_strlen($brief, 'UTF-8') > 100 ? mb_substr($brief, 0, 80, 'UTF-8') . "..." : $brief;
         $slug = self::VENDOR . '-' . (Str::slug($parsedLink[4] ?? '') ?: time());
