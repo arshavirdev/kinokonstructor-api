@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use App\Models\Profile;
 use App\Models\Video;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
 class VideoResource extends JsonResource
 {
@@ -17,14 +18,14 @@ class VideoResource extends JsonResource
     }
 
     /**
-     * Transform the resource into an array.
+     * Transform the resource into an array. 2
      *
      * @param \Illuminate\Http\Request $request
      * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
      */
     public function toArray($request)
     {
-        $userId = auth()->id();
+        $userId = Auth::guard('sanctum')->id();
 
         return [
             'id' => $this->id,
@@ -33,13 +34,14 @@ class VideoResource extends JsonResource
             'category' => $this->category,
             'video_link' => $this->video_link,
             'external_link' => $this->external_link,
-            'comments' => $this->when($this->withDetails,
+            'comments' => $this->when(
+                $this->withDetails,
                 CommentResource::collection($this->comments)
             ),
             'is_favorite' => (bool) $this->is_favorite,
             'video_file' => new MediaResource($this->getFirstMedia(Video::VIDEO_FILE)),
             'image_file' => new MediaResource($this->getFirstMedia(Video::IMAGE_FILE)),
-            'is_owner' => $this->owner_id === $userId,
+            'is_owner' => $userId !== null && (int)$this->owner_id === (int)$userId,
             'owner' => isset($this->owner->profile) ? [
                 'roles' => $this->owner->roles,
                 'fullname' => $this->owner->profile->fullname,

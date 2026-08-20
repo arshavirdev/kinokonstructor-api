@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Service\News\MovieStartScraper;
 use App\Service\StrapiService;
+use App\Service\TelegramService;
 use Illuminate\Console\Command;
 use App\Service\News\KinoNewsScraper;
 
@@ -52,6 +53,7 @@ class ScrapeNews extends Command
             $news = $scraper->process();
         } catch (\Throwable $e) {
             $this->error("Failed to process $vendor: " . $e->getMessage());
+            $this->notifyError("Failed to process news:scrap $vendor", $e);
             return;
         }
 
@@ -62,20 +64,28 @@ class ScrapeNews extends Command
 
         $this->info("Found " . count($news) . " items for $vendor.");
 
-        // TODO: check
-        // try {
-        //     $this->strapiService->deleteNewsByVendor($vendor);
-        // } catch (\Throwable $e) {
-        //     $this->error("Failed to delete existing news for $vendor: " . $e->getMessage());
-        //     return;
-        // }
+        try {
+            $this->strapiService->deleteNewsByVendor($vendor);
+            $this->info("Deleting $vendor news.");
+        } catch (\Throwable $e) {
+            $this->error("Failed to delete existing news for $vendor: " . $e->getMessage());
+            $this->notifyError("Failed to delete existing news for $vendor", $e);
+            return;
+        }
 
         foreach ($news as $newsData) {
             try {
                 $this->strapiService->createNews($newsData);
             } catch (\Throwable $e) {
                 $this->error("Failed to create news item for $vendor: " . $e->getMessage());
+                $this->notifyError("Failed to create news item for $vendor", $e);
             }
         }
+    }
+
+    private function notifyError(string $context, \Throwable $e): void
+    {
+        $message = TelegramService::formatException($e) . "\nContext: `$context`";
+        TelegramService::sendMessage($message);
     }
 }

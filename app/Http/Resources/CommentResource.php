@@ -22,6 +22,7 @@ class CommentResource extends JsonResource
                 'avatar' => new AvatarResource($this->user->profile->getFirstMedia(Profile::AVATAR_MEDIA)),
             ] : [],
             'body' => $this->body,
+            'is_hidden' => $this->is_hidden,
             'created_at' => $this->created_at,
         ];
     }

@@ -7,7 +7,9 @@ namespace App\Providers;
 use App\Http\Controllers\VerifyEmailController;
 use App\Models\Profile;
 use App\Models\User;
+use App\Policies\CommentPolicy;
 use App\Policies\ProfilePolicy;
+use App\Models\Comment;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use App\Mail\VerifyEmail as CustomVerifyEmail;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
@@ -28,6 +30,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         // 'App\Models\Model' => 'App\Policies\ModelPolicy',
+        Comment::class => CommentPolicy::class,
         Profile::class => ProfilePolicy::class,
         // 'App\Models\Profile' => 'App\Policies\ProfilePolicy2'
     ];
