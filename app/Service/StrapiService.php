@@ -56,32 +56,39 @@ final readonly class StrapiService
      */
     public function deleteNewsByVendor(string $vendor): void
     {
-        $query = http_build_query([
-            'filters' => [
-                'vendor' => [
-                    '$eq' => $vendor
+        do {
+            $query = http_build_query([
+                'filters' => [
+                    'slug' => [
+                        '$startsWith' => "$vendor-"
+                    ],
                 ],
-            ],
-            'fields[0]' => 'id',
-            'populate' => '*'
-        ]);
+                'fields[0]' => 'id',
+                'populate' => '*',
+                'pagination[pageSize]' => 100,
+            ]);
 
-        $response = Http::withToken($this->token)
-            ->get("{$this->baseUrl}/news?$query");
+            $response = Http::withToken($this->token)
+                ->get("{$this->baseUrl}/news?$query");
 
-        $data = $response->json()['data'] ?? [];
+            $data = $response->json()['data'] ?? [];
 
-        foreach ($data as $item) {
-            $id = $item['id'];
-            $mediaId = $item['image']['id'] ?? '';
+            foreach ($data as $item) {
+                $id = $item['id'];
+                $mediaId = $item['image']['id'] ?? '';
 
-            Http::withToken($this->token)
-                ->delete("{$this->baseUrl}/news/$id");
+                $deleteResponse = Http::withToken($this->token)
+                    ->delete("{$this->baseUrl}/news/$id");
 
-            if ($mediaId) {
-                Http::withToken($this->token)
-                    ->delete("{$this->baseUrl}/upload/files/$mediaId");
+                if (!$deleteResponse->successful()) {
+                    throw new \Exception($deleteResponse->body());
+                }
+
+                if ($mediaId) {
+                    Http::withToken($this->token)
+                        ->delete("{$this->baseUrl}/upload/files/$mediaId");
+                }
             }
-        }
+        } while (count($data) > 0);
     }
 }

@@ -1,6 +1,7 @@
 <?php
 namespace App\Service\News;
 
+use Illuminate\Support\Str;
 use Log;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpClient\HttpClient;
@@ -79,7 +80,7 @@ class MovieStartScraper
         $content = $crawler->filter('div.layout__content')->count() ? $crawler->filter('div.layout__content')->html() : '';
 
         $brief = mb_strlen($brief, 'UTF-8') > 100 ? mb_substr($brief, 0, 80, 'UTF-8') . "..." : $brief;
-        $slug = self::VENDOR . '-' . ($parsedLink[4] ?? time());
+        $slug = self::VENDOR . '-' . (Str::slug($parsedLink[4] ?? '') ?: time());
 
         return [
             'vendor' => self::VENDOR,

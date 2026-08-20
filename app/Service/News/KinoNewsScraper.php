@@ -1,6 +1,7 @@
 <?php
 namespace App\Service\News;
 
+use Illuminate\Support\Str;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
@@ -70,7 +71,7 @@ class KinoNewsScraper
         $content = $newsBlock->filter('div.textart')->count() ? $newsBlock->filter('div.textart')->html() : '';
 
         $brief = mb_strlen($brief, 'UTF-8') > 100 ? mb_substr($brief, 0, 80, 'UTF-8') . "..." : $brief;
-        $slug = self::VENDOR . '-' . str_replace(['/', '_'], '', $link);
+        $slug = self::VENDOR . '-' . (Str::slug($link) ?: time());
 
         return [
             'vendor' => self::VENDOR,
