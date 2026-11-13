@@ -24,7 +24,7 @@ class BranchNewsRequest extends FormRequest
     public function rules()
     {
         return [
-            'news' => 'required|array',
+            'news' => 'present|array',
             'news.*.id' => 'nullable|exists:branch_news,id',
             'news.*.title' => 'required|string',
             'news.*.category' => 'sometimes|array',

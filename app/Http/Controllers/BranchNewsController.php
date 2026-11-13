@@ -16,12 +16,26 @@ class BranchNewsController extends Controller
         return new BranchNewsResource($branchNews);
     }
 
+    /**
+     * Sync branch news: items with id are updated, items without id are created,
+     * and existing news missing from the payload are deleted (empty array deletes all).
+     */
     public function store(RegionalBranch $regionalBranch, BranchNewsRequest $request)
     {
+        $newsList = $request->validated()['news'] ?? [];
+
         DB::beginTransaction();
 
         try {
-            foreach ($request->validated()['news'] as $newsData) {
+            $keepIds = collect($newsList)->pluck('id')->filter()->all();
+
+            // Delete news removed on the client (model delete also clears media)
+            $regionalBranch->news()
+                ->whereNotIn('id', $keepIds)
+                ->get()
+                ->each(fn (BranchNews $news) => $news->delete());
+
+            foreach ($newsList as $newsData) {
                 $image = $newsData['image_file'] ?? null;
                 unset($newsData['image_file']);
 
@@ -44,7 +58,7 @@ class BranchNewsController extends Controller
 
             DB::commit();
 
-            return new BranchNewsResource($branchNewsItem);
+            return BranchNewsResource::collection($regionalBranch->news()->with('media')->get());
         } catch (\Exception $e) {
             DB::rollBack();
 
